@@ -1,5 +1,5 @@
 Command line:
-"travis encrypt SOMEVAR=9097fe740e52d88912580b6acc1026db0f8c576f"
+"travis"
 
 
    ________                                 __
@@ -24,7 +24,7 @@ Command line:
 
      There is absolutely no warranty on any results obtained from TRAVIS.
 
-  #  Running on Jaskier at Thu Oct 29 10:52:01 2020 (PID 9232).
+  #  Running on Jaskier at Thu Oct 29 11:27:34 2020 (PID 11837).
   #  Running in /home/luisgg/Documents/Cuarto_Curso/ING-WEB/Proyecto/UrlShortener
   #  Code version: Aug 12 2017, compiled at Jan 14 2018 01:39:14, compiler "7.2.0", GCC 7.2.0
   #  Target platform: Linux, compile flags: DEBUG_ARRAYS 
@@ -36,32 +36,22 @@ Command line:
 
     Loading configuration from /home/luisgg/.travis.conf ...
 
-[Renaming existing File input.txt to #3#input.txt ...OK.]
-Unknown parameter: "encrypt".
+    No trajectory file specified.
+    Please use the "-p" flag to specify an input trajectory in the command line.
 
-    List of supported command line options:
+    Enter the file name of the trajectory file to open: [Quit] q
 
-      -p <file>       Loads position data from the specified trajectory file.
-                      The file format may be *.xyz, *.pdb, *.lmp (LAMMPS), HISTORY (DLPOLY), or *.prmtop/*.mdcrd (Amber).
-                      BQB format (*.bqb, *.btr, *.blist) is also supported.
-      -vel <file>     Reads atom velocities from file in addition to main trajectory.
-                      Currently, only .xyz format is supported for velocity data.
-      -i <file>       Reads input from the specified text file.
+Could not determine trajectory file format ((null)).
 
-      -config <file>  Load the specified configuration file.
-      -stream         Treats input trajectory as a stream (e.g. named pipe): No fseek, etc.
-      -showconf       Shows a tree structure of the configuration file.
-      -writeconf      Writes the default configuration file, including all defines values.
+The following formats are supported:
+  - XYZ trajectories (extension .xyz)
+  - PDB trajectories (extension .pdb)
+  - LAMMPS trajectories "dump custom element xu yu zu" (extension .lmp)
+  - DLPOLY trajectories (file name "HISTORY", no extension)
+  - Amber trajectories (extension .prmtop / .mdcrd)
+  - Cube file trajectories (extension .cube)
+  - BQB format (extensions .bqb, .btr, and .blist)
 
-      -verbose        Show detailed information about what's going on.
-      -nocolor        Executes TRAVIS in monochrome mode (suitable for white background).
-      -dimcolor       Uses dim instead of bright colors.
-
-      -credits        Display a list of persons who contributed to TRAVIS.
-      -help, -?       Shows this help.
-
-    If only one argument is specified, it is assumed to be the name of a trajectory file.
-    If argument is specified at all, TRAVIS asks for the trajectory file to open.
 
 
     Note: To show a list of all persons who contributed to TRAVIS,
