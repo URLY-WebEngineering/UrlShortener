@@ -1,11 +1,9 @@
 language: java
 jdk: openjdk8
-
 addons:
   sonarcloud:
     organization: "urly-webengineering"
     token:
     secure: "ekqR/0xdaGsWlGWc1/4uLoTr2L5R/mV5jxmecSus8a5bq5r0eC8NA1EioYE6F2tYdLTX3+cQ3I6cJggXugxdgGXocMAGLit5oFVe2sARAR74rvyFqh0lhJLLVYhkzPZxWI1hP8ThFwpv387CZG66T9FCHTow8LFk3oDmY25RJakJzsWrfsDcssly75QQ3TjEFHVS4hrLNCIWC/iznCwEUxj79SmnqdTDOjDp7vXWI+eLcUhMK6yVT6KslwH+14ltkNSOacqAx/xRQF9Zl/Wakr6ZvsTWem81E4J4gXm+75HpHgJE8736CD66tb0bL9fgNZpy9ylXGR2jXNTIVZZHIhhcf5v12E3aUK8Y9R8fmVa1PqG7fPeNCiOxsK/LXBGa0nn1dLLiGTMI1dsQZv5veKPPPWx2bIzvimpnE/zllKJC0iKUXZWiuXmyn6WZBFxStetmmB0IcnItoYGrVHnwOUa6BBK7hXtQyKNpt417yfrJBZxTvQFvPHBe3PtalLqOW/HvDbeCFco/2nBuIHU1v5/VSFXsL+zIYiHfEB7YC1v6s3t1I2h8eUXgamhUtcIsM0LdRRmtfwUlvGmdAvm5Mw3YN0MQPsyCe67P18baSPRMxIyiKpv219QesbEHfO5WlPk73UEaZr2IybM24wFfOdR+ln5kXmCuKk1WUDCqa3Q="
-
 script:
   - ./gradlew sonarqube
