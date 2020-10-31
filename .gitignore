@@ -18,4 +18,5 @@ out/
 
 # Other
 
+travis.log
 db/
