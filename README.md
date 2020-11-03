@@ -11,17 +11,26 @@ The __project__ is a [Spring Boot](http://docs.spring.io/spring-boot/docs/curren
 * __Database service__: Persistence and retrieval of `ShortURL` and `Click` objects.
 
 
-The application can be run in Linux and macOS as follows:
+## Deployment
 
+The application can be run as follows:
+### Linux and MacOS
+#### Docker
+```
+$ ./deploy.sh
+```
+#### Graddle 
+    
 ```
 $ ./gradlew bootRun
 ```
-or in Windows
+### Windows
 
 ```
 $ gradle.bat bootRun
 ```
 
+## Usage
 Gradle will compile project and then run it
 Now you have a shortener service running at port 8080. 
 You can test that it works as follows:
