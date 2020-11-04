@@ -20,5 +20,4 @@ public interface ShortURLRepository {
   Long count();
 
   List<ShortURL> list(Long limit, Long offset);
-
 }

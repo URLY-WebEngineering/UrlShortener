@@ -1,8 +1,9 @@
 plugins {
     id 'org.springframework.boot' version '2.3.3.RELEASE'
-    id "org.sonarqube" version "3.0" 
+    id "org.sonarqube" version "3.0"
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
     id 'java'
+    id 'com.github.sherter.google-java-format' version '0.9'
 }
 
 apply plugin: 'idea'
@@ -13,6 +14,10 @@ targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
+}
+
+googleJavaFormat {
+    options style: 'GOOGLE'
 }
 
 dependencies {
@@ -33,9 +38,9 @@ dependencies {
 }
 
 sonarqube {
-  properties {
-    property "sonar.projectKey", "URLY-WebEngineering_UrlShortener"
-  }
+    properties {
+        property "sonar.projectKey", "URLY-WebEngineering_UrlShortener"
+    }
 }
 
 clean.doFirst {
