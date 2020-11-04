@@ -28,6 +28,11 @@ jacocoTestReport {
     }
 }
 
+test {
+    // Make sure that after running the tests, the report is generated
+    finalizedBy(jacocoTestReport)
+}
+
 sonarqube {
     properties {
         property "sonar.projectKey", "URLY-WebEngineering_UrlShortener"
