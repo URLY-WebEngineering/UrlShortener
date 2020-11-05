@@ -18,8 +18,7 @@ public class ClickBuilder {
   }
 
   Click build() {
-    return new Click(null, hash, created, referrer,
-        browser, platform, ip, country);
+    return new Click(null, hash, created, referrer, browser, platform, ip, country);
   }
 
   ClickBuilder hash(String hash) {
@@ -47,7 +46,6 @@ public class ClickBuilder {
     return this;
   }
 
-
   ClickBuilder ip(String ip) {
     this.ip = ip;
     return this;
@@ -57,5 +55,4 @@ public class ClickBuilder {
     this.country = null;
     return this;
   }
-
 }

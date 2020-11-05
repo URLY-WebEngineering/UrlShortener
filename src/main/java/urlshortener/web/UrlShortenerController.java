@@ -27,8 +27,7 @@ public class UrlShortenerController {
   }
 
   @RequestMapping(value = "/{id:(?!link|index).*}", method = RequestMethod.GET)
-  public ResponseEntity<?> redirectTo(@PathVariable String id,
-                                      HttpServletRequest request) {
+  public ResponseEntity<?> redirectTo(@PathVariable String id, HttpServletRequest request) {
     ShortURL l = shortUrlService.findByKey(id);
     if (l != null) {
       clickService.saveClick(id, extractIP(request));
@@ -39,12 +38,11 @@ public class UrlShortenerController {
   }
 
   @RequestMapping(value = "/link", method = RequestMethod.POST)
-  public ResponseEntity<ShortURL> shortener(@RequestParam("url") String url,
-                                            @RequestParam(value = "sponsor", required = false)
-                                                String sponsor,
-                                            HttpServletRequest request) {
-    UrlValidator urlValidator = new UrlValidator(new String[] {"http",
-        "https"});
+  public ResponseEntity<ShortURL> shortener(
+      @RequestParam("url") String url,
+      @RequestParam(value = "sponsor", required = false) String sponsor,
+      HttpServletRequest request) {
+    UrlValidator urlValidator = new UrlValidator(new String[] {"http", "https"});
     if (urlValidator.isValid(url)) {
       ShortURL su = shortUrlService.save(url, sponsor, request.getRemoteAddr());
       HttpHeaders h = new HttpHeaders();

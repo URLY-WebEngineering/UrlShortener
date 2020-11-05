@@ -26,5 +26,4 @@ public class PersistenceConfiguration {
   ClickRepository clickRepository() {
     return new ClickRepositoryImpl(jdbc);
   }
-
 }
