@@ -22,11 +22,15 @@ dependencies {
 
     implementation 'commons-validator:commons-validator:1.6'
     implementation 'com.google.guava:guava:28.1-jre'
+    implementation 'org.jetbrains:annotations:19.0.0'
 
     runtime 'org.webjars:bootstrap:3.3.5'
     runtime 'org.webjars:jquery:2.1.4'
 
     runtime 'org.hsqldb:hsqldb'
+
+    compile "com.google.zxing:core:3.3.0"
+    compile 'com.google.zxing:javase:3.3.0'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.apache.httpcomponents:httpclient'

@@ -38,6 +38,8 @@ public class UrlShortenerController {
     }
   }
 
+
+
   @RequestMapping(value = "/link", method = RequestMethod.POST)
   public ResponseEntity<ShortURL> shortener(@RequestParam("url") String url,
                                             @RequestParam(value = "sponsor", required = false)
@@ -46,7 +48,9 @@ public class UrlShortenerController {
     UrlValidator urlValidator = new UrlValidator(new String[] {"http",
         "https"});
     if (urlValidator.isValid(url)) {
+      //Once ShortURL is built , it should generate the qrcode
       ShortURL su = shortUrlService.save(url, sponsor, request.getRemoteAddr());
+      // In a few weeks we should save the code in the database
       HttpHeaders h = new HttpHeaders();
       h.setLocation(su.getUri());
       return new ResponseEntity<>(su, h, HttpStatus.CREATED);

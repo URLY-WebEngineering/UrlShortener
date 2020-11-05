@@ -7,9 +7,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static urlshortener.fixtures.ShortURLFixture.someUrl;
 
 
@@ -20,15 +18,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.Answer;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder;
 import urlshortener.domain.ShortURL;
 import urlshortener.service.ClickService;
+import urlshortener.service.QRService;
 import urlshortener.service.ShortURLService;
 
 public class UrlShortenerTests {
 
   private MockMvc mockMvc;
+
 
   @Mock
   private ClickService clickService;
@@ -39,10 +41,13 @@ public class UrlShortenerTests {
   @InjectMocks
   private UrlShortenerController urlShortener;
 
+  @Mock
+  private QRController qrcode;
+
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this);
-    this.mockMvc = MockMvcBuilders.standaloneSetup(urlShortener).build();
+    this.mockMvc = MockMvcBuilders.standaloneSetup(urlShortener,qrcode).build();
   }
 
   @Test
@@ -123,5 +128,15 @@ public class UrlShortenerTests {
             false,
             null,
             null));
+  }
+
+
+  public String TEST_URL = "https://www.esportmaniacos.com/";
+  @Test
+  public void checkQRIfIsWorking() throws  Exception{
+    mockMvc.perform(post("/qr").param("url", TEST_URL)).andDo(print())
+            .andExpect(status().isCreated()).andExpect(header().string("Location", is(TEST_URL)));
+
+    ;
   }
 }
