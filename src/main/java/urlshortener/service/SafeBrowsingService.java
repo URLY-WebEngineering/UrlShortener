@@ -41,7 +41,12 @@ public class SafeBrowsingService {
     if (response.getStatusCode() != HttpStatus.OK) {
       throw new HttpServerErrorException(response.getStatusCode());
     } else {
-      return response.getBody() == null || response.getBody().getMatches() == null;
+      SBResponse sbResponse = response.getBody();
+      if (sbResponse != null) {
+        return sbResponse.getMatches() == null;
+      } else {
+        return false;
+      }
     }
   }
 }
