@@ -1,32 +1,33 @@
 package urlshortener.domain.safebrowsing;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "threatTypes",
-    "platformTypes",
-    "threatEntryTypes",
-    "threatEntries"
-})
+@JsonPropertyOrder({"threatTypes", "platformTypes", "threatEntryTypes", "threatEntries"})
 public class SBThreatInfo {
 
   @JsonProperty("threatTypes")
   public List<String> threatTypes = null;
+
   @JsonProperty("platformTypes")
   public List<String> platformTypes = null;
+
   @JsonProperty("threatEntryTypes")
   public List<String> threatEntryTypes = null;
+
   @JsonProperty("threatEntries")
   public List<SBThreatEntry> threatEntries = null;
 
-  public SBThreatInfo(){}
+  public SBThreatInfo() {}
 
-  public SBThreatInfo(List<String> threatTypes, List<String> platformTypes, List<String> threatEntryTypes, List<SBThreatEntry> threatEntries) {
+  public SBThreatInfo(
+      List<String> threatTypes,
+      List<String> platformTypes,
+      List<String> threatEntryTypes,
+      List<SBThreatEntry> threatEntries) {
     this.threatTypes = threatTypes;
     this.platformTypes = platformTypes;
     this.threatEntryTypes = threatEntryTypes;
@@ -67,11 +68,15 @@ public class SBThreatInfo {
 
   @Override
   public String toString() {
-    return "SBThreatInfo{" +
-        "threatTypes=" + threatTypes +
-        ", platformTypes=" + platformTypes +
-        ", threatEntryTypes=" + threatEntryTypes +
-        ", threatEntries=" + threatEntries +
-        '}';
+    return "SBThreatInfo{"
+        + "threatTypes="
+        + threatTypes
+        + ", platformTypes="
+        + platformTypes
+        + ", threatEntryTypes="
+        + threatEntryTypes
+        + ", threatEntries="
+        + threatEntries
+        + '}';
   }
 }

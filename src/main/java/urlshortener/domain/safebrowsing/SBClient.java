@@ -4,21 +4,17 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "clientId",
-    "clientVersion"
-})
+@JsonPropertyOrder({"clientId", "clientVersion"})
 public class SBClient {
 
   @JsonProperty("clientId")
   public String clientId;
+
   @JsonProperty("clientVersion")
   public String clientVersion;
 
-  public SBClient() {
-  }
+  public SBClient() {}
 
   public SBClient(String clientId, String clientVersion) {
     this.clientId = clientId;
@@ -43,9 +39,13 @@ public class SBClient {
 
   @Override
   public String toString() {
-    return "SBClient{" +
-        "clientId='" + clientId + '\'' +
-        ", clientVersion='" + clientVersion + '\'' +
-        '}';
+    return "SBClient{"
+        + "clientId='"
+        + clientId
+        + '\''
+        + ", clientVersion='"
+        + clientVersion
+        + '\''
+        + '}';
   }
 }

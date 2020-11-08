@@ -5,15 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "url"
-})
+@JsonPropertyOrder({"url"})
 public class SBThreatEntry {
 
   @JsonProperty("url")
   public String url;
 
-  public SBThreatEntry(){}
+  public SBThreatEntry() {}
 
   public SBThreatEntry(String url) {
     this.url = url;
@@ -29,8 +27,6 @@ public class SBThreatEntry {
 
   @Override
   public String toString() {
-    return "SBThreatEntry{" +
-        "url='" + url + '\'' +
-        '}';
+    return "SBThreatEntry{" + "url='" + url + '\'' + '}';
   }
 }

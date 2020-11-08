@@ -5,19 +5,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "client",
-    "threatInfo"
-})
+@JsonPropertyOrder({"client", "threatInfo"})
 public class SBRequest {
 
   @JsonProperty("client")
   public SBClient client;
+
   @JsonProperty("threatInfo")
   public SBThreatInfo threatInfo;
 
-  public SBRequest() {
-  }
+  public SBRequest() {}
 
   public SBRequest(SBClient client, SBThreatInfo threatInfo) {
     this.client = client;
@@ -42,9 +39,6 @@ public class SBRequest {
 
   @Override
   public String toString() {
-    return "SBRequest{" +
-        "client=" + client +
-        ", threatInfo=" + threatInfo +
-        '}';
+    return "SBRequest{" + "client=" + client + ", threatInfo=" + threatInfo + '}';
   }
 }
