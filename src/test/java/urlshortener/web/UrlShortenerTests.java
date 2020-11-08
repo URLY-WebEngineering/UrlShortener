@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import urlshortener.domain.ShortURL;
 import urlshortener.service.ClickService;
+import urlshortener.service.SafeBrowsingService;
 import urlshortener.service.ShortURLService;
 
 public class UrlShortenerTests {
@@ -32,6 +33,8 @@ public class UrlShortenerTests {
   @Mock private ClickService clickService;
 
   @Mock private ShortURLService shortUrlService;
+
+  @Mock private SafeBrowsingService safeBrowsingService;
 
   @InjectMocks private UrlShortenerController urlShortener;
 
@@ -62,6 +65,7 @@ public class UrlShortenerTests {
   @Test
   public void thatShortenerCreatesARedirectIfTheURLisOK() throws Exception {
     configureSave(null);
+    when(safeBrowsingService.isSafe("http://example.com/")).thenReturn(true);
 
     mockMvc
         .perform(post("/link").param("url", "http://example.com/"))
@@ -77,6 +81,7 @@ public class UrlShortenerTests {
   @Test
   public void thatShortenerCreatesARedirectWithSponsor() throws Exception {
     configureSave("http://sponsor.com/");
+    when(safeBrowsingService.isSafe("http://example.com/")).thenReturn(true);
 
     mockMvc
         .perform(
@@ -111,6 +116,16 @@ public class UrlShortenerTests {
         .perform(post("/link").param("url", "someKey"))
         .andDo(print())
         .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void thatShortenerCreatesARedirectIfTheURLisNotSafe() throws Exception {
+    when(safeBrowsingService.isSafe(any(String.class))).thenReturn(false);
+
+    mockMvc
+        .perform(post("/link").param("url", "http://example.com/"))
+        .andDo(print())
+        .andExpect(status().isNotAcceptable());
   }
 
   private void configureSave(String sponsor) {
