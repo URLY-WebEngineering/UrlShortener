@@ -32,12 +32,7 @@ $(document).ready(
                 url: "/qr",
                 data: { url: enlace},
                 success:function (data) {
-                    //alert("Response: "+ body);
-                    //var oImg = document.createElement("img");
-                    //oImg.setAttribute('src', 'data:image/png,' + Image.data);
-                    //$("#botonQR").append(oImg);
-                   $("#QRresult").html("<img style='width:400px;height:400px;' src=data:image/png;base64," + data + " />");
-                    //$("#QRresult").attr('src', `data:image/png;base64,${data}`);
+                   $("#QRresult").html("<img style='width:400px;height:400px;' src=" + data + " />");
                 },
                 error: function () {
 

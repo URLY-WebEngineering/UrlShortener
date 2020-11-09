@@ -9,6 +9,7 @@ import com.google.zxing.common.BitMatrix;
 
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -20,7 +21,10 @@ import java.io.IOException;
 
 
 public class QRService {
-    public static byte[] getQRImage(String uri ) throws IOException, WriterException {
+    public static String getQRImage(String uri ) throws IOException, WriterException {
+        //resultImage = new String("data:image/png;base64," + Base64.encode(os.toByteArray()));
+
+        //return resultImage;
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         QRCodeWriter writer = new QRCodeWriter();
@@ -29,7 +33,9 @@ public class QRService {
         BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
         ImageIO.write(bufferedImage, "png", os);
         byte[] pngData = os.toByteArray();
-        return pngData;
+        String resultImage = new String("data:image/png;base64," + Base64.encode(pngData));
+        //return pngData;
+        return resultImage;
 
     }
 

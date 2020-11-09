@@ -21,16 +21,14 @@ import java.net.URI;
 public class QRController {
 //Provisional, currently this method is just for testing ,due to the way we return the qrcode is about to change
     @RequestMapping(value = "/qr", method = RequestMethod.POST, produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<byte[]> generateQR(@RequestParam("url") String url,
+    public ResponseEntity<String> generateQR(@RequestParam("url") String url,
                                               HttpServletRequest request) throws IOException, WriterException {
 
-        UrlValidator urlValidator = new UrlValidator(new String[] {"http",
-                "https"});
-        byte[] qrImage = QRService.getQRImage(url);
+        String qrImage = QRService.getQRImage(url);
         HttpHeaders h = new HttpHeaders();
         h.setLocation(URI.create(url));
         h.setContentType(MediaType.IMAGE_PNG);
-        h.setContentLength(qrImage.length);
+        h.setContentLength(qrImage.length());
         return new ResponseEntity<>(qrImage, h, HttpStatus.CREATED);
 
     }
