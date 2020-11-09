@@ -61,8 +61,9 @@ public class QRController {
 
 
     private boolean isLocal(String url){
-        String  local_host= "//localhost:8080/";
-        return (url.contains(local_host));
+        String  local_http= "http://localhost:8080/";
+        String  local_https= "https://localhost:8080/";
+        return (url.contains(local_https) || url.contains(local_http));
 
     }
 
