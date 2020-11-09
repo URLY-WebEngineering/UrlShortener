@@ -41,13 +41,10 @@ public class UrlShortenerTests {
   @InjectMocks
   private UrlShortenerController urlShortener;
 
-  @Mock
-  private QRController qrcode;
-
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this);
-    this.mockMvc = MockMvcBuilders.standaloneSetup(urlShortener,qrcode).build();
+    this.mockMvc = MockMvcBuilders.standaloneSetup(urlShortener).build();
   }
 
   @Test
@@ -131,11 +128,4 @@ public class UrlShortenerTests {
   }
 
 
-  public String TEST_URL = "https://www.esportmaniacos.com/";
-  @Test
-  public void checkQRIfIsWorking() throws  Exception{
-    mockMvc.perform(post("/qr").param("url", TEST_URL)).andDo(print())
-            .andExpect(status().isCreated()).andExpect(header().string("Location", is(TEST_URL)));
-
-  }
 }

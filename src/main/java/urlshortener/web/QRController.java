@@ -19,6 +19,7 @@ import java.net.URI;
 
 @Controller
 public class QRController {
+
 //Provisional, currently this method is just for testing ,due to the way we return the qrcode is about to change
     @RequestMapping(value = "/qr", method = RequestMethod.POST, produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<String> generateQR(@RequestParam("url") String url,

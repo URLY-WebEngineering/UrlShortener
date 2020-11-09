@@ -10,6 +10,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -19,6 +20,7 @@ import java.io.IOException;
 // Tutorials:https://www.pixeltrice.com/generate-the-qr-code-using-spring-boot-application/
 //          https://www.callicoder.com/generate-qr-code-in-java-using-zxing/
 
+@Service
 public class QRService {
     public static String getQRImage(String uri ) throws IOException, WriterException {
 
