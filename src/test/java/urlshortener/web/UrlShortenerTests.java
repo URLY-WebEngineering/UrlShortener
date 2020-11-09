@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static urlshortener.fixtures.ShortURLFixture.someUrl;
 
-
 import java.net.URI;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,22 +23,20 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder;
 import urlshortener.domain.ShortURL;
 import urlshortener.service.ClickService;
-import urlshortener.service.QRService;
+import urlshortener.service.SafeBrowsingService;
 import urlshortener.service.ShortURLService;
 
 public class UrlShortenerTests {
 
   private MockMvc mockMvc;
 
+  @Mock private ClickService clickService;
 
-  @Mock
-  private ClickService clickService;
+  @Mock private ShortURLService shortUrlService;
 
-  @Mock
-  private ShortURLService shortUrlService;
+  @Mock private SafeBrowsingService safeBrowsingService;
 
-  @InjectMocks
-  private UrlShortenerController urlShortener;
+  @InjectMocks private UrlShortenerController urlShortener;
 
   @Before
   public void setup() {
@@ -48,29 +45,30 @@ public class UrlShortenerTests {
   }
 
   @Test
-  public void thatRedirectToReturnsTemporaryRedirectIfKeyExists()
-      throws Exception {
+  public void thatRedirectToReturnsTemporaryRedirectIfKeyExists() throws Exception {
     when(shortUrlService.findByKey("someKey")).thenReturn(someUrl());
 
-    mockMvc.perform(get("/{id}", "someKey")).andDo(print())
+    mockMvc
+        .perform(get("/{id}", "someKey"))
+        .andDo(print())
         .andExpect(status().isTemporaryRedirect())
         .andExpect(redirectedUrl("http://example.com/"));
   }
 
   @Test
-  public void thatRedirecToReturnsNotFoundIdIfKeyDoesNotExist()
-      throws Exception {
+  public void thatRedirecToReturnsNotFoundIdIfKeyDoesNotExist() throws Exception {
     when(shortUrlService.findByKey("someKey")).thenReturn(null);
 
-    mockMvc.perform(get("/{id}", "someKey")).andDo(print())
-        .andExpect(status().isNotFound());
+    mockMvc.perform(get("/{id}", "someKey")).andDo(print()).andExpect(status().isNotFound());
   }
 
   @Test
   public void thatShortenerCreatesARedirectIfTheURLisOK() throws Exception {
     configureSave(null);
+    when(safeBrowsingService.isSafe("http://example.com/")).thenReturn(true);
 
-    mockMvc.perform(post("/link").param("url", "http://example.com/"))
+    mockMvc
+        .perform(post("/link").param("url", "http://example.com/"))
         .andDo(print())
         .andExpect(redirectedUrl("http://localhost/f684a3c4"))
         .andExpect(status().isCreated())
@@ -83,10 +81,14 @@ public class UrlShortenerTests {
   @Test
   public void thatShortenerCreatesARedirectWithSponsor() throws Exception {
     configureSave("http://sponsor.com/");
+    when(safeBrowsingService.isSafe("http://example.com/")).thenReturn(true);
 
-    mockMvc.perform(
-        post("/link").param("url", "http://example.com/").param(
-            "sponsor", "http://sponsor.com/")).andDo(print())
+    mockMvc
+        .perform(
+            post("/link")
+                .param("url", "http://example.com/")
+                .param("sponsor", "http://sponsor.com/"))
+        .andDo(print())
         .andExpect(redirectedUrl("http://localhost/f684a3c4"))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.hash", is("f684a3c4")))
@@ -99,7 +101,9 @@ public class UrlShortenerTests {
   public void thatShortenerFailsIfTheURLisWrong() throws Exception {
     configureSave(null);
 
-    mockMvc.perform(post("/link").param("url", "someKey")).andDo(print())
+    mockMvc
+        .perform(post("/link").param("url", "someKey"))
+        .andDo(print())
         .andExpect(status().isBadRequest());
   }
 
@@ -108,23 +112,38 @@ public class UrlShortenerTests {
     when(shortUrlService.save(any(String.class), any(String.class), any(String.class)))
         .thenReturn(null);
 
-    mockMvc.perform(post("/link").param("url", "someKey")).andDo(print())
+    mockMvc
+        .perform(post("/link").param("url", "someKey"))
+        .andDo(print())
         .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void thatShortenerCreatesARedirectIfTheURLisNotSafe() throws Exception {
+    when(safeBrowsingService.isSafe(any(String.class))).thenReturn(false);
+
+    mockMvc
+        .perform(post("/link").param("url", "http://example.com/"))
+        .andDo(print())
+        .andExpect(status().isNotAcceptable());
   }
 
   private void configureSave(String sponsor) {
     when(shortUrlService.save(any(), any(), any()))
-        .then((Answer<ShortURL>) invocation -> new ShortURL(
-            "f684a3c4",
-            "http://example.com/",
-            URI.create("http://localhost/f684a3c4"),
-            sponsor,
-            null,
-            null,
-            0,
-            false,
-            null,
-            null));
+        .then(
+            (Answer<ShortURL>)
+                invocation ->
+                    new ShortURL(
+                        "f684a3c4",
+                        "http://example.com/",
+                        URI.create("http://localhost/f684a3c4"),
+                        sponsor,
+                        null,
+                        null,
+                        0,
+                        false,
+                        null,
+                        null));
   }
 
 

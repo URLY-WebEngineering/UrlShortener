@@ -13,6 +13,9 @@ The __project__ is a [Spring Boot](http://docs.spring.io/spring-boot/docs/curren
 
 ## Deployment
 
+It is necessary to export environment variable:  
+`export GSB_API_KEY=askthisvaluetoowners`
+
 The application can be run as follows:
 ### Linux and MacOS
 #### Docker
