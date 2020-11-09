@@ -1,15 +1,11 @@
 package urlshortener.service;
 
-
+import java.util.Base64;
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
-
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -24,6 +20,7 @@ import java.io.IOException;
 public class QRService {
     public static String getQRImage(String uri ) throws IOException, WriterException {
 
+        Base64.Encoder enc = Base64.getEncoder();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         QRCodeWriter writer = new QRCodeWriter();
         BitMatrix bitMatrix = writer.encode(uri, BarcodeFormat.QR_CODE, 300, 300);
@@ -31,9 +28,7 @@ public class QRService {
         BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
         ImageIO.write(bufferedImage, "png", os);
         byte[] pngData = os.toByteArray();
-        String result = new String("data:image/png;base64," + Base64.encode(pngData));
-        return result;
-
+        return new String("data:image/png;base64," + enc.encodeToString(pngData));
     }
 
 }
