@@ -137,6 +137,5 @@ public class UrlShortenerTests {
     mockMvc.perform(post("/qr").param("url", TEST_URL)).andDo(print())
             .andExpect(status().isCreated()).andExpect(header().string("Location", is(TEST_URL)));
 
-    ;
   }
 }
