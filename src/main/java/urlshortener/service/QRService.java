@@ -19,7 +19,6 @@ import java.io.IOException;
 @Service
 public class QRService {
     public static String getQRImage(String uri ) throws IOException, WriterException {
-
         Base64.Encoder enc = Base64.getEncoder();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         QRCodeWriter writer = new QRCodeWriter();
