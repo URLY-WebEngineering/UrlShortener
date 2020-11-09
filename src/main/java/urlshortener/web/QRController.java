@@ -24,13 +24,18 @@ public class QRController {
     @RequestMapping(value = "/qr", method = RequestMethod.POST, produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<String> generateQR(@RequestParam("url") String url,
                                               HttpServletRequest request) throws IOException, WriterException {
+        if(url!=null){
+            String qrImage = QRService.getQRImage(url);
+            HttpHeaders h = new HttpHeaders();
+            h.setLocation(URI.create(url));
+            h.setContentType(MediaType.IMAGE_PNG);
+            h.setContentLength(qrImage.length());
+            return new ResponseEntity<>(qrImage, h, HttpStatus.CREATED);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
-        String qrImage = QRService.getQRImage(url);
-        HttpHeaders h = new HttpHeaders();
-        h.setLocation(URI.create(url));
-        h.setContentType(MediaType.IMAGE_PNG);
-        h.setContentLength(qrImage.length());
-        return new ResponseEntity<>(qrImage, h, HttpStatus.CREATED);
 
     }
 
