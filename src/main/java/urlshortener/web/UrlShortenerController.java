@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpServerErrorException;
 import urlshortener.domain.ShortURL;
 import urlshortener.service.ClickService;
+import urlshortener.service.SafeBrowsingService;
 import urlshortener.service.ShortURLService;
 
 @RestController
@@ -21,14 +23,19 @@ public class UrlShortenerController {
 
   private final ClickService clickService;
 
-  public UrlShortenerController(ShortURLService shortUrlService, ClickService clickService) {
+  private final SafeBrowsingService safeBrowsingService;
+
+  public UrlShortenerController(
+      ShortURLService shortUrlService,
+      ClickService clickService,
+      SafeBrowsingService safeBrowsingService) {
     this.shortUrlService = shortUrlService;
     this.clickService = clickService;
+    this.safeBrowsingService = safeBrowsingService;
   }
 
   @RequestMapping(value = "/{id:(?!link|index).*}", method = RequestMethod.GET)
-  public ResponseEntity<?> redirectTo(@PathVariable String id,
-                                      HttpServletRequest request) {
+  public ResponseEntity<?> redirectTo(@PathVariable String id, HttpServletRequest request) {
     ShortURL l = shortUrlService.findByKey(id);
     if (l != null) {
       clickService.saveClick(id, extractIP(request));
@@ -41,19 +48,25 @@ public class UrlShortenerController {
 
 
   @RequestMapping(value = "/link", method = RequestMethod.POST)
-  public ResponseEntity<ShortURL> shortener(@RequestParam("url") String url,
-                                            @RequestParam(value = "sponsor", required = false)
-                                                String sponsor,
-                                            HttpServletRequest request) {
-    UrlValidator urlValidator = new UrlValidator(new String[] {"http",
-        "https"});
+  public ResponseEntity<ShortURL> shortener(
+      @RequestParam("url") String url,
+      @RequestParam(value = "sponsor", required = false) String sponsor,
+      HttpServletRequest request) {
+    UrlValidator urlValidator = new UrlValidator(new String[] {"http", "https"});
     if (urlValidator.isValid(url)) {
-      //Once ShortURL is built , it should generate the qrcode
-      ShortURL su = shortUrlService.save(url, sponsor, request.getRemoteAddr());
-      // In a few weeks we should save the code in the database
-      HttpHeaders h = new HttpHeaders();
-      h.setLocation(su.getUri());
-      return new ResponseEntity<>(su, h, HttpStatus.CREATED);
+      try { // Safe browsing checking
+        if (safeBrowsingService.isSafe(url)) {
+          ShortURL su = shortUrlService.save(url, sponsor, request.getRemoteAddr());
+          HttpHeaders h = new HttpHeaders();
+          h.setLocation(su.getUri());
+          return new ResponseEntity<>(su, h, HttpStatus.CREATED);
+        } else {
+          return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE); // Unsafe URL
+        }
+      } catch (HttpServerErrorException e) {
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // Error safety checking
+      }
+
     } else {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }

@@ -16,15 +16,21 @@ import urlshortener.repository.ShortURLRepository;
 @Repository
 public class ShortURLRepositoryImpl implements ShortURLRepository {
 
-  private static final Logger log = LoggerFactory
-      .getLogger(ShortURLRepositoryImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(ShortURLRepositoryImpl.class);
 
   private static final RowMapper<ShortURL> rowMapper =
-      (rs, rowNum) -> new ShortURL(rs.getString("hash"), rs.getString("target"),
-          null, rs.getString("sponsor"), rs.getDate("created"),
-          rs.getString("owner"), rs.getInt("mode"),
-          rs.getBoolean("safe"), rs.getString("ip"),
-          rs.getString("country"));
+      (rs, rowNum) ->
+          new ShortURL(
+              rs.getString("hash"),
+              rs.getString("target"),
+              null,
+              rs.getString("sponsor"),
+              rs.getDate("created"),
+              rs.getString("owner"),
+              rs.getInt("mode"),
+              rs.getBoolean("safe"),
+              rs.getString("ip"),
+              rs.getString("country"));
 
   private final JdbcTemplate jdbc;
 
@@ -35,8 +41,7 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
   @Override
   public ShortURL findByKey(String id) {
     try {
-      return jdbc.queryForObject("SELECT * FROM shorturl WHERE hash=?",
-          rowMapper, id);
+      return jdbc.queryForObject("SELECT * FROM shorturl WHERE hash=?", rowMapper, id);
     } catch (Exception e) {
       log.debug("When select for key {}", id, e);
       return null;
@@ -46,10 +51,17 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
   @Override
   public ShortURL save(ShortURL su) {
     try {
-      jdbc.update("INSERT INTO shorturl VALUES (?,?,?,?,?,?,?,?,?)",
-          su.getHash(), su.getTarget(), su.getSponsor(),
-          su.getCreated(), su.getOwner(), su.getMode(), su.getSafe(),
-          su.getIP(), su.getCountry());
+      jdbc.update(
+          "INSERT INTO shorturl VALUES (?,?,?,?,?,?,?,?,?)",
+          su.getHash(),
+          su.getTarget(),
+          su.getSponsor(),
+          su.getCreated(),
+          su.getOwner(),
+          su.getMode(),
+          su.getSafe(),
+          su.getIP(),
+          su.getCountry());
     } catch (DuplicateKeyException e) {
       log.debug("When insert for key {}", su.getHash(), e);
       return su;
@@ -63,8 +75,7 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
   @Override
   public ShortURL mark(ShortURL su, boolean safeness) {
     try {
-      jdbc.update("UPDATE shorturl SET safe=? WHERE hash=?", safeness,
-          su.getHash());
+      jdbc.update("UPDATE shorturl SET safe=? WHERE hash=?", safeness, su.getHash());
       ShortURL res = new ShortURL();
       BeanUtils.copyProperties(su, res);
       new DirectFieldAccessor(res).setPropertyValue("safe", safeness);
@@ -80,9 +91,15 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
     try {
       jdbc.update(
           "update shorturl set target=?, sponsor=?, created=?, owner=?, mode=?, safe=?, ip=?, country=? where hash=?",
-          su.getTarget(), su.getSponsor(), su.getCreated(),
-          su.getOwner(), su.getMode(), su.getSafe(), su.getIP(),
-          su.getCountry(), su.getHash());
+          su.getTarget(),
+          su.getSponsor(),
+          su.getCreated(),
+          su.getOwner(),
+          su.getMode(),
+          su.getSafe(),
+          su.getIP(),
+          su.getCountry(),
+          su.getHash());
     } catch (Exception e) {
       log.debug("When update for hash {}", su.getHash(), e);
     }
@@ -100,8 +117,7 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
   @Override
   public Long count() {
     try {
-      return jdbc.queryForObject("select count(*) from shorturl",
-          Long.class);
+      return jdbc.queryForObject("select count(*) from shorturl", Long.class);
     } catch (Exception e) {
       log.debug("When counting", e);
     }
@@ -111,8 +127,8 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
   @Override
   public List<ShortURL> list(Long limit, Long offset) {
     try {
-      return jdbc.query("SELECT * FROM shorturl LIMIT ? OFFSET ?",
-          new Object[] {limit, offset}, rowMapper);
+      return jdbc.query(
+          "SELECT * FROM shorturl LIMIT ? OFFSET ?", new Object[] {limit, offset}, rowMapper);
     } catch (Exception e) {
       log.debug("When select for limit {} and offset {}", limit, offset, e);
       return Collections.emptyList();
@@ -122,8 +138,8 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
   @Override
   public List<ShortURL> findByTarget(String target) {
     try {
-      return jdbc.query("SELECT * FROM shorturl WHERE target = ?",
-          new Object[] {target}, rowMapper);
+      return jdbc.query(
+          "SELECT * FROM shorturl WHERE target = ?", new Object[] {target}, rowMapper);
     } catch (Exception e) {
       log.debug("When select for target " + target, e);
       return Collections.emptyList();

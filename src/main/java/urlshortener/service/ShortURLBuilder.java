@@ -2,7 +2,6 @@ package urlshortener.service;
 
 import static com.google.common.hash.Hashing.murmur3_32;
 
-
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
@@ -29,18 +28,7 @@ public class ShortURLBuilder {
   }
 
   ShortURL build() {
-    return new ShortURL(
-        hash,
-        target,
-        uri,
-        sponsor,
-        created,
-        owner,
-        mode,
-        safe,
-        ip,
-        country
-    );
+    return new ShortURL(hash, target, uri, sponsor, created, owner, mode, safe, ip, country);
   }
 
   ShortURLBuilder target(String url) {

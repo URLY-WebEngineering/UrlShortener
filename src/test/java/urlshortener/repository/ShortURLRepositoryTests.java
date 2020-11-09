@@ -13,7 +13,6 @@ import static urlshortener.fixtures.ShortURLFixture.url3;
 import static urlshortener.fixtures.ShortURLFixture.urlSafe;
 import static urlshortener.fixtures.ShortURLFixture.urlSponsor;
 
-
 import java.util.List;
 import org.junit.After;
 import org.junit.Before;
@@ -32,8 +31,7 @@ public class ShortURLRepositoryTests {
 
   @Before
   public void setup() {
-    db = new EmbeddedDatabaseBuilder().setType(HSQL)
-        .addScript("schema-hsqldb.sql").build();
+    db = new EmbeddedDatabaseBuilder().setType(HSQL).addScript("schema-hsqldb.sql").build();
     jdbc = new JdbcTemplate(db);
     repository = new ShortURLRepositoryImpl(jdbc);
   }
@@ -41,46 +39,38 @@ public class ShortURLRepositoryTests {
   @Test
   public void thatSavePersistsTheShortURL() {
     assertNotNull(repository.save(url1()));
-    assertSame(jdbc.queryForObject("select count(*) from SHORTURL",
-        Integer.class), 1);
+    assertSame(jdbc.queryForObject("select count(*) from SHORTURL", Integer.class), 1);
   }
 
   @Test
   public void thatSaveSponsor() {
     assertNotNull(repository.save(urlSponsor()));
-    assertSame(jdbc.queryForObject("select sponsor from SHORTURL",
-        String.class), urlSponsor().getSponsor());
+    assertSame(
+        jdbc.queryForObject("select sponsor from SHORTURL", String.class),
+        urlSponsor().getSponsor());
   }
 
   @Test
   public void thatSaveSafe() {
     assertNotNull(repository.save(urlSafe()));
-    assertSame(
-        jdbc.queryForObject("select safe from SHORTURL", Boolean.class),
-        true);
+    assertSame(jdbc.queryForObject("select safe from SHORTURL", Boolean.class), true);
     repository.mark(urlSafe(), false);
-    assertSame(
-        jdbc.queryForObject("select safe from SHORTURL", Boolean.class),
-        false);
+    assertSame(jdbc.queryForObject("select safe from SHORTURL", Boolean.class), false);
     repository.mark(urlSafe(), true);
-    assertSame(
-        jdbc.queryForObject("select safe from SHORTURL", Boolean.class),
-        true);
+    assertSame(jdbc.queryForObject("select safe from SHORTURL", Boolean.class), true);
   }
 
   @Test
   public void thatSaveADuplicateHashIsSafelyIgnored() {
     repository.save(url1());
     assertNotNull(repository.save(url1()));
-    assertSame(jdbc.queryForObject("select count(*) from SHORTURL",
-        Integer.class), 1);
+    assertSame(jdbc.queryForObject("select count(*) from SHORTURL", Integer.class), 1);
   }
 
   @Test
   public void thatErrorsInSaveReturnsNull() {
     assertNull(repository.save(badUrl()));
-    assertSame(jdbc.queryForObject("select count(*) from SHORTURL",
-        Integer.class), 0);
+    assertSame(jdbc.queryForObject("select count(*) from SHORTURL", Integer.class), 0);
   }
 
   @Test
@@ -135,5 +125,4 @@ public class ShortURLRepositoryTests {
   public void shutdown() {
     db.shutdown();
   }
-
 }
