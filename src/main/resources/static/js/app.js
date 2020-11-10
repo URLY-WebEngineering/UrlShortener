@@ -1,6 +1,5 @@
 $(document).ready(
     function () {
-        var enlace;
         $("#shortener").submit(
             function (event) {
                 event.preventDefault();
@@ -16,8 +15,19 @@ $(document).ready(
                             + msg.uri
                             + "</a></div>"
                             );
-                        enlace = msg.uri;
-                        $("#botonQR").fadeIn();
+                        $.ajax({
+                            type: "POST",
+                            url: "/qr",
+                            data: { url: msg.uri},
+                            success:function (data) {
+                                $("#QRresult").html("<img alt='helmet' style='width:400px;height:400px;' src=" + data + " />");
+                            },
+                            error: function () {
+                                $("#QRresult").html(
+                                    "<div class='alert alert-danger lead'>SOMETHING WENT WRONG</div>");
+
+                            }
+                        });
 
                     },
                     error: function () {
@@ -26,23 +36,4 @@ $(document).ready(
                     }
                 });
             });
-        $('#generateQR').click(function () {
-            $.ajax({
-                type: "POST",
-                url: "/qr",
-                data: { url: enlace},
-                success:function (data) {
-                   $("#QRresult").html("<img style='width:400px;height:400px;' src=" + data + " />");
-                },
-                error: function () {
-
-                    $("#QRresult").html(
-                        "<div class='alert alert-danger lead'>SOMETHING WENT WRONG</div>");
-
-                }
-            })
-
-        })
-
-
     });

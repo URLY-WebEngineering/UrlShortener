@@ -45,8 +45,6 @@ public class UrlShortenerController {
     }
   }
 
-
-
   @RequestMapping(value = "/link", method = RequestMethod.POST)
   public ResponseEntity<ShortURL> shortener(
       @RequestParam("url") String url,
