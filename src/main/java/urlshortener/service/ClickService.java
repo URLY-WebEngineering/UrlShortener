@@ -25,4 +25,8 @@ public class ClickService {
             ? "[" + hash + "] saved with id [" + cl.getId() + "]"
             : "[" + hash + "] was not saved");
   }
+
+  public Long getTotalClick() {
+    return clickRepository.count();
+  }
 }

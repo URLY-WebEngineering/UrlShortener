@@ -38,4 +38,8 @@ public class ShortURLService {
             .build();
     return shortURLRepository.save(su);
   }
+
+  public Long getTotalURL() {
+    return shortURLRepository.count();
+  }
 }
