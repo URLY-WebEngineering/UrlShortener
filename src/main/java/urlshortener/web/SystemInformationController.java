@@ -2,6 +2,7 @@ package urlshortener.web;
 
 import com.sun.management.OperatingSystemMXBean;
 import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ public class SystemInformationController {
 
   private final ClickService clickService;
   private final ShortURLService shortUrlService;
+  private static final long KILOBYTE = 1024L;
 
   public SystemInformationController(ClickService clickService, ShortURLService shortUrlService) {
     this.clickService = clickService;
@@ -25,24 +27,31 @@ public class SystemInformationController {
 
   @RequestMapping(value = "/system_info", method = RequestMethod.GET)
   public ResponseEntity<SystemInformation> sytemInfoSpot() {
+    // TODO Get the number of users
+    Long numUsers = 0L;
+
+    RuntimeMXBean runtimer = ManagementFactory.getRuntimeMXBean();
+    // Time in milliseconds
+    Long UpTime = runtimer.getUptime();
+
     OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
-    // Time in nanoseconds
-    Long CpuTime = osBean.getProcessCpuTime();
-
-    // Returns the amount of free swap space in bytes.
-    Long memoryAvailableSwap = osBean.getFreeSwapSpaceSize() / 1024 / 1024 / 1024;
-    Long memoryAvailablePhycal = osBean.getFreePhysicalMemorySize()/ 1024 / 1024 / 1024;
-
-    Long usedMemory = osBean.getCommittedVirtualMemorySize() / 1024 / 1024 / 1024;
-    // Returns the amount of virtual memory that is guaranteed to be available to the running
-    // process in bytes, or -1 if this operation is not supported.
+    // Memory that's available for the applications to work correctly
+    Long usedMemory = bytesToKilobytes(osBean.getCommittedVirtualMemorySize());
+    // System Memory Size
+    Long machineMemory = bytesToKilobytes(osBean.getTotalPhysicalMemorySize());
+    // Free memory available
+    Long freeMemory = bytesToKilobytes(osBean.getFreePhysicalMemorySize());
 
     HttpHeaders h = new HttpHeaders();
     Long numClicks = clickService.getTotalClick();
     Long numURLs = shortUrlService.getTotalURL();
     SystemInformation info =
         new SystemInformation(
-            numClicks, numURLs, CpuTime, usedMemory, memoryAvailableSwap, memoryAvailablePhycal);
+            numClicks, numURLs, numUsers, UpTime, machineMemory, freeMemory, usedMemory);
     return new ResponseEntity<>(info, h, HttpStatus.OK);
+  }
+
+  public static long bytesToKilobytes(long bytes) {
+    return bytes / KILOBYTE;
   }
 }

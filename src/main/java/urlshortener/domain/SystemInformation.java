@@ -4,35 +4,36 @@ public class SystemInformation {
   Long numClicks;
   Long numURLs;
   Long numUsers;
-  Long CpuTime;
-  Long usedMemory;
-  Long memoryAvailableSwap;
-
-  Long memoryAvailablePhycal;
-  // Memory used by the system
-  // Memory avaible by the system
+  // Time the system has been up and running
+  Long UpTime;
+  // Memory in KBs
+  Long SystemMemory;
+  Long AvailableMemory;
+  Long UsedMemory;
 
   public SystemInformation(
       Long numClicks,
       Long numURLs,
-      Long CpuTime,
-      Long usedMemory,
-      Long memoryAvailableSwap,
-      Long memoryAvailablePhycal) {
+      Long numUsers,
+      Long UpTime,
+      Long SystemMemory,
+      Long AvailableMemory,
+      Long UsedMemory) {
     this.numClicks = numClicks;
     this.numURLs = numURLs;
-    this.CpuTime = CpuTime;
-    this.usedMemory = usedMemory;
-    this.memoryAvailableSwap = memoryAvailableSwap;
-    this.memoryAvailablePhycal = memoryAvailablePhycal;
+    this.numUsers = numUsers;
+    this.UpTime = UpTime;
+    this.SystemMemory = SystemMemory;
+    this.AvailableMemory = AvailableMemory;
+    this.UsedMemory = UsedMemory;
   }
 
-  public void setCpuTime(Long cpuTime) {
-    CpuTime = cpuTime;
+  public void setUpTime(Long UpTime) {
+    UpTime = UpTime;
   }
 
-  public Long getCpuTime() {
-    return CpuTime;
+  public Long getUpTime() {
+    return UpTime;
   }
 
   public void setNumClicks(Long numClicks) {
@@ -59,27 +60,27 @@ public class SystemInformation {
     this.numUsers = numUsers;
   }
 
+  public Long getSystemMemory() {
+    return SystemMemory;
+  }
+
+  public void setSystemMemory(Long systemMemory) {
+    SystemMemory = systemMemory;
+  }
+
+  public Long getAvailableMemory() {
+    return AvailableMemory;
+  }
+
+  public void setAvailableMemory(Long availableMemory) {
+    AvailableMemory = availableMemory;
+  }
+
   public Long getUsedMemory() {
-    return usedMemory;
+    return UsedMemory;
   }
 
   public void setUsedMemory(Long usedMemory) {
-    this.usedMemory = usedMemory;
-  }
-
-  public Long getMemoryAvailableSwap() {
-    return memoryAvailableSwap;
-  }
-
-  public void setMemoryAvailableSwap(Long memoryAvailableSwap) {
-    this.memoryAvailableSwap = memoryAvailableSwap;
-  }
-
-  public Long getMemoryAvailablePhycal() {
-    return memoryAvailablePhycal;
-  }
-
-  public void setMemoryAvailablePhycal(Long memoryAvailablePhycal) {
-    this.memoryAvailablePhycal = memoryAvailablePhycal;
+    UsedMemory = usedMemory;
   }
 }
