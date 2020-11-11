@@ -18,13 +18,6 @@ import urlshortener.service.SafeBrowsingService;
 @Controller
 public class QRController {
 
-  private final SafeBrowsingService safeBrowsingService;
-
-  public QRController(SafeBrowsingService safeBrowsingService) {
-
-    this.safeBrowsingService = safeBrowsingService;
-  }
-
   @RequestMapping(value = "/qr", method = RequestMethod.POST, produces = MediaType.IMAGE_PNG_VALUE)
   public ResponseEntity<String> generateQR(
       @RequestParam("url") String url, HttpServletRequest request)
