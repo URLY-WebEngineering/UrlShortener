@@ -1,5 +1,6 @@
 package urlshortener.web;
 
+import java.io.IOException;
 import java.net.URI;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -11,9 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpServerErrorException;
 import urlshortener.domain.ShortURL;
+import urlshortener.domain.UrlStatus;
 import urlshortener.service.ClickService;
+import urlshortener.service.ReachabilityUrlService;
 import urlshortener.service.SafeBrowsingService;
 import urlshortener.service.ShortURLService;
 
@@ -25,13 +27,17 @@ public class UrlShortenerController {
 
   private final SafeBrowsingService safeBrowsingService;
 
+  private final ReachabilityUrlService reachabilityUrlService;
+
   public UrlShortenerController(
       ShortURLService shortUrlService,
       ClickService clickService,
-      SafeBrowsingService safeBrowsingService) {
+      SafeBrowsingService safeBrowsingService,
+      ReachabilityUrlService reachabilityUrlService) {
     this.shortUrlService = shortUrlService;
     this.clickService = clickService;
     this.safeBrowsingService = safeBrowsingService;
+    this.reachabilityUrlService = reachabilityUrlService;
   }
 
   @RequestMapping(value = "/{id:(?!link|index).*}", method = RequestMethod.GET)
@@ -50,22 +56,24 @@ public class UrlShortenerController {
       @RequestParam("url") String url,
       @RequestParam(value = "sponsor", required = false) String sponsor,
       HttpServletRequest request) {
-    UrlValidator urlValidator = new UrlValidator(new String[] {"http", "https"});
-    if (urlValidator.isValid(url)) {
-      try { // Safe browsing checking
-        if (safeBrowsingService.isSafe(url)) {
+    try {
+      switch (checkStatus(url)) {
+        case INVALID:
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        case UNREACHABLE:
+        case UNSAFE:
+          return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        case OK:
+          // Create short url
           ShortURL su = shortUrlService.save(url, sponsor, request.getRemoteAddr());
           HttpHeaders h = new HttpHeaders();
           h.setLocation(su.getUri());
           return new ResponseEntity<>(su, h, HttpStatus.CREATED);
-        } else {
-          return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE); // Unsafe URL
-        }
-      } catch (HttpServerErrorException e) {
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // Error safety checking
+        default:
+          return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
       }
-    } else {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (Exception e) {
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -77,5 +85,15 @@ public class UrlShortenerController {
     HttpHeaders h = new HttpHeaders();
     h.setLocation(URI.create(l.getTarget()));
     return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
+  }
+
+  private UrlStatus checkStatus(String url) {
+    UrlValidator urlValidator = new UrlValidator(new String[] {"http", "https"});
+    // Checking switch
+    if (!urlValidator.isValid(url)) return UrlStatus.INVALID;
+    if (!reachabilityUrlService.isReachable(url)) return UrlStatus.UNREACHABLE;
+    if (!safeBrowsingService.isSafe(url)) return UrlStatus.UNSAFE;
+    // else
+    return UrlStatus.OK;
   }
 }

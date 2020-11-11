@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import urlshortener.domain.ShortURL;
 import urlshortener.service.ClickService;
+import urlshortener.service.ReachabilityUrlService;
 import urlshortener.service.SafeBrowsingService;
 import urlshortener.service.ShortURLService;
 
@@ -35,6 +36,8 @@ public class UrlShortenerTests {
   @Mock private ShortURLService shortUrlService;
 
   @Mock private SafeBrowsingService safeBrowsingService;
+
+  @Mock private ReachabilityUrlService reachabilityUrlService;
 
   @InjectMocks private UrlShortenerController urlShortener;
 
@@ -65,10 +68,12 @@ public class UrlShortenerTests {
   @Test
   public void thatShortenerCreatesARedirectIfTheURLisOK() throws Exception {
     configureSave(null);
-    when(safeBrowsingService.isSafe("http://example.com/")).thenReturn(true);
+    String url = "http://example.com/";
+    when(safeBrowsingService.isSafe(url)).thenReturn(true);
+    when(reachabilityUrlService.isReachable(url)).thenReturn(true);
 
     mockMvc
-        .perform(post("/link").param("url", "http://example.com/"))
+        .perform(post("/link").param("url", url))
         .andDo(print())
         .andExpect(redirectedUrl("http://localhost/f684a3c4"))
         .andExpect(status().isCreated())
@@ -81,13 +86,12 @@ public class UrlShortenerTests {
   @Test
   public void thatShortenerCreatesARedirectWithSponsor() throws Exception {
     configureSave("http://sponsor.com/");
-    when(safeBrowsingService.isSafe("http://example.com/")).thenReturn(true);
+    String url = "http://example.com/";
+    when(safeBrowsingService.isSafe(url)).thenReturn(true);
+    when(reachabilityUrlService.isReachable(url)).thenReturn(true);
 
     mockMvc
-        .perform(
-            post("/link")
-                .param("url", "http://example.com/")
-                .param("sponsor", "http://sponsor.com/"))
+        .perform(post("/link").param("url", url).param("sponsor", "http://sponsor.com/"))
         .andDo(print())
         .andExpect(redirectedUrl("http://localhost/f684a3c4"))
         .andExpect(status().isCreated())
@@ -119,11 +123,25 @@ public class UrlShortenerTests {
   }
 
   @Test
-  public void thatShortenerCreatesARedirectIfTheURLisNotSafe() throws Exception {
-    when(safeBrowsingService.isSafe(any(String.class))).thenReturn(false);
+  public void thatShortenerFailsIfTheURLisNotSafe() throws Exception {
+    String url = "http://example.com/";
+    when(safeBrowsingService.isSafe(url)).thenReturn(false);
+    when(reachabilityUrlService.isReachable(url)).thenReturn(true);
 
     mockMvc
-        .perform(post("/link").param("url", "http://example.com/"))
+        .perform(post("/link").param("url", url))
+        .andDo(print())
+        .andExpect(status().isNotAcceptable());
+  }
+
+  @Test
+  public void thatShortenerFailsIfTheURLisNotReachable() throws Exception {
+    String url = "http://example.com/";
+    when(safeBrowsingService.isSafe(url)).thenReturn(true);
+    when(reachabilityUrlService.isReachable(url)).thenReturn(false);
+
+    mockMvc
+        .perform(post("/link").param("url", url))
         .andDo(print())
         .andExpect(status().isNotAcceptable());
   }
