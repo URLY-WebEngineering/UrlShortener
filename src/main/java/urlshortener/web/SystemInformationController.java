@@ -19,6 +19,7 @@ public class SystemInformationController {
   private final ClickService clickService;
   private final ShortURLService shortUrlService;
   private static final long KILOBYTE = 1024L;
+  private static final long SECONDS = 1000L;
 
   public SystemInformationController(ClickService clickService, ShortURLService shortUrlService) {
     this.clickService = clickService;
@@ -31,8 +32,8 @@ public class SystemInformationController {
     Long numUsers = 0L;
 
     RuntimeMXBean runtimer = ManagementFactory.getRuntimeMXBean();
-    // Time in milliseconds
-    Long UpTime = runtimer.getUptime();
+    // Time in seconds
+    Long UpTime = miliToSeconds(runtimer.getUptime());
 
     OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
     // Memory that's available for the applications to work correctly
@@ -43,15 +44,22 @@ public class SystemInformationController {
     Long freeMemory = bytesToKilobytes(osBean.getFreePhysicalMemorySize());
 
     HttpHeaders h = new HttpHeaders();
+    // Get all clicks
     Long numClicks = clickService.getTotalClick();
+    // Get all URLs
     Long numURLs = shortUrlService.getTotalURL();
+
     SystemInformation info =
         new SystemInformation(
             numClicks, numURLs, numUsers, UpTime, machineMemory, freeMemory, usedMemory);
     return new ResponseEntity<>(info, h, HttpStatus.OK);
   }
 
-  public static long bytesToKilobytes(long bytes) {
+  private static long bytesToKilobytes(long bytes) {
     return bytes / KILOBYTE;
+  }
+
+  private static long miliToSeconds(long mili) {
+    return mili / SECONDS;
   }
 }
