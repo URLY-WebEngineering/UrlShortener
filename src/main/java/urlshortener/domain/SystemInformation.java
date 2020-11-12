@@ -29,7 +29,7 @@ public class SystemInformation {
   }
 
   public void setUpTime(Long UpTime) {
-    UpTime = UpTime;
+    this.UpTime = UpTime;
   }
 
   public Long getUpTime() {
