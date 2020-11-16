@@ -29,8 +29,8 @@ public class QRController {
       throws Exception {
 
     try {
-      HttpHeaders h = new HttpHeaders();
-      ShortURL shorturl = shortUrlService.findByKey(id);
+      HttpHeaders h = new HttpHeaders(); //NOSONAR
+      ShortURL shorturl = shortUrlService.findByKey(id); //NOSONAR
       String location = shorturl.getTarget();
       byte[] qrImage = QRService.getQRImage(location);
       h.setLocation(URI.create(location));
@@ -40,7 +40,6 @@ public class QRController {
     } catch (Exception e) {
 
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-      // return new ResponseEntity<>("error", h,HttpStatus.CONFLICT);
     }
   }
 }
