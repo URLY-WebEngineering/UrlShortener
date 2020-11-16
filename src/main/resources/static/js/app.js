@@ -15,24 +15,16 @@ $(document).ready(
                             + msg.uri
                             + "</a></div>"
                             );
-                        $.ajax({
-                            type: "POST",
-                            url: "/qr",
-                            data: { url: msg.uri},
-                            success:function (data) {
-                                $("#QRresult").html("<img alt='helmet' style='width:400px;height:400px;' src=" + data + " />");
-                            },
-                            error: function () {
-                                $("#QRresult").html(
-                                    "<div class='alert alert-danger lead'>SOMETHING WENT WRONG</div>");
-
-                            }
-                        });
-
+                        $("#QRresult").html(
+                            "<img  style='width:400px;height:400px;'"
+                            + "src='"
+                            + msg.qr
+                            +"' />"
+                        );
                     },
                     error: function () {
                         $("#result").html(
-                            "<div class='alert alert-danger lead'>ERROR</div>");
+                            "<div class='alert alert-danger lead'>SOMETHING WENT WRONG</div>");
                     }
                 });
             });
