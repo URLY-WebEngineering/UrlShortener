@@ -31,6 +31,7 @@ public class QRCodeTests {
 
   @Test
   public void checkQRIfIsWorking() throws Exception {
+    // Test if it can create a QR code
     when(shortUrlService.findByKey("someKey")).thenReturn(someUrl());
 
     mockMvc
@@ -42,6 +43,7 @@ public class QRCodeTests {
 
   @Test
   public void checkNotFound() throws Exception {
+    // Test what happens given a not validated URL
     when(shortUrlService.findByKey("someKey")).thenReturn(someUrl());
     mockMvc.perform(get("/qr/{id}", "oneDay")).andDo(print()).andExpect(status().isNotFound());
   }

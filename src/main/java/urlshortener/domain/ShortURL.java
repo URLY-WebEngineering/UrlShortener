@@ -1,7 +1,11 @@
 package urlshortener.domain;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.net.URI;
 import java.sql.Date;
+import urlshortener.web.UrlShortenerController;
 
 public class ShortURL {
 
@@ -53,6 +57,9 @@ public class ShortURL {
   }
 
   public URI getUri() {
+    // I will not be necessary to save the uri on the database
+    // Perhaps it is better to generate it when it is needed
+    uri = linkTo(methodOn(UrlShortenerController.class).redirectTo(hash, null)).toUri();
     return uri;
   }
 
