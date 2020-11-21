@@ -1,4 +1,4 @@
-package urlshortener.web;
+package urlshortener.information;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -20,16 +20,6 @@ public class SystemInformationTests {
 
   @Mock private ShortURLService shortUrlService;
 
-  @InjectMocks private SystemInformationController systemInfoController;
+  @Mock private SystemInformation SystemInformation;
 
-  @Before
-  public void setup() {
-    MockitoAnnotations.initMocks(this);
-    this.mockMvc = MockMvcBuilders.standaloneSetup(systemInfoController).build();
-  }
-
-  @Test
-  public void SystemInfoWorking() throws Exception {
-    mockMvc.perform(get("/system_info")).andDo(print()).andExpect(status().isOk());
-  }
 }

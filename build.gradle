@@ -6,6 +6,7 @@ plugins {
     id 'org.springframework.boot' version '2.3.3.RELEASE'
     // https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-gradle/
     id 'org.sonarqube' version '3.0'    // Code Quality and Security
+
 }
 
 // apply plugin: 'idea'     // not needed for now
@@ -63,7 +64,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'commons-validator:commons-validator:1.6'
     implementation 'com.google.guava:guava:28.1-jre'
 
