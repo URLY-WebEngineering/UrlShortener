@@ -131,7 +131,7 @@ public class UrlShortenerTests {
     mockMvc
         .perform(post("/link").param("url", url))
         .andDo(print())
-        .andExpect(status().isNotAcceptable());
+        .andExpect(status().isBadRequest());
   }
 
   @Test
@@ -143,7 +143,7 @@ public class UrlShortenerTests {
     mockMvc
         .perform(post("/link").param("url", url))
         .andDo(print())
-        .andExpect(status().isNotAcceptable());
+        .andExpect(status().isBadRequest());
   }
 
   private void configureSave(String sponsor) {
