@@ -1,25 +1,46 @@
 package urlshortener.information;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import urlshortener.service.ClickService;
-import urlshortener.service.ShortURLService;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = RANDOM_PORT)
 public class SystemInformationTests {
-  private MockMvc mockMvc;
-  @Mock private ClickService clickService;
 
-  @Mock private ShortURLService shortUrlService;
+  @Autowired private TestRestTemplate restTemplate;
 
-  @Mock private SystemInformation SystemInformation;
+  @Test
+  public void testInfo() {
+    ResponseEntity<String> entity = restTemplate.getForEntity("/info", String.class);
+    assertThat(entity.getStatusCode(), is(HttpStatus.OK));
+    assertNotNull(entity.getHeaders().getContentType());
+    assertNotNull(entity.getBody());
+  }
 
+  @Test
+  public void testMetrics() {
+    ResponseEntity<String> entity = restTemplate.getForEntity("/info/metrics", String.class);
+    assertThat(entity.getStatusCode(), is(HttpStatus.OK));
+    assertNotNull(entity.getHeaders().getContentType());
+    assertNotNull(entity.getBody());
+  }
+
+  @Test
+  public void testDatabase() {
+    ResponseEntity<String> entity = restTemplate.getForEntity("/info/database", String.class);
+    assertThat(entity.getStatusCode(), is(HttpStatus.OK));
+    assertNotNull(entity.getHeaders().getContentType());
+    assertNotNull(entity.getBody());
+  }
 }
