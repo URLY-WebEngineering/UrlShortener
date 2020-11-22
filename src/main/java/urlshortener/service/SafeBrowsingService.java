@@ -1,5 +1,6 @@
 package urlshortener.service;
 
+import com.jayway.jsonpath.JsonPath;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -33,20 +34,15 @@ public class SafeBrowsingService {
     HttpEntity<SBRequest> request = new HttpEntity<>(sbRequest, headers);
     RestTemplate restTemplate = new RestTemplate();
     String sbUrl = "https://safebrowsing.googleapis.com/v4/threatMatches:find?key=" + API_KEY;
-    ResponseEntity<SBResponse> response =
-        restTemplate.postForEntity(sbUrl, request, SBResponse.class);
+    ResponseEntity<String> response = restTemplate.postForEntity(sbUrl, request, String.class);
 
-    // Decide is it's safe
+    // Decide if it's safe
     if (response.getStatusCode() != HttpStatus.OK) {
       throw new HttpServerErrorException(response.getStatusCode());
     } else {
-      SBResponse sbResponse = response.getBody();
-      if (sbResponse != null) {
-        // Safe browsing returns if that url match to some malware, etc
-        return sbResponse.getMatches() == null; // No matches -> Safe; else -> Not safe
-      } else { // Url could not check
-        return false;
-      }
+      String json = response.getBody();
+      List<String> matches = JsonPath.parse(json).read("$..matches");
+      return matches.isEmpty();
     }
   }
 }
