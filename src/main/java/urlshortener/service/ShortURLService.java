@@ -40,6 +40,6 @@ public class ShortURLService {
   }
 
   public Long getTotalURL() {
-    return shortURLRepository.count();
-  } // NOSONAR
+    return shortURLRepository.count(); // NOSONAR
+  }
 }
