@@ -1,17 +1,13 @@
 package urlshortener.web;
 
-import java.io.IOException;
 import java.net.URI;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import urlshortener.domain.ShortURL;
 import urlshortener.domain.UrlStatus;
 import urlshortener.service.ClickService;
@@ -56,24 +52,22 @@ public class UrlShortenerController {
       @RequestParam("url") String url,
       @RequestParam(value = "sponsor", required = false) String sponsor,
       HttpServletRequest request) {
-    try {
-      switch (checkStatus(url)) {
-        case INVALID:
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        case UNREACHABLE:
-        case UNSAFE:
-          return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-        case OK:
-          // Create short url
-          ShortURL su = shortUrlService.save(url, sponsor, request.getRemoteAddr());
-          HttpHeaders h = new HttpHeaders();
-          h.setLocation(su.getUri());
-          return new ResponseEntity<>(su, h, HttpStatus.CREATED);
-        default:
-          return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-    } catch (Exception e) {
-      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    switch (checkStatus(url)) {
+      case INVALID:
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, UrlStatus.INVALID.getStatus());
+      case UNREACHABLE:
+        throw new ResponseStatusException(
+            HttpStatus.BAD_REQUEST, UrlStatus.UNREACHABLE.getStatus());
+      case UNSAFE:
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, UrlStatus.UNSAFE.getStatus());
+      case OK:
+        // Create short url
+        ShortURL su = shortUrlService.save(url, sponsor, request.getRemoteAddr());
+        HttpHeaders h = new HttpHeaders();
+        h.setLocation(su.getUri());
+        return new ResponseEntity<>(su, h, HttpStatus.CREATED);
+      default:
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
