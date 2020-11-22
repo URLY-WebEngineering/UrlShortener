@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>URL Shortener</title>
+    <title>URLY Shortener</title>
+    <link rel="icon" href="icon/logo-provisional.png">
+
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <link href="webjars/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"
           type="text/css"/>
@@ -12,11 +14,14 @@
     </script>
 </head>
 <body>
+<div class="col-lg-12 text-center" >
+    <img src="icon/logo-provisional.png" style='width:160px;height:200px; padding-top: 15px;'  />
+</div>
 <div class="container-full">
     <div class="row">
         <div class="col-lg-12 text-center">
-            <h1>URL Shortener</h1>
-            <p class="lead">A front-end example page for the project</p>
+            <h1>URLY Shortener</h1>
+            <p class="lead">A Spartan front-end example page for the project</p>
             <br>
             <form action="" class="col-lg-12" id="shortener" role="form">
                 <div class="input-group input-group-lg col-sm-offset-4 col-sm-4">
@@ -33,6 +38,13 @@
             <div class="col-sm-offset-4 col-sm-4 text-center">
                 <br/>
                 <div id="result"/>
+            </div>
+        </div>
+        <div class='col-lg-12 text-center'>
+            <div class='col-sm-offset-4 col-sm-4 text-center'>
+                <br/>
+                <div id="QRresult" >
+                </div>
             </div>
         </div>
     </div>

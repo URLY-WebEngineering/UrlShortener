@@ -13,11 +13,18 @@ $(document).ready(
                             + msg.uri
                             + "'>"
                             + msg.uri
-                            + "</a></div>");
+                            + "</a></div>"
+                            );
+                        $("#QRresult").html(
+                            "<img  style='width:400px;height:400px;'"
+                            + "src='"
+                            + msg.qr
+                            +"' />"
+                        );
                     },
                     error: function () {
                         $("#result").html(
-                            "<div class='alert alert-danger lead'>ERROR</div>");
+                            "<div class='alert alert-danger lead'>SOMETHING WENT WRONG</div>");
                     }
                 });
             });

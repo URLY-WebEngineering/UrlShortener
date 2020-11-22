@@ -64,6 +64,7 @@ public class UrlShortenerController {
       } catch (HttpServerErrorException e) {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // Error safety checking
       }
+
     } else {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }

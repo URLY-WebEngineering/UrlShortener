@@ -32,7 +32,6 @@ public class SafeBrowsingService {
     // Send request to Google Safe Browsing API (Lookup API)
     HttpEntity<SBRequest> request = new HttpEntity<>(sbRequest, headers);
     RestTemplate restTemplate = new RestTemplate();
-    System.out.println(API_KEY);
     String sbUrl = "https://safebrowsing.googleapis.com/v4/threatMatches:find?key=" + API_KEY;
     ResponseEntity<SBResponse> response =
         restTemplate.postForEntity(sbUrl, request, SBResponse.class);
