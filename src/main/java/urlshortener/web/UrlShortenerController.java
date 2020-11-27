@@ -1,5 +1,11 @@
 package urlshortener.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.net.URI;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -36,8 +42,22 @@ public class UrlShortenerController {
     this.reachabilityUrlService = reachabilityUrlService;
   }
 
-  @RequestMapping(value = "/{id:(?!link|index).*}", method = RequestMethod.GET)
-  public ResponseEntity<?> redirectTo(@PathVariable String id, HttpServletRequest request) {
+  @Operation(summary = "Redirects the shortened URL identified by id to the original URL")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "307",
+            description = "Shortened URL found and redirecting",
+            content = @Content),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Shortened URL not found",
+            content = @Content)
+      })
+  @GetMapping(value = "/{id:(?!link|index).*}")
+  public ResponseEntity<?> redirectTo(
+      @Parameter(description = "id of the shortened URL") @PathVariable String id,
+      HttpServletRequest request) {
     ShortURL l = shortUrlService.findByKey(id);
     if (l != null) {
       clickService.saveClick(id, extractIP(request));
@@ -47,7 +67,23 @@ public class UrlShortenerController {
     }
   }
 
-  @RequestMapping(value = "/link", method = RequestMethod.POST)
+  @Operation(summary = "Shortens a long URL into a shortened URL identified by an id")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "201",
+            description = "Long URL shortened",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ShortURL.class))),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Long URL could not be shortened",
+            content = @Content(mediaType = "application/json")),
+        @ApiResponse(responseCode = "500", content = @Content)
+      })
+  @PostMapping(value = "/link")
   public ResponseEntity<ShortURL> shortener(
       @RequestParam("url") String url,
       @RequestParam(value = "sponsor", required = false) String sponsor,
