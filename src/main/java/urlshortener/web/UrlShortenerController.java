@@ -6,14 +6,12 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import urlshortener.domain.ShortURL;
+import urlshortener.domain.UrlStatus;
 import urlshortener.service.ClickService;
+import urlshortener.service.ReachabilityUrlService;
 import urlshortener.service.SafeBrowsingService;
 import urlshortener.service.ShortURLService;
 
@@ -25,13 +23,17 @@ public class UrlShortenerController {
 
   private final SafeBrowsingService safeBrowsingService;
 
+  private final ReachabilityUrlService reachabilityUrlService;
+
   public UrlShortenerController(
       ShortURLService shortUrlService,
       ClickService clickService,
-      SafeBrowsingService safeBrowsingService) {
+      SafeBrowsingService safeBrowsingService,
+      ReachabilityUrlService reachabilityUrlService) {
     this.shortUrlService = shortUrlService;
     this.clickService = clickService;
     this.safeBrowsingService = safeBrowsingService;
+    this.reachabilityUrlService = reachabilityUrlService;
   }
 
   @RequestMapping(value = "/{id:(?!link|index).*}", method = RequestMethod.GET)
@@ -50,23 +52,22 @@ public class UrlShortenerController {
       @RequestParam("url") String url,
       @RequestParam(value = "sponsor", required = false) String sponsor,
       HttpServletRequest request) {
-    UrlValidator urlValidator = new UrlValidator(new String[] {"http", "https"});
-    if (urlValidator.isValid(url)) {
-      try { // Safe browsing checking
-        if (safeBrowsingService.isSafe(url)) {
-          ShortURL su = shortUrlService.save(url, sponsor, request.getRemoteAddr());
-          HttpHeaders h = new HttpHeaders();
-          h.setLocation(su.getUri());
-          return new ResponseEntity<>(su, h, HttpStatus.CREATED);
-        } else {
-          return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE); // Unsafe URL
-        }
-      } catch (HttpServerErrorException e) {
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // Error safety checking
-      }
-
-    } else {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    switch (checkStatus(url)) {
+      case INVALID:
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, UrlStatus.INVALID.getStatus());
+      case UNREACHABLE:
+        throw new ResponseStatusException(
+            HttpStatus.BAD_REQUEST, UrlStatus.UNREACHABLE.getStatus());
+      case UNSAFE:
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, UrlStatus.UNSAFE.getStatus());
+      case OK:
+        // Create short url
+        ShortURL su = shortUrlService.save(url, sponsor, request.getRemoteAddr());
+        HttpHeaders h = new HttpHeaders();
+        h.setLocation(su.getUri());
+        return new ResponseEntity<>(su, h, HttpStatus.CREATED);
+      default:
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -78,5 +79,15 @@ public class UrlShortenerController {
     HttpHeaders h = new HttpHeaders();
     h.setLocation(URI.create(l.getTarget()));
     return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
+  }
+
+  private UrlStatus checkStatus(String url) {
+    UrlValidator urlValidator = new UrlValidator(new String[] {"http", "https"});
+    // Checking switch
+    if (!urlValidator.isValid(url)) return UrlStatus.INVALID;
+    if (!reachabilityUrlService.isReachable(url)) return UrlStatus.UNREACHABLE;
+    if (!safeBrowsingService.isSafe(url)) return UrlStatus.UNSAFE;
+    // else
+    return UrlStatus.OK;
   }
 }
