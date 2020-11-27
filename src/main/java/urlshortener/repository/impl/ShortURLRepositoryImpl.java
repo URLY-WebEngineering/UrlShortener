@@ -30,7 +30,8 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
               rs.getInt("mode"),
               rs.getBoolean("safe"),
               rs.getString("ip"),
-              rs.getString("country"));
+              rs.getString("country"),
+              null);
 
   private final JdbcTemplate jdbc;
 

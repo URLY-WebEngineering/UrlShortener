@@ -22,6 +22,7 @@ public class ShortURLService {
   }
 
   public ShortURL save(String url, String sponsor, String ip) {
+
     ShortURL su =
         ShortURLBuilder.newInstance()
             .target(url)
