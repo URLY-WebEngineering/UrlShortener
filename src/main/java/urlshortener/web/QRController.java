@@ -1,18 +1,22 @@
 package urlshortener.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.net.URI;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import urlshortener.domain.ShortURL;
 import urlshortener.service.QRService;
 import urlshortener.service.ShortURLService;
 
-@Controller
+@RestController
 public class QRController {
 
   private final ShortURLService shortUrlService;
@@ -21,11 +25,22 @@ public class QRController {
     this.shortUrlService = shortUrlService;
   }
 
-  @RequestMapping(
-      value = "/qr/{id:(?!link|index).*}",
-      method = RequestMethod.GET,
-      produces = MediaType.IMAGE_PNG_VALUE)
-  public ResponseEntity<?> generateQR(@PathVariable String id, HttpServletRequest request)
+  @Operation(summary = "Generates a QR code for the shortened URL")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "201",
+            description = "QR created",
+            content = @Content(mediaType = "image/png")),
+        @ApiResponse(
+            responseCode = "404",
+            description = "id of shortened URL not found",
+            content = @Content(mediaType = "application/json"))
+      })
+  @GetMapping(value = "/qr/{id:(?!link|index).*}", produces = MediaType.IMAGE_PNG_VALUE)
+  public ResponseEntity<?> generateQR(
+      @Parameter(description = "id of the shortened url") @PathVariable String id,
+      HttpServletRequest request)
       throws Exception {
     try {
       HttpHeaders h = new HttpHeaders(); // NOSONAR

@@ -85,7 +85,7 @@ public class UrlShortenerController {
       })
   @PostMapping(value = "/link")
   public ResponseEntity<ShortURL> shortener(
-      @RequestParam("url") String url,
+      @Parameter(description = "long url to shorten") @RequestParam("url") String url,
       @RequestParam(value = "sponsor", required = false) String sponsor,
       HttpServletRequest request) {
     switch (checkStatus(url)) {
