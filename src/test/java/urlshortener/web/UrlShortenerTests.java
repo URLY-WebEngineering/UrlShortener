@@ -66,7 +66,7 @@ public class UrlShortenerTests {
   @Test
   public void thatShortenerCreatesARedirectIfTheURLisOK() throws Exception {
     configureSave(null);
-    String url = "http://example.com/";
+    String url = "https://example.com/";
     when(safeBrowsingService.isSafe(url)).thenReturn(true);
     when(reachabilityUrlService.isReachable(url)).thenReturn(true);
 
@@ -109,9 +109,10 @@ public class UrlShortenerTests {
         .andExpect(status().isBadRequest());
   }
 
+
   @Test
   public void thatShortenerFailsIfTheRepositoryReturnsNull() throws Exception {
-    when(shortUrlService.save(any(String.class), any(String.class), any(String.class), false))
+    when(shortUrlService.save(any(String.class), any(String.class), any(String.class), any(Boolean.class)))
         .thenReturn(null);
 
     mockMvc
@@ -132,6 +133,7 @@ public class UrlShortenerTests {
         .andExpect(status().isBadRequest());
   }
 
+  //ok
   @Test
   public void thatShortenerFailsIfTheURLisNotReachable() throws Exception {
     String url = "http://example.com/";
@@ -145,7 +147,7 @@ public class UrlShortenerTests {
   }
 
   private void configureSave(String sponsor) {
-    when(shortUrlService.save(any(), any(), any(), false))
+    when(shortUrlService.save(any(), any(), any(), any(Boolean.class)))
         .then(
             (Answer<ShortURL>)
                 invocation ->
