@@ -133,7 +133,6 @@ public class UrlShortenerTests {
         .andExpect(status().isBadRequest());
   }
 
-  //ok
   @Test
   public void thatShortenerFailsIfTheURLisNotReachable() throws Exception {
     String url = "http://example.com/";

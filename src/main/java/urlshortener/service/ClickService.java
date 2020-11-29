@@ -25,7 +25,7 @@ public class ClickService {
             : "[" + hash + "] was not saved");
   }
 
-  public Long getTotalClick() { // NOSONAR
+  public Long getTotalClick() {
     return clickRepository.count(); // NOSONAR
   }
 }

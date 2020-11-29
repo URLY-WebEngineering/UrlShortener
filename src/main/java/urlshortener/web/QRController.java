@@ -60,7 +60,7 @@ public class QRController {
 
     } catch (Exception e) {
       // It could not find the URI
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, UrlStatus.IDNOTFOUND.getStatus());
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ID of shortened URL not found");
     }
   }
 }
