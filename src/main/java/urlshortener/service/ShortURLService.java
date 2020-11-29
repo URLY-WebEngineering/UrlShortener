@@ -21,7 +21,7 @@ public class ShortURLService {
     return shortURLRepository.findByKey(id);
   }
 
-  public ShortURL save(String url, String sponsor, String ip) {
+  public ShortURL save(String url, String sponsor, String ip, boolean wantQr) {
 
     ShortURL su =
         ShortURLBuilder.newInstance()
@@ -36,6 +36,7 @@ public class ShortURLService {
             .treatAsSafe()
             .ip(ip)
             .unknownCountry()
+            .qr(wantQr)
             .build();
     return shortURLRepository.save(su);
   }

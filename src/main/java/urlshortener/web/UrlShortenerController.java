@@ -87,6 +87,7 @@ public class UrlShortenerController {
   public ResponseEntity<ShortURL> shortener(
       @Parameter(description = "long url to shorten") @RequestParam("url") String url,
       @RequestParam(value = "sponsor", required = false) String sponsor,
+      @RequestParam(value = "qrfeature", required = false) String qrfeature,
       HttpServletRequest request) {
     switch (checkStatus(url)) {
       case INVALID:
@@ -98,7 +99,9 @@ public class UrlShortenerController {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, UrlStatus.UNSAFE.getStatus());
       case OK:
         // Create short url
-        ShortURL su = shortUrlService.save(url, sponsor, request.getRemoteAddr());
+        boolean wantQr = (qrfeature != null) && (qrfeature.equals("on"));
+        ShortURL su = shortUrlService.save(url, sponsor, request.getRemoteAddr(), wantQr);
+        // ShortURL su = shortUrlService.save(url, sponsor, request.getRemoteAddr());
         HttpHeaders h = new HttpHeaders();
         h.setLocation(su.getUri());
         return new ResponseEntity<>(su, h, HttpStatus.CREATED);

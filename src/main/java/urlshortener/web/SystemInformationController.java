@@ -52,5 +52,4 @@ public class SystemInformationController {
     list.add(new Information("users.number", "Number of users  on the database", numUsers));
     return list;
   }
-
 }

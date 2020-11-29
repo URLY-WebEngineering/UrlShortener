@@ -15,12 +15,20 @@ $(document).ready(
                             + msg.uri
                             + "</a></div>"
                             );
-                        $("#QRresult").html(
-                            "<img  style='width:400px;height:400px;'"
-                            + "src='"
-                            + msg.qr
-                            +"' />"
-                        );
+                        if (msg.qr != null){
+                            $("#QRresult").html(
+                                "<img  style='width:400px;height:400px;'"
+                                + "src='"
+                                + msg.qr
+                                +"' />"
+                            );
+                        }
+                        else{
+                            $("#QRresult").html(
+                                '<div id="QRresult" >' +   ' </div>'
+                            );
+                        }
+
                     },
                     error: function () {
                         $("#result").html(

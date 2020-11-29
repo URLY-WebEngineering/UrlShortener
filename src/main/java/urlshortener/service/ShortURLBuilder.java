@@ -23,6 +23,7 @@ public class ShortURLBuilder {
   private String ip;
   private String country;
   private URI qr;
+  private Function<String, URI> extractor;
 
   static ShortURLBuilder newInstance() {
     return new ShortURLBuilder();
@@ -74,9 +75,15 @@ public class ShortURLBuilder {
     return this;
   }
 
+  ShortURLBuilder qr(boolean wantQr) {
+    if (wantQr) {
+      this.qr = this.extractor.apply("qr" + '/' + hash);
+    }
+    return this;
+  }
+
   ShortURLBuilder uri(Function<String, URI> extractor) {
-    Function<String, URI> extractor_qr = extractor;
-    this.qr = extractor_qr.apply("qr" + '/' + hash);
+    this.extractor = extractor;
     this.uri = extractor.apply(hash);
     return this;
   }

@@ -4,7 +4,8 @@ public enum UrlStatus {
   OK("OK"),
   UNSAFE("Unsafe url"),
   INVALID("Invalid url"),
-  UNREACHABLE("Unreachable url");
+  UNREACHABLE("Unreachable url"),
+  IDNOTFOUND("ID of shortened URL not found");
 
   private String status;
 
