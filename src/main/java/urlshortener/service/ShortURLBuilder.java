@@ -22,13 +22,14 @@ public class ShortURLBuilder {
   private Boolean safe;
   private String ip;
   private String country;
+  private URI qr;
 
   static ShortURLBuilder newInstance() {
     return new ShortURLBuilder();
   }
 
   ShortURL build() {
-    return new ShortURL(hash, target, uri, sponsor, created, owner, mode, safe, ip, country);
+    return new ShortURL(hash, target, uri, sponsor, created, owner, mode, safe, ip, country, qr);
   }
 
   ShortURLBuilder target(String url) {
@@ -74,6 +75,8 @@ public class ShortURLBuilder {
   }
 
   ShortURLBuilder uri(Function<String, URI> extractor) {
+    Function<String, URI> extractor_qr = extractor;
+    this.qr = extractor_qr.apply("qr" + '/' + hash);
     this.uri = extractor.apply(hash);
     return this;
   }

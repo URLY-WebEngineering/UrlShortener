@@ -4,9 +4,8 @@ plugins {
     id 'jacoco'     // Test Coverage Report
     id 'java'
     id 'org.springframework.boot' version '2.3.3.RELEASE'
-    // https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-gradle/
     id 'org.sonarqube' version '3.0'    // Code Quality and Security
-
+    id 'io.freefair.lombok' version '5.3.0' // Lombok
 }
 
 // apply plugin: 'idea'     // not needed for now
@@ -16,6 +15,7 @@ targetCompatibility = 11
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 googleJavaFormat {
@@ -45,33 +45,30 @@ sonarqube {
         property 'sonar.links.scm', 'https://github.com/URLY-WebEngineering/UrlShortener'
         property 'sonar.links.issue', 'https://github.com/URLY-WebEngineering/UrlShortener/issues'
 
-        // Code Configuration Parameters (not needed because these values are configured by default)
-        // property 'sonar.sources', 'src/main'
-        // property 'sonar.tests', 'src/test'
-        // property 'sonar.exclusions', 'src/main/resources/**/*'
-        // Code Configuration Parameters for compiled classes
-        // property 'sonar.java.binaries', 'build/classes/java/main'
-        // property 'sonar.java.test.binaries', 'build/classes/java/test'
-
         // Test Coverage Configuration Parameters
         property 'sonar.coverage.jacoco.xmlReportPaths', "${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml"
     }
 }
 
-
 // Documentation for types of dependencies: https://tomgregory.com/gradle-implementation-vs-compile-dependencies/
 dependencies {
+    implementation 'commons-validator:commons-validator:1.6'
+    implementation 'com.google.guava:guava:28.1-jre'
+    implementation 'com.jayway.jsonpath:json-path:2.4.0'
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'commons-validator:commons-validator:1.6'
     implementation 'com.google.guava:guava:28.1-jre'
-
-    runtime 'org.webjars:bootstrap:3.3.5'
-    runtime 'org.webjars:jquery:2.1.4'
+    compile 'com.google.zxing:core:3.3.0'
+    compile 'com.google.zxing:javase:3.3.0'
+    compile 'org.springdoc:springdoc-openapi-ui:1.5.0'
 
     runtime 'org.hsqldb:hsqldb'
+    runtime 'org.webjars:bootstrap:3.3.5'
+    runtime 'org.webjars:jquery:2.1.4'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.apache.httpcomponents:httpclient'
