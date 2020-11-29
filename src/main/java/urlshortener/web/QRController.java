@@ -12,7 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import urlshortener.domain.ShortURL;
+import urlshortener.domain.UrlStatus;
 import urlshortener.service.QRService;
 import urlshortener.service.ShortURLService;
 
@@ -29,7 +31,7 @@ public class QRController {
   @ApiResponses(
       value = {
         @ApiResponse(
-            responseCode = "201",
+            responseCode = "200",
             description = "QR created",
             content = @Content(mediaType = "image/png")),
         @ApiResponse(
@@ -54,11 +56,11 @@ public class QRController {
       h.setLocation(URI.create(location));
       h.setContentType(MediaType.IMAGE_PNG);
       h.setContentLength(qrImage.length);
-      return new ResponseEntity<>(qrImage, h, HttpStatus.CREATED);
+      return new ResponseEntity<>(qrImage, h, HttpStatus.OK);
 
     } catch (Exception e) {
       // It could not find the URI
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ID of shortened URL not found");
     }
   }
 }

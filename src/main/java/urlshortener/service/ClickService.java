@@ -8,7 +8,6 @@ import urlshortener.repository.ClickRepository;
 
 @Service
 public class ClickService {
-
   private static final Logger log = LoggerFactory.getLogger(ClickService.class);
 
   private final ClickRepository clickRepository;
@@ -24,5 +23,9 @@ public class ClickService {
         cl != null
             ? "[" + hash + "] saved with id [" + cl.getId() + "]"
             : "[" + hash + "] was not saved");
+  }
+
+  public Long getTotalClick() {
+    return clickRepository.count(); // NOSONAR
   }
 }

@@ -37,7 +37,7 @@ public class QRCodeTests {
     mockMvc
         .perform(get("/qr/{id}", "someKey"))
         .andDo(print())
-        .andExpect(status().isCreated())
+        .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.IMAGE_PNG));
   }
 
