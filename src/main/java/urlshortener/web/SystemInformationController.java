@@ -6,6 +6,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,7 @@ import urlshortener.service.ShortURLService;
 @Endpoint(id = "database")
 @Configuration
 @EnableScheduling
+@EnableAsync
 @Component
 public class SystemInformationController {
 
@@ -35,6 +38,7 @@ public class SystemInformationController {
   }
 
   @Scheduled(fixedRate = 1000)
+  @Async
   public void checkSystemInformation() {
     numUsers.set(0);
     numClicks.set(Math.toIntExact(clickService.getTotalClick()));
