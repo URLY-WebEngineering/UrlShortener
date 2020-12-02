@@ -24,6 +24,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import urlshortener.domain.UrlStatus;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -71,11 +72,31 @@ public class SystemTests {
 
   @Test
   public void testRedirection() throws Exception {
-    postLink("http://example.com/");
+    postLink("https://www.youtube.com/");
+    Thread.sleep(2000); // Wait for checking
 
-    ResponseEntity<String> entity = restTemplate.getForEntity("/f684a3c4", String.class);
+    ResponseEntity<String> entity = restTemplate.getForEntity("/6f12359f", String.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.TEMPORARY_REDIRECT));
-    assertThat(entity.getHeaders().getLocation(), is(new URI("http://example.com/")));
+    assertThat(entity.getHeaders().getLocation(), is(new URI("https://www.youtube.com/")));
+  }
+
+  @Test
+  public void testUrlNotValidYet() throws Exception {
+    postLink("https://www.youtube.com/");
+
+    ResponseEntity<String> entity = restTemplate.getForEntity("/6f12359f", String.class);
+    assertThat(entity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+    assertThat(JsonPath.read(entity.getBody(), "$.message"), is(UrlStatus.CHECKING.getStatus()));
+  }
+
+  @Test
+  public void testUrlNotReachable() throws Exception {
+    postLink("http://ingenieriaweb.com/");
+    Thread.sleep(2000); // Wait for checking
+
+    ResponseEntity<String> entity = restTemplate.getForEntity("/6e9c6060", String.class);
+    assertThat(entity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+    assertThat(JsonPath.read(entity.getBody(), "$.message"), is(UrlStatus.UNREACHABLE.getStatus()));
   }
 
   private ResponseEntity<String> postLink(String url) {

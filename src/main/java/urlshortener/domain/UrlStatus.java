@@ -4,7 +4,8 @@ public enum UrlStatus {
   OK("OK"),
   UNSAFE("Unsafe url"),
   INVALID("Invalid url"),
-  UNREACHABLE("Unreachable url");
+  UNREACHABLE("Unreachable url"),
+  CHECKING("Url is not validated yet");
 
   private String status;
 

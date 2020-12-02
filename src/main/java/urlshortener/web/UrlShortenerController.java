@@ -17,9 +17,8 @@ import org.springframework.web.server.ResponseStatusException;
 import urlshortener.domain.ShortURL;
 import urlshortener.domain.UrlStatus;
 import urlshortener.service.ClickService;
-import urlshortener.service.ReachabilityUrlService;
-import urlshortener.service.SafeBrowsingService;
 import urlshortener.service.ShortURLService;
+import urlshortener.service.URLStatusService;
 
 @RestController
 public class UrlShortenerController {
@@ -27,19 +26,15 @@ public class UrlShortenerController {
 
   private final ClickService clickService;
 
-  private final SafeBrowsingService safeBrowsingService;
-
-  private final ReachabilityUrlService reachabilityUrlService;
+  private final URLStatusService urlStatusService;
 
   public UrlShortenerController(
       ShortURLService shortUrlService,
       ClickService clickService,
-      SafeBrowsingService safeBrowsingService,
-      ReachabilityUrlService reachabilityUrlService) {
+      URLStatusService urlStatusService) {
     this.shortUrlService = shortUrlService;
     this.clickService = clickService;
-    this.safeBrowsingService = safeBrowsingService;
-    this.reachabilityUrlService = reachabilityUrlService;
+    this.urlStatusService = urlStatusService;
   }
 
   @Operation(summary = "Redirects the shortened URL identified by id to the original URL")
@@ -52,6 +47,10 @@ public class UrlShortenerController {
         @ApiResponse(
             responseCode = "404",
             description = "Shortened URL not found",
+            content = @Content),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Shortened URL not checked|reachable|safe",
             content = @Content)
       })
   @GetMapping(value = "/{id:(?!link|index).*}")
@@ -61,6 +60,18 @@ public class UrlShortenerController {
     ShortURL l = shortUrlService.findByKey(id);
     if (l != null) {
       clickService.saveClick(id, extractIP(request));
+      // Checking url status
+      if (!l.getChecked()) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, UrlStatus.CHECKING.getStatus());
+      }
+      if (!l.getReachable()) {
+        throw new ResponseStatusException(
+            HttpStatus.BAD_REQUEST, UrlStatus.UNREACHABLE.getStatus());
+      }
+      if (!l.getSafe()) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, UrlStatus.UNSAFE.getStatus());
+      }
+      // Everything is ok
       return createSuccessfulRedirectToResponse(l);
     } else {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -88,26 +99,24 @@ public class UrlShortenerController {
       @Parameter(description = "long url to shorten") @RequestParam("url") String url,
       @RequestParam(value = "sponsor", required = false) String sponsor,
       @RequestParam(value = "qrfeature", required = false) String qrfeature,
-      HttpServletRequest request) {
-    switch (checkStatus(url)) {
-      case INVALID:
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, UrlStatus.INVALID.getStatus());
-      case UNREACHABLE:
-        throw new ResponseStatusException(
-            HttpStatus.BAD_REQUEST, UrlStatus.UNREACHABLE.getStatus());
-      case UNSAFE:
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, UrlStatus.UNSAFE.getStatus());
-      case OK:
-        // Create short url
-        boolean wantQr = (qrfeature != null) && (qrfeature.equals("on"));
-        ShortURL su = shortUrlService.save(url, sponsor, request.getRemoteAddr(), wantQr);
-        // ShortURL su = shortUrlService.save(url, sponsor, request.getRemoteAddr());
-        HttpHeaders h = new HttpHeaders();
-        h.setLocation(su.getUri());
-        return new ResponseEntity<>(su, h, HttpStatus.CREATED);
-      default:
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+      HttpServletRequest request)
+      throws InterruptedException {
+
+    UrlValidator urlValidator = new UrlValidator(new String[] {"http", "https"});
+    if (!urlValidator.isValid(url)) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, UrlStatus.INVALID.getStatus());
     }
+
+    // Create short url
+    boolean wantQr = (qrfeature != null) && (qrfeature.equals("on"));
+    // ShortUrl is saved without URLStatus checked, it's pending
+    ShortURL su = shortUrlService.save(url, sponsor, request.getRemoteAddr(), wantQr);
+    // Check URLStatus
+    urlStatusService.checkStatus(su); // Async
+    // It's returned with a pending check
+    HttpHeaders h = new HttpHeaders();
+    h.setLocation(su.getUri());
+    return new ResponseEntity<>(su, h, HttpStatus.CREATED);
   }
 
   private String extractIP(HttpServletRequest request) {
@@ -118,15 +127,5 @@ public class UrlShortenerController {
     HttpHeaders h = new HttpHeaders();
     h.setLocation(URI.create(l.getTarget()));
     return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
-  }
-
-  private UrlStatus checkStatus(String url) {
-    UrlValidator urlValidator = new UrlValidator(new String[] {"http", "https"});
-    // Checking switch
-    if (!urlValidator.isValid(url)) return UrlStatus.INVALID;
-    if (!reachabilityUrlService.isReachable(url)) return UrlStatus.UNREACHABLE;
-    if (!safeBrowsingService.isSafe(url)) return UrlStatus.UNSAFE;
-    // else
-    return UrlStatus.OK;
   }
 }
