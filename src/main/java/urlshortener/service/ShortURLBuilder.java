@@ -24,13 +24,17 @@ public class ShortURLBuilder {
   private String country;
   private URI qr;
   private Function<String, URI> extractor;
+  private Boolean reachable;
+  private Boolean checked;
 
   static ShortURLBuilder newInstance() {
     return new ShortURLBuilder();
   }
 
   ShortURL build() {
-    return new ShortURL(hash, target, uri, sponsor, created, owner, mode, safe, ip, country, qr);
+    return new ShortURL(
+        hash, target, uri, sponsor, created, owner, mode, safe, ip, country, qr, reachable,
+        checked);
   }
 
   ShortURLBuilder target(String url) {
@@ -60,8 +64,8 @@ public class ShortURLBuilder {
     return this;
   }
 
-  ShortURLBuilder treatAsSafe() {
-    this.safe = true;
+  ShortURLBuilder safe() {
+    this.safe = false;
     return this;
   }
 
@@ -85,6 +89,16 @@ public class ShortURLBuilder {
   ShortURLBuilder uri(Function<String, URI> extractor) {
     this.extractor = extractor;
     this.uri = extractor.apply(hash);
+    return this;
+  }
+
+  ShortURLBuilder reachable() {
+    this.reachable = false;
+    return this;
+  }
+
+  ShortURLBuilder checked() {
+    this.checked = false;
     return this;
   }
 }

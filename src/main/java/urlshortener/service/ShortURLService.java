@@ -33,10 +33,12 @@ public class ShortURLService {
             .createdNow()
             .randomOwner()
             .temporaryRedirect()
-            .treatAsSafe()
+            .safe()
             .ip(ip)
             .unknownCountry()
             .qr(wantQr)
+            .reachable()
+            .checked()
             .build();
     return shortURLRepository.save(su);
   }
