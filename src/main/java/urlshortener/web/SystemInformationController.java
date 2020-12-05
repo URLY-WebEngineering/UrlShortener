@@ -22,27 +22,27 @@ import urlshortener.service.ShortURLService;
 @Component
 public class SystemInformationController {
 
-  private final AtomicInteger numClicks;
-  private final AtomicInteger numUsers;
-  private final AtomicInteger numURLs;
+  private  Integer numClicks;
+  private  Integer numUsers;
+  private  Integer numURLs;
 
   private final ClickService clickService;
   private final ShortURLService shortUrlService;
 
   public SystemInformationController(ClickService clickService, ShortURLService shortUrlService) {
-    this.numClicks = new AtomicInteger(0);
-    this.numURLs = new AtomicInteger(0);
-    this.numUsers = new AtomicInteger(0);
+    this.numClicks = 0;
+    this.numURLs = 0;
+    this.numUsers = 0;
     this.clickService = clickService;
     this.shortUrlService = shortUrlService;
   }
 
   @Scheduled(fixedRate = 1000)
   @Async
-  public void checkSystemInformation()rab {
-    numUsers.set(0);
-    numClicks.set(Math.toIntExact(clickService.getTotalClick()));
-    numURLs.set(Math.toIntExact(shortUrlService.getTotalURL()));
+  public void checkSystemInformation() {
+    numUsers = 0;
+    numClicks = Math.toIntExact(clickService.getTotalClick());
+    numURLs= (Math.toIntExact(shortUrlService.getTotalURL()));
   }
 
   @ReadOperation

@@ -19,5 +19,5 @@ public class Information {
   public String description;
 
   @JsonProperty("number")
-  public AtomicInteger number;
+  public Integer number;
 }

@@ -109,10 +109,10 @@ public class UrlShortenerTests {
         .andExpect(status().isBadRequest());
   }
 
-
   @Test
   public void thatShortenerFailsIfTheRepositoryReturnsNull() throws Exception {
-    when(shortUrlService.save(any(String.class), any(String.class), any(String.class), any(Boolean.class)))
+    when(shortUrlService.save(
+            any(String.class), any(String.class), any(String.class), any(Boolean.class)))
         .thenReturn(null);
 
     mockMvc
