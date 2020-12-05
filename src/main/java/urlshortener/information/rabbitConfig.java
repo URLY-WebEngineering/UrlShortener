@@ -22,40 +22,36 @@ public class rabbitConfig {
     }
 
     @Bean
-    public Binding bindingUsersRequest(DirectExchange direct, Queue  UsersRequestQueue) {
+    public Binding bindingUsersRequest(DirectExchange direct, Queue UsersRequestQueue) {
       return BindingBuilder.bind(UsersRequestQueue).to(direct).with("request_users");
     }
 
     @Bean
-    public  Queue URLRequestQueue(){
+    public Queue URLRequestQueue() {
       return new Queue("request_url");
     }
 
     @Bean
-    public Binding bindingURLRequest(DirectExchange direct, Queue  URLRequestQueue) {
+    public Binding bindingURLRequest(DirectExchange direct, Queue URLRequestQueue) {
       return BindingBuilder.bind(URLRequestQueue).to(direct).with("request_url");
     }
 
-
     @Bean
-    public  Queue ClickRequestQueue(){
+    public Queue ClickRequestQueue() {
       return new Queue("request_click");
     }
 
     @Bean
-    public Binding bindingClickRequest(DirectExchange direct, Queue  ClickRequestQueue) {
+    public Binding bindingClickRequest(DirectExchange direct, Queue ClickRequestQueue) {
       return BindingBuilder.bind(ClickRequestQueue).to(direct).with("request_click");
     }
 
-
-
     @Bean
-    public InformationReceiver receiver(ClickService clickService, ShortURLService shortUrlService) {
+    public InformationReceiver receiver(
+        ClickService clickService, ShortURLService shortUrlService) {
       return new InformationReceiver(clickService, shortUrlService);
     }
   }
-
-
 
   private static class SenderConfig {
 
@@ -79,7 +75,6 @@ public class rabbitConfig {
       return BindingBuilder.bind(ResponsesURLQueue).to(direct).with("responses_url");
     }
 
-
     @Bean
     public Queue ResponsesClickQueue() {
       return new Queue("responses_click");
@@ -89,7 +84,6 @@ public class rabbitConfig {
     public Binding bindingClickResponses(DirectExchange direct, Queue ResponsesClickQueue) {
       return BindingBuilder.bind(ResponsesClickQueue).to(direct).with("responses_click");
     }
-
 
     @Bean
     public InformationSender sender() {

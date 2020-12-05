@@ -2,7 +2,6 @@ package urlshortener.web;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.context.annotation.Configuration;
@@ -22,9 +21,9 @@ import urlshortener.service.ShortURLService;
 @Component
 public class SystemInformationController {
 
-  private  Integer numClicks;
-  private  Integer numUsers;
-  private  Integer numURLs;
+  private Integer numClicks;
+  private Integer numUsers;
+  private Integer numURLs;
 
   private final ClickService clickService;
   private final ShortURLService shortUrlService;
@@ -42,7 +41,7 @@ public class SystemInformationController {
   public void checkSystemInformation() {
     numUsers = 0;
     numClicks = Math.toIntExact(clickService.getTotalClick());
-    numURLs= (Math.toIntExact(shortUrlService.getTotalURL()));
+    numURLs = (Math.toIntExact(shortUrlService.getTotalURL()));
   }
 
   @ReadOperation

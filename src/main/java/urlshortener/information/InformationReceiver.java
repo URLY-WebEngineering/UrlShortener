@@ -9,9 +9,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import urlshortener.service.ClickService;
 import urlshortener.service.ShortURLService;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-
 // The machine which is going to process the data
 @EnableAsync
 public class InformationReceiver {
@@ -22,11 +19,9 @@ public class InformationReceiver {
 
   @Autowired private DirectExchange direct;
 
-
   public InformationReceiver(ClickService clickService, ShortURLService shortUrlService) {
-    this.calculator = new SystemCalculator(clickService,shortUrlService);
+    this.calculator = new SystemCalculator(clickService, shortUrlService);
   }
-
 
   public void sendUsers() {
     String builder = new String(String.valueOf(0));
@@ -52,7 +47,7 @@ public class InformationReceiver {
   @Async
   @RabbitListener(queues = "request_url")
   public void receiveURL(String in) throws InterruptedException {
-    sendUrl() ;
+    sendUrl();
   }
 
   @Async
@@ -60,5 +55,4 @@ public class InformationReceiver {
   public void receiveClick(String in) throws InterruptedException {
     sendClick();
   }
-
 }
