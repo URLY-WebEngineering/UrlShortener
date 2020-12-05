@@ -39,7 +39,7 @@ public class SystemInformationController {
 
   @Scheduled(fixedRate = 1000)
   @Async
-  public void checkSystemInformation() {
+  public void checkSystemInformation()rab {
     numUsers.set(0);
     numClicks.set(Math.toIntExact(clickService.getTotalClick()));
     numURLs.set(Math.toIntExact(shortUrlService.getTotalURL()));
