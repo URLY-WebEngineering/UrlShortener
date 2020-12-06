@@ -3,6 +3,7 @@ package urlshortener.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -18,5 +19,5 @@ public class Information {
   public String description;
 
   @JsonProperty("number")
-  public Integer number;
+  public AtomicInteger number;
 }

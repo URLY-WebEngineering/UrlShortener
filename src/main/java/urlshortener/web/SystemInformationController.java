@@ -2,6 +2,7 @@ package urlshortener.web;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -54,14 +55,14 @@ public class SystemInformationController {
     return BindingBuilder.bind(ResponsesClickQueue).to(direct).with("responses_click");
   }
 
-  private Integer numClicks;
-  private Integer numUsers;
-  private Integer numURLs;
+  private AtomicInteger numClicks;
+  private AtomicInteger numUsers;
+  private AtomicInteger numURLs;
 
   public SystemInformationController() {
-    this.numClicks = 0;
-    this.numURLs = 0;
-    this.numUsers = 0;
+    this.numClicks = new AtomicInteger(0);
+    this.numURLs = new AtomicInteger(0);
+    this.numUsers = new AtomicInteger(0);
   }
 
   @ReadOperation
@@ -79,18 +80,18 @@ public class SystemInformationController {
   @Async
   @RabbitListener(queues = "responses_users")
   public void receiveUsers(String in) {
-    this.numUsers = Integer.parseInt(in);
+    this.numUsers.getAndAdd(1);
   }
 
   @Async
   @RabbitListener(queues = "responses_url")
   public void receiveUrl(String in) {
-    this.numURLs = Integer.parseInt(in);
+    this.numURLs.getAndAdd(1);
   }
 
   @Async
   @RabbitListener(queues = "responses_click")
   public void receiveClick(String in) {
-    this.numClicks = Integer.parseInt(in);
+    this.numClicks.getAndAdd(1);
   }
 }
