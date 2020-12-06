@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static urlshortener.fixtures.ShortURLFixture.someUrl;
+import static urlshortener.fixtures.ShortURLFixture.someOKUrl;
 
 import java.net.URI;
 import org.junit.Before;
@@ -20,10 +20,10 @@ import org.mockito.stubbing.Answer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import urlshortener.domain.ShortURL;
+import urlshortener.repository.impl.ShortURLRepositoryImpl;
 import urlshortener.service.ClickService;
-import urlshortener.service.ReachabilityUrlService;
-import urlshortener.service.SafeBrowsingService;
 import urlshortener.service.ShortURLService;
+import urlshortener.service.URLStatusService;
 
 public class UrlShortenerTests {
 
@@ -33,9 +33,9 @@ public class UrlShortenerTests {
 
   @Mock private ShortURLService shortUrlService;
 
-  @Mock private SafeBrowsingService safeBrowsingService;
+  @Mock private URLStatusService urlStatusService;
 
-  @Mock private ReachabilityUrlService reachabilityUrlService;
+  @Mock private ShortURLRepositoryImpl shortURLRepository;
 
   @InjectMocks private UrlShortenerController urlShortener;
 
@@ -47,7 +47,7 @@ public class UrlShortenerTests {
 
   @Test
   public void thatRedirectToReturnsTemporaryRedirectIfKeyExists() throws Exception {
-    when(shortUrlService.findByKey("someKey")).thenReturn(someUrl());
+    when(shortUrlService.findByKey("someKey")).thenReturn(someOKUrl());
 
     mockMvc
         .perform(get("/{id}", "someKey"))
@@ -67,8 +67,6 @@ public class UrlShortenerTests {
   public void thatShortenerCreatesARedirectIfTheURLisOK() throws Exception {
     configureSave(null);
     String url = "https://example.com/";
-    when(safeBrowsingService.isSafe(url)).thenReturn(true);
-    when(reachabilityUrlService.isReachable(url)).thenReturn(true);
 
     mockMvc
         .perform(post("/link").param("url", url))
@@ -85,8 +83,8 @@ public class UrlShortenerTests {
   public void thatShortenerCreatesARedirectWithSponsor() throws Exception {
     configureSave("http://sponsor.com/");
     String url = "http://example.com/";
-    when(safeBrowsingService.isSafe(url)).thenReturn(true);
-    when(reachabilityUrlService.isReachable(url)).thenReturn(true);
+    when(urlStatusService.isSafe(url)).thenReturn(true);
+    when(urlStatusService.isReachable(url)).thenReturn(true);
 
     mockMvc
         .perform(post("/link").param("url", url).param("sponsor", "http://sponsor.com/"))
@@ -109,38 +107,14 @@ public class UrlShortenerTests {
         .andExpect(status().isBadRequest());
   }
 
-
   @Test
   public void thatShortenerFailsIfTheRepositoryReturnsNull() throws Exception {
-    when(shortUrlService.save(any(String.class), any(String.class), any(String.class), any(Boolean.class)))
+    when(shortUrlService.save(
+            any(String.class), any(String.class), any(String.class), any(Boolean.class)))
         .thenReturn(null);
 
     mockMvc
         .perform(post("/link").param("url", "someKey"))
-        .andDo(print())
-        .andExpect(status().isBadRequest());
-  }
-
-  @Test
-  public void thatShortenerFailsIfTheURLisNotSafe() throws Exception {
-    String url = "http://example.com/";
-    when(safeBrowsingService.isSafe(url)).thenReturn(false);
-    when(reachabilityUrlService.isReachable(url)).thenReturn(true);
-
-    mockMvc
-        .perform(post("/link").param("url", url))
-        .andDo(print())
-        .andExpect(status().isBadRequest());
-  }
-
-  @Test
-  public void thatShortenerFailsIfTheURLisNotReachable() throws Exception {
-    String url = "http://example.com/";
-    when(safeBrowsingService.isSafe(url)).thenReturn(true);
-    when(reachabilityUrlService.isReachable(url)).thenReturn(false);
-
-    mockMvc
-        .perform(post("/link").param("url", url))
         .andDo(print())
         .andExpect(status().isBadRequest());
   }
@@ -161,6 +135,8 @@ public class UrlShortenerTests {
                         false,
                         null,
                         null,
-                        null));
+                        null,
+                        false,
+                        false));
   }
 }

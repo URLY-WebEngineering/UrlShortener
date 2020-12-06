@@ -1,19 +1,46 @@
 package urlshortener.service;
 
 import com.jayway.jsonpath.JsonPath;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-import urlshortener.domain.safebrowsing.*;
+import urlshortener.domain.ShortURL;
+import urlshortener.domain.safebrowsing.SBClient;
+import urlshortener.domain.safebrowsing.SBRequest;
+import urlshortener.domain.safebrowsing.SBThreatEntry;
+import urlshortener.domain.safebrowsing.SBThreatInfo;
+import urlshortener.repository.ShortURLRepository;
+import urlshortener.repository.impl.ShortURLRepositoryImpl;
 
 @Service
-public class SafeBrowsingService {
+public class URLStatusService {
 
   private final String API_KEY = System.getenv("GSB_API_KEY");
+
+  private final ShortURLRepository shortURLRepository;
+
+  public URLStatusService(ShortURLRepositoryImpl shortURLRepository) {
+    this.shortURLRepository = shortURLRepository;
+  }
+
+  public boolean isReachable(String urlToCheck) {
+    try {
+      URL url = new URL(urlToCheck);
+      HttpURLConnection huc = (HttpURLConnection) url.openConnection(); // NOSONAR
+      huc.setRequestMethod("HEAD"); // Only HEAD request to reduce response time and bandwidth
+      int responseCode = huc.getResponseCode();
+      return responseCode == HttpURLConnection.HTTP_OK;
+    } catch (Exception e) { // All HTTP Exceptions
+      return false;
+    }
+  }
 
   public boolean isSafe(String url) {
     // Create request through domain classes
@@ -38,11 +65,25 @@ public class SafeBrowsingService {
 
     // Decide if it's safe
     if (response.getStatusCode() != HttpStatus.OK) {
-      throw new HttpServerErrorException(response.getStatusCode());
+      return false;
     } else {
       String json = response.getBody();
       List<String> matches = JsonPath.parse(json).read("$..matches");
       return matches.isEmpty();
     }
+  }
+
+  @Async("threadTaskExecutor")
+  public void checkStatus(ShortURL shortURL) {
+    String url = shortURL.getTarget();
+    ShortURL updatedShortURL = new ShortURL();
+    // New copy to update
+    BeanUtils.copyProperties(shortURL, updatedShortURL);
+    if (isReachable(url) && isSafe(url)) {
+      updatedShortURL.setReachable(true);
+      updatedShortURL.setSafe(true);
+    }
+    updatedShortURL.setChecked(true);
+    shortURLRepository.update(updatedShortURL);
   }
 }

@@ -31,7 +31,9 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
               rs.getBoolean("safe"),
               rs.getString("ip"),
               rs.getString("country"),
-              null);
+              null,
+              rs.getBoolean("reachable"),
+              (rs.getBoolean("checked")));
 
   private final JdbcTemplate jdbc;
 
@@ -53,7 +55,7 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
   public ShortURL save(ShortURL su) {
     try {
       jdbc.update(
-          "INSERT INTO shorturl VALUES (?,?,?,?,?,?,?,?,?)",
+          "INSERT INTO shorturl VALUES (?,?,?,?,?,?,?,?,?,?,?)",
           su.getHash(),
           su.getTarget(),
           su.getSponsor(),
@@ -61,8 +63,10 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
           su.getOwner(),
           su.getMode(),
           su.getSafe(),
-          su.getIP(),
-          su.getCountry());
+          su.getIp(),
+          su.getCountry(),
+          su.getReachable(),
+          su.getChecked());
     } catch (DuplicateKeyException e) {
       log.debug("When insert for key {}", su.getHash(), e);
       return su;
@@ -91,15 +95,17 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
   public void update(ShortURL su) {
     try {
       jdbc.update(
-          "update shorturl set target=?, sponsor=?, created=?, owner=?, mode=?, safe=?, ip=?, country=? where hash=?",
+          "update shorturl set target=?, sponsor=?, created=?, owner=?, mode=?, safe=?, ip=?, country=?, reachable=?, checked=? where hash=?",
           su.getTarget(),
           su.getSponsor(),
           su.getCreated(),
           su.getOwner(),
           su.getMode(),
           su.getSafe(),
-          su.getIP(),
+          su.getIp(),
           su.getCountry(),
+          su.getReachable(),
+          su.getChecked(),
           su.getHash());
     } catch (Exception e) {
       log.debug("When update for hash {}", su.getHash(), e);
@@ -131,7 +137,7 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
       return jdbc.query(
           "SELECT * FROM shorturl LIMIT ? OFFSET ?", new Object[] {limit, offset}, rowMapper);
     } catch (Exception e) {
-      log.debug("When select for limit {} and offset {}", limit, offset, e);
+      log.info("When select for limit {} and offset {}", limit, offset, e);
       return Collections.emptyList();
     }
   }
