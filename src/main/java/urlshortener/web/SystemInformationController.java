@@ -2,17 +2,20 @@ package urlshortener.web;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import urlshortener.domain.Information;
-import urlshortener.service.ClickService;
-import urlshortener.service.ShortURLService;
 
 @Endpoint(id = "database")
 @Configuration
@@ -21,27 +24,44 @@ import urlshortener.service.ShortURLService;
 @Component
 public class SystemInformationController {
 
+  @Bean
+  public Queue ResponsesUsersQueue() {
+    return new Queue("responses_users");
+  }
+
+  @Bean
+  public Binding bindingUsersResponses(DirectExchange direct, Queue ResponsesUsersQueue) {
+    return BindingBuilder.bind(ResponsesUsersQueue).to(direct).with("responses_users");
+  }
+
+  @Bean
+  public Queue ResponsesURLQueue() {
+    return new Queue("responses_url");
+  }
+
+  @Bean
+  public Binding bindingURLResponses(DirectExchange direct, Queue ResponsesURLQueue) {
+    return BindingBuilder.bind(ResponsesURLQueue).to(direct).with("responses_url");
+  }
+
+  @Bean
+  public Queue ResponsesClickQueue() {
+    return new Queue("responses_click");
+  }
+
+  @Bean
+  public Binding bindingClickResponses(DirectExchange direct, Queue ResponsesClickQueue) {
+    return BindingBuilder.bind(ResponsesClickQueue).to(direct).with("responses_click");
+  }
+
   private Integer numClicks;
   private Integer numUsers;
   private Integer numURLs;
 
-  private final ClickService clickService;
-  private final ShortURLService shortUrlService;
-
-  public SystemInformationController(ClickService clickService, ShortURLService shortUrlService) {
+  public SystemInformationController() {
     this.numClicks = 0;
     this.numURLs = 0;
     this.numUsers = 0;
-    this.clickService = clickService;
-    this.shortUrlService = shortUrlService;
-  }
-
-  @Scheduled(fixedRate = 1000)
-  @Async
-  public void checkSystemInformation() {
-    numUsers = 0;
-    numClicks = Math.toIntExact(clickService.getTotalClick());
-    numURLs = (Math.toIntExact(shortUrlService.getTotalURL()));
   }
 
   @ReadOperation
@@ -54,5 +74,23 @@ public class SystemInformationController {
             "clicks.number", "Number of clicks to urls stored in  the database", numClicks));
     list.add(new Information("users.number", "Number of users  on the database", numUsers));
     return list;
+  }
+
+  @Async
+  @RabbitListener(queues = "responses_users")
+  public void receiveUsers(String in) {
+    this.numUsers = Integer.parseInt(in);
+  }
+
+  @Async
+  @RabbitListener(queues = "responses_url")
+  public void receiveUrl(String in) {
+    this.numURLs = Integer.parseInt(in);
+  }
+
+  @Async
+  @RabbitListener(queues = "responses_click")
+  public void receiveClick(String in) {
+    this.numClicks = Integer.parseInt(in);
   }
 }
