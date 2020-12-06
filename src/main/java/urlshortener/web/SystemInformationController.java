@@ -24,12 +24,14 @@ import urlshortener.domain.Information;
 @EnableAsync
 @Component
 public class SystemInformationController {
-
+  // This is the code that should be in the external machine
   @Bean
   public Queue ResponsesUsersQueue() {
     return new Queue("responses_users");
   }
 
+  // Bind the process to the queues
+  // A binding is a relationship between an exchange and a queue
   @Bean
   public Binding bindingUsersResponses(DirectExchange direct, Queue ResponsesUsersQueue) {
     return BindingBuilder.bind(ResponsesUsersQueue).to(direct).with("responses_users");
@@ -77,6 +79,7 @@ public class SystemInformationController {
     return list;
   }
 
+  // Consumes the messages in the queue and updates the values
   @Async
   @RabbitListener(queues = "responses_users")
   public void receiveUsers(String in) {

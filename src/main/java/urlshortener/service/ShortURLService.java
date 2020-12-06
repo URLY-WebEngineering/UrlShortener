@@ -16,7 +16,7 @@ import urlshortener.web.UrlShortenerController;
 @Service
 @EnableAsync
 public class ShortURLService {
-
+  // Template used to the send messages
   @Autowired private RabbitTemplate template;
 
   @Autowired private DirectExchange direct;

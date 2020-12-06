@@ -18,6 +18,7 @@ public class ClickService {
 
   private final ClickRepository clickRepository;
 
+  // Template used to the send messages
   @Autowired private RabbitTemplate template;
 
   @Autowired private DirectExchange direct;
