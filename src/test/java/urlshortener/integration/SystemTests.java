@@ -55,7 +55,7 @@ public class SystemTests {
 
   @Test
   public void testCreateLink() throws Exception {
-    ResponseEntity<String> entity = postLink("https://example.com/");
+    ResponseEntity<String> entity = postLink("http://example.com/");
 
     assertThat(entity.getStatusCode(), is(HttpStatus.CREATED));
     assertThat(
