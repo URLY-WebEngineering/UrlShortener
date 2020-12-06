@@ -73,8 +73,8 @@ public class URLStatusService {
     }
   }
 
-  @Async
-  public void checkStatus(ShortURL shortURL) throws InterruptedException {
+  @Async("threadTaskExecutor")
+  public void checkStatus(ShortURL shortURL) {
     String url = shortURL.getTarget();
     ShortURL updatedShortURL = new ShortURL();
     BeanUtils.copyProperties(shortURL, updatedShortURL);
