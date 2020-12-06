@@ -77,6 +77,7 @@ public class URLStatusService {
   public void checkStatus(ShortURL shortURL) {
     String url = shortURL.getTarget();
     ShortURL updatedShortURL = new ShortURL();
+    // New copy to update
     BeanUtils.copyProperties(shortURL, updatedShortURL);
     if (isReachable(url) && isSafe(url)) {
       updatedShortURL.setReachable(true);

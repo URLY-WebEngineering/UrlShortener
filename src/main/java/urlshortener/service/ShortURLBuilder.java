@@ -64,7 +64,7 @@ public class ShortURLBuilder {
     return this;
   }
 
-  ShortURLBuilder safe() {
+  ShortURLBuilder notSafe() {
     this.safe = false;
     return this;
   }
@@ -92,12 +92,12 @@ public class ShortURLBuilder {
     return this;
   }
 
-  ShortURLBuilder reachable() {
+  ShortURLBuilder notReachable() {
     this.reachable = false;
     return this;
   }
 
-  ShortURLBuilder checked() {
+  ShortURLBuilder notChecked() {
     this.checked = false;
     return this;
   }
