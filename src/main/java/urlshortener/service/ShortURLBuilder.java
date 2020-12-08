@@ -95,7 +95,7 @@ public class ShortURLBuilder {
   }
 
   ShortURLBuilder uri(Function<String, URI> extractor) {
-    if(hascustombackhalf) {
+    if (hascustombackhalf) {
       hash = custombackhalf;
     } else {
       hash = "_" + hash; // different namespace when not custombackhalf

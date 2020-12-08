@@ -19,7 +19,6 @@ import urlshortener.domain.UrlStatus;
 import urlshortener.service.ClickService;
 import urlshortener.service.ShortURLService;
 import urlshortener.service.URLStatusService;
-import urlshortener.service.exceptions.BadCustomBackhalfException;
 
 @RestController
 public class UrlShortenerController {
@@ -105,7 +104,7 @@ public class UrlShortenerController {
       throws InterruptedException {
 
     try {
-      UrlValidator urlValidator = new UrlValidator(new String[]{"http", "https"});
+      UrlValidator urlValidator = new UrlValidator(new String[] {"http", "https"});
       if (!urlValidator.isValid(url)) {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, UrlStatus.INVALID.getStatus());
       }
@@ -113,7 +112,7 @@ public class UrlShortenerController {
       ShortURL su;
       // TODO: check for @NotNull @NotBlank
       boolean wantQr = (qrfeature != null) && (qrfeature.equals("on"));
-      if ((custombackhalf!= null) && (!custombackhalf.isEmpty())) {
+      if ((custombackhalf != null) && (!custombackhalf.isEmpty())) {
         // ShortUrl is saved without URLStatus checked, it's pending
         su = shortUrlService.save(url, sponsor, custombackhalf, request.getRemoteAddr(), wantQr);
       } else {
@@ -127,10 +126,8 @@ public class UrlShortenerController {
       HttpHeaders h = new HttpHeaders();
       h.setLocation(su.getUri());
       return new ResponseEntity<>(su, h, HttpStatus.CREATED);
-    } catch (BadCustomBackhalfException e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     } catch (Exception e) {
-      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     }
   }
 

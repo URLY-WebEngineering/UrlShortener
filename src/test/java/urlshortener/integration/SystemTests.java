@@ -76,9 +76,8 @@ public class SystemTests {
 
     assertThat(entity.getStatusCode(), is(HttpStatus.CREATED));
     assertThat(
-            entity.getHeaders().getLocation(),
-            is(new URI("http://localhost:" + this.port + "/custom"))
-    );
+        entity.getHeaders().getLocation(),
+        is(new URI("http://localhost:" + this.port + "/custom")));
     assertThat(entity.getHeaders().getContentType(), is(new MediaType("application", "json")));
     ReadContext rc = JsonPath.parse(entity.getBody());
     assertThat(rc.read("$.hash"), is("custom"));
@@ -92,7 +91,10 @@ public class SystemTests {
     ResponseEntity<String> entity = postLink("http://example.com/", "_custom");
 
     assertThat(entity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
-    assertThat(JsonPath.read(entity.getBody(), "$.message"), is("Backhalf should start with letters or numbers and be followed by letters, numbers, _ or -"));
+    assertThat(
+        JsonPath.read(entity.getBody(), "$.message"),
+        is(
+            "Backhalf should start with letters or numbers and be followed by letters, numbers, _ or -"));
   }
 
   @Test

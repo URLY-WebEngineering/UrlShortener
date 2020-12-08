@@ -1,8 +1,8 @@
 package urlshortener.service.exceptions;
 
-public class BadCustomBackhalfException extends Exception{
+public class BadCustomBackhalfException extends Exception {
 
-    public BadCustomBackhalfException(String errorMessage) {
-        super(errorMessage);
-    }
+  public BadCustomBackhalfException(String errorMessage) {
+    super(errorMessage);
+  }
 }
