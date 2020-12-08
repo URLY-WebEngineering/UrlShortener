@@ -62,10 +62,10 @@ public class ShortURLRepositoryTests {
   public void thatSaveADuplicateHashThrowsException() {
     repository.save(url1());
     // Assert is inserted
-    assertSame(jdbc.queryForObject("select count(*) from SHORTURL", Integer.class), 1);
+    assertSame(1, jdbc.queryForObject("select count(*) from SHORTURL", Integer.class));
     // Assert exception for duplicate hash
     Exception exception = assertThrows(DuplicateKeyException.class, () -> repository.save(url1()));
-    assertSame(jdbc.queryForObject("select count(*) from SHORTURL", Integer.class), 1);
+    assertSame(1, jdbc.queryForObject("select count(*) from SHORTURL", Integer.class));
   }
 
   @Test
