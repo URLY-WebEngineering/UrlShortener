@@ -61,13 +61,38 @@ public class SystemTests {
     assertThat(entity.getStatusCode(), is(HttpStatus.CREATED));
     assertThat(
         entity.getHeaders().getLocation(),
-        is(new URI("http://localhost:" + this.port + "/f684a3c4")));
+        is(new URI("http://localhost:" + this.port + "/_f684a3c4")));
     assertThat(entity.getHeaders().getContentType(), is(new MediaType("application", "json")));
     ReadContext rc = JsonPath.parse(entity.getBody());
-    assertThat(rc.read("$.hash"), is("f684a3c4"));
-    assertThat(rc.read("$.uri"), is("http://localhost:" + this.port + "/f684a3c4"));
+    assertThat(rc.read("$.hash"), is("_f684a3c4"));
+    assertThat(rc.read("$.uri"), is("http://localhost:" + this.port + "/_f684a3c4"));
     assertThat(rc.read("$.target"), is("http://example.com/"));
     assertThat(rc.read("$.sponsor"), is(nullValue()));
+  }
+
+  @Test
+  public void testCreateLinkWithCustomBackhalfCorrect() throws Exception {
+    ResponseEntity<String> entity = postLink("http://example.com/", "custom");
+
+    assertThat(entity.getStatusCode(), is(HttpStatus.CREATED));
+    assertThat(
+            entity.getHeaders().getLocation(),
+            is(new URI("http://localhost:" + this.port + "/custom"))
+    );
+    assertThat(entity.getHeaders().getContentType(), is(new MediaType("application", "json")));
+    ReadContext rc = JsonPath.parse(entity.getBody());
+    assertThat(rc.read("$.hash"), is("custom"));
+    assertThat(rc.read("$.uri"), is("http://localhost:" + this.port + "/custom"));
+    assertThat(rc.read("$.target"), is("http://example.com/"));
+    assertThat(rc.read("$.sponsor"), is(nullValue()));
+  }
+
+  @Test
+  public void testCreateLinkWithCustomBackhalfIncorrect() throws Exception {
+    ResponseEntity<String> entity = postLink("http://example.com/", "_custom");
+
+    assertThat(entity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+    assertThat(JsonPath.read(entity.getBody(), "$.message"), is("Backhalf should start with letters or numbers and be followed by letters, numbers, _ or -"));
   }
 
   @Test
@@ -75,7 +100,7 @@ public class SystemTests {
     postLink("https://www.youtube.com/");
     Thread.sleep(2000); // Wait for checking
 
-    ResponseEntity<String> entity = restTemplate.getForEntity("/6f12359f", String.class);
+    ResponseEntity<String> entity = restTemplate.getForEntity("/_6f12359f", String.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.TEMPORARY_REDIRECT));
     assertThat(entity.getHeaders().getLocation(), is(new URI("https://www.youtube.com/")));
   }
@@ -84,7 +109,7 @@ public class SystemTests {
   public void testUrlNotValidYet() throws Exception {
     postLink("https://www.youtube.com/");
 
-    ResponseEntity<String> entity = restTemplate.getForEntity("/6f12359f", String.class);
+    ResponseEntity<String> entity = restTemplate.getForEntity("/_6f12359f", String.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     assertThat(JsonPath.read(entity.getBody(), "$.message"), is(UrlStatus.CHECKING.getStatus()));
   }
@@ -94,7 +119,7 @@ public class SystemTests {
     postLink("http://ingenieriaweb.com/");
     Thread.sleep(2000); // Wait for checking
 
-    ResponseEntity<String> entity = restTemplate.getForEntity("/6e9c6060", String.class);
+    ResponseEntity<String> entity = restTemplate.getForEntity("/_6e9c6060", String.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     assertThat(JsonPath.read(entity.getBody(), "$.message"), is(UrlStatus.UNREACHABLE.getStatus()));
   }
@@ -102,6 +127,13 @@ public class SystemTests {
   private ResponseEntity<String> postLink(String url) {
     MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
     parts.add("url", url);
+    return restTemplate.postForEntity("/link", parts, String.class);
+  }
+
+  private ResponseEntity<String> postLink(String url, String custombackhalf) {
+    MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+    parts.add("url", url);
+    parts.add("custombackhalf", custombackhalf);
     return restTemplate.postForEntity("/link", parts, String.class);
   }
 }

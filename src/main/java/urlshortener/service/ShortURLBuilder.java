@@ -14,6 +14,8 @@ public class ShortURLBuilder {
 
   private String hash;
   private String target;
+  private boolean hascustombackhalf = false;
+  private String custombackhalf;
   private URI uri;
   private String sponsor;
   private Date created;
@@ -41,6 +43,12 @@ public class ShortURLBuilder {
     target = url;
     //noinspection UnstableApiUsage
     hash = murmur3_32().hashString(url, StandardCharsets.UTF_8).toString();
+    return this;
+  }
+
+  ShortURLBuilder customBackhalf(String custombackhalf) {
+    this.hascustombackhalf = true;
+    this.custombackhalf = custombackhalf;
     return this;
   }
 
@@ -87,6 +95,12 @@ public class ShortURLBuilder {
   }
 
   ShortURLBuilder uri(Function<String, URI> extractor) {
+    if(hascustombackhalf) {
+      hash = custombackhalf;
+    } else {
+      hash = "_" + hash; // different namespace when not custombackhalf
+    }
+
     this.extractor = extractor;
     this.uri = extractor.apply(hash);
     return this;
