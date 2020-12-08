@@ -31,6 +31,7 @@ $(document).ready(
 
                     },
                     error: function () {
+                        // TODO: think about displaying the error from server
                         $("#result").html(
                             "<div class='alert alert-danger lead'>SOMETHING WENT WRONG</div>");
                     }
