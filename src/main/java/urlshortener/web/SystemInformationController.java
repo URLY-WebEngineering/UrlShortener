@@ -14,13 +14,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 import urlshortener.domain.Information;
 
 @Endpoint(id = "database")
 @Configuration
-@EnableScheduling
 @EnableAsync
 @Component
 public class SystemInformationController {
@@ -56,7 +54,6 @@ public class SystemInformationController {
   public Binding bindingClickResponses(DirectExchange direct, Queue ResponsesClickQueue) {
     return BindingBuilder.bind(ResponsesClickQueue).to(direct).with("responses_click");
   }
-
   private AtomicInteger numClicks;
   private AtomicInteger numUsers;
   private AtomicInteger numURLs;
