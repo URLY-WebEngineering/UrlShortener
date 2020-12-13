@@ -38,7 +38,7 @@ public class SystemInformationController {
     this.numUsers = new AtomicInteger(0);
   }
 
-  @Async("threadTaskExecutor")
+  @Async("threadTaskScheduler")
   @Scheduled(fixedRate = 1000, initialDelay = 500)
   public void checkSystemInformation() {
     numUsers.set(0);

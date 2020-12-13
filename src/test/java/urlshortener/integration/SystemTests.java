@@ -91,7 +91,6 @@ public class SystemTests {
 
   @Test
   public void testUrlNotReachable() throws Exception {
-
     postLink("http://ingenieriaweb.com/");
     Thread.sleep(2000); // Wait for checking
 
