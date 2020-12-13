@@ -13,4 +13,11 @@ public class AsyncConfig {
     simpleAsyncTaskExecutor.setConcurrencyLimit(3);
     return simpleAsyncTaskExecutor;
   }
+
+  @Bean(name = "threadTaskScheduler")
+  public Executor threadTaskScheduler() {
+    SimpleAsyncTaskExecutor simpleAsyncTaskExecutor = new SimpleAsyncTaskExecutor();
+    simpleAsyncTaskExecutor.setConcurrencyLimit(2);
+    return simpleAsyncTaskExecutor;
+  }
 }

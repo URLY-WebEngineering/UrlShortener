@@ -6,6 +6,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,7 @@ import urlshortener.service.ShortURLService;
 
 @Endpoint(id = "database")
 @Configuration
+@EnableAsync
 @EnableScheduling
 @Component
 public class SystemInformationController {
@@ -27,14 +30,16 @@ public class SystemInformationController {
   private final ShortURLService shortUrlService;
 
   public SystemInformationController(ClickService clickService, ShortURLService shortUrlService) {
-    this.numClicks = new AtomicInteger(0);
-    this.numURLs = new AtomicInteger(0);
-    this.numUsers = new AtomicInteger(0);
     this.clickService = clickService;
     this.shortUrlService = shortUrlService;
+
+    this.numClicks = new AtomicInteger(Math.toIntExact(clickService.getTotalClick()));
+    this.numURLs = new AtomicInteger(Math.toIntExact(shortUrlService.getTotalURL()));
+    this.numUsers = new AtomicInteger(0);
   }
 
-  @Scheduled(fixedRate = 1000)
+  @Async("threadTaskScheduler")
+  @Scheduled(fixedRate = 1000, initialDelay = 500)
   public void checkSystemInformation() {
     numUsers.set(0);
     numClicks.set(Math.toIntExact(clickService.getTotalClick()));
@@ -45,11 +50,11 @@ public class SystemInformationController {
   public List<Information> getInformation() {
     List<Information> list = new ArrayList<>();
     list.add(
-        new Information("url.number", "Number of url shortened stored in the database", numURLs));
+        new Information("URL.number", "Number of URL shortened stored in the database", numURLs));
     list.add(
         new Information(
-            "clicks.number", "Number of clicks to urls stored in  the database", numClicks));
-    list.add(new Information("users.number", "Number of users  on the database", numUsers));
+            "Clicks.number", "Number of clicks to urls stored in  the database", numClicks));
+    list.add(new Information("Users.number", "Number of users  on the database", numUsers));
     return list;
   }
 }

@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import urlshortener.domain.ShortURL;
-import urlshortener.domain.UrlStatus;
 import urlshortener.service.QRService;
 import urlshortener.service.ShortURLService;
 
