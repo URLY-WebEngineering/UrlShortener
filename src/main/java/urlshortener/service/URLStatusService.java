@@ -26,7 +26,7 @@ public class URLStatusService {
 
   private final ShortURLRepository shortURLRepository;
 
-  public URLStatusService(ShortURLRepositoryImpl shortURLRepository) {
+  public URLStatusService(ShortURLRepository shortURLRepository) {
     this.shortURLRepository = shortURLRepository;
   }
 
