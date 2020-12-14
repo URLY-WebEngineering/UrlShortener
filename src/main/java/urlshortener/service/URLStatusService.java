@@ -26,7 +26,7 @@ public class URLStatusService {
 
   private final ShortURLRepository shortURLRepository;
 
-  public URLStatusService(ShortURLRepositoryImpl shortURLRepository) {
+  public URLStatusService(ShortURLRepository shortURLRepository) {
     this.shortURLRepository = shortURLRepository;
   }
 
@@ -34,6 +34,7 @@ public class URLStatusService {
     try {
       URL url = new URL(urlToCheck);
       HttpURLConnection huc = (HttpURLConnection) url.openConnection(); // NOSONAR
+      huc.setConnectTimeout(5000);
       huc.setRequestMethod("HEAD"); // Only HEAD request to reduce response time and bandwidth
       int responseCode = huc.getResponseCode();
       return responseCode == HttpURLConnection.HTTP_OK;
