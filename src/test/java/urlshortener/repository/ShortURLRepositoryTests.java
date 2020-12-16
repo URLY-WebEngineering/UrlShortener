@@ -1,9 +1,6 @@
 package urlshortener.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.HSQL;
 import static urlshortener.fixtures.ShortURLFixture.badUrl;
 import static urlshortener.fixtures.ShortURLFixture.url1;
@@ -17,6 +14,7 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -61,15 +59,18 @@ public class ShortURLRepositoryTests {
   }
 
   @Test
-  public void thatSaveADuplicateHashIsSafelyIgnored() {
+  public void thatSaveADuplicateHashThrowsException() {
     repository.save(url1());
-    assertNotNull(repository.save(url1()));
-    assertSame(jdbc.queryForObject("select count(*) from SHORTURL", Integer.class), 1);
+    // Assert is inserted
+    assertSame(1, jdbc.queryForObject("select count(*) from SHORTURL", Integer.class));
+    // Assert exception for duplicate hash
+    Exception exception = assertThrows(DuplicateKeyException.class, () -> repository.save(url1()));
+    assertSame(1, jdbc.queryForObject("select count(*) from SHORTURL", Integer.class));
   }
 
   @Test
   public void thatErrorsInSaveReturnsNull() {
-    assertNull(repository.save(badUrl()));
+    Exception exception = assertThrows(Exception.class, () -> repository.save(badUrl()));
     assertSame(jdbc.queryForObject("select count(*) from SHORTURL", Integer.class), 0);
   }
 

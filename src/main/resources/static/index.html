@@ -14,8 +14,8 @@
     </script>
 </head>
 <body>
-<div class="col-lg-12 text-center" >
-    <img src="icon/logo-provisional.png" style='width:160px;height:200px; padding-top: 15px;'  />
+<div class="col-lg-12 text-center">
+    <img src="icon/logo-provisional.png" style='width:160px;height:200px; padding-top: 15px;'/>
 </div>
 <div class="container-full">
     <div class="row">
@@ -24,12 +24,26 @@
             <p class="lead">A Spartan front-end example page for the project</p>
             <br>
             <form action="" class="col-lg-12" id="shortener" role="form">
-                <div class="input-group input-group-lg col-sm-offset-4 col-sm-4">
-                    <input class="center-block form-control input-lg" name="url"
-                           placeholder="Enter a URL" title="Enter a URL" type="text">
-                    <span class="input-group-btn"><button
-                            class="btn btn-lg btn-primary" type="submit">Short me!</button></span>
-                    <input  type="checkbox" name="qrfeature" checked="" > Do you want the QR code?<br>
+                <div class="form-group">
+                    <div class="input-group input-group-lg col-sm-offset-4 col-sm-4">
+                        <input class="center-block form-control input-lg" name="url"
+                               placeholder="Enter a URL" title="Enter a URL" type="text">
+                        <span class="input-group-btn"><button
+                                class="btn btn-lg btn-primary"
+                                type="submit">Short me!</button></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group col-sm-offset-4 col-sm-4">
+                        <input class="center-block form-control input-lg" name="custombackhalf"
+                               placeholder="(Optional) Choose a short URL"
+                               title="(Optional) Choose a short URL" type="text">
+                    </div>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="qrfeature" checked="">Do you want a QR code?
+                    </label>
                 </div>
             </form>
         </div>
@@ -44,7 +58,7 @@
         <div class='col-lg-12 text-center'>
             <div class='col-sm-offset-4 col-sm-4 text-center'>
                 <br/>
-                <div id="QRresult" >
+                <div id="QRresult">
                 </div>
             </div>
         </div>

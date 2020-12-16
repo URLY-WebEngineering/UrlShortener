@@ -69,10 +69,10 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
           su.getChecked());
     } catch (DuplicateKeyException e) {
       log.debug("When insert for key {}", su.getHash(), e);
-      return su;
+      throw e;
     } catch (Exception e) {
       log.debug("When insert", e);
-      return null;
+      throw e;
     }
     return su;
   }

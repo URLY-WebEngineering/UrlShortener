@@ -99,24 +99,36 @@ public class UrlShortenerController {
       @Parameter(description = "long url to shorten") @RequestParam("url") String url,
       @RequestParam(value = "sponsor", required = false) String sponsor,
       @RequestParam(value = "qrfeature", required = false) String qrfeature,
+      @RequestParam(value = "custombackhalf", required = false) String custombackhalf,
       HttpServletRequest request)
       throws InterruptedException {
 
-    UrlValidator urlValidator = new UrlValidator(new String[] {"http", "https"});
-    if (!urlValidator.isValid(url)) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, UrlStatus.INVALID.getStatus());
-    }
+    try {
+      UrlValidator urlValidator = new UrlValidator(new String[] {"http", "https"});
+      if (!urlValidator.isValid(url)) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, UrlStatus.INVALID.getStatus());
+      }
 
-    // Create short url
-    boolean wantQr = (qrfeature != null) && (qrfeature.equals("on"));
-    // ShortUrl is saved without URLStatus checked, it's pending
-    ShortURL su = shortUrlService.save(url, sponsor, request.getRemoteAddr(), wantQr);
-    // Check URLStatus
-    urlStatusService.checkStatus(su); // Async
-    // It's returned with a pending check
-    HttpHeaders h = new HttpHeaders();
-    h.setLocation(su.getUri());
-    return new ResponseEntity<>(su, h, HttpStatus.CREATED);
+      ShortURL su;
+      // TODO: check for @NotNull @NotBlank
+      boolean wantQr = (qrfeature != null) && (qrfeature.equals("on"));
+      if ((custombackhalf != null) && (!custombackhalf.isEmpty())) {
+        // ShortUrl is saved without URLStatus checked, it's pending
+        su = shortUrlService.save(url, sponsor, custombackhalf, request.getRemoteAddr(), wantQr);
+      } else {
+        // ShortUrl is saved without URLStatus checked, it's pending
+        su = shortUrlService.save(url, sponsor, request.getRemoteAddr(), wantQr);
+      }
+
+      // Check URLStatus
+      urlStatusService.checkStatus(su); // Async
+      // It's returned with a pending check
+      HttpHeaders h = new HttpHeaders();
+      h.setLocation(su.getUri());
+      return new ResponseEntity<>(su, h, HttpStatus.CREATED);
+    } catch (Exception e) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
   }
 
   private String extractIP(HttpServletRequest request) {
