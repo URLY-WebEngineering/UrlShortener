@@ -17,7 +17,6 @@ import urlshortener.domain.safebrowsing.SBRequest;
 import urlshortener.domain.safebrowsing.SBThreatEntry;
 import urlshortener.domain.safebrowsing.SBThreatInfo;
 import urlshortener.repository.ShortURLRepository;
-import urlshortener.repository.impl.ShortURLRepositoryImpl;
 
 @Service
 public class URLStatusService {
