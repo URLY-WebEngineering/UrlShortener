@@ -1,6 +1,9 @@
 # Web Engineering 2020-2021 / URL Shortener
 
 [![Build Status](https://travis-ci.com/UNIZAR-30246-WebEngineering/UrlShortener.svg?branch=master)](https://travis-ci.com/UNIZAR-30246-WebEngineering/UrlShortener)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=URLY-WebEngineering_UrlShortener&metric=coverage)](https://sonarcloud.io/dashboard?id=URLY-WebEngineering_UrlShortener)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=URLY-WebEngineering_UrlShortener&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=URLY-WebEngineering_UrlShortener)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=URLY-WebEngineering_UrlShortener&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=URLY-WebEngineering_UrlShortener)
 
 This is the start repository for the project developed in this course. 
 
@@ -10,6 +13,7 @@ The __project__ is a [Spring Boot](http://docs.spring.io/spring-boot/docs/curren
 * __Redirection service__: `GET /{id}` redirects the request to a URL associated with the parameter `id`.
 * __Database service__: Persistence and retrieval of `ShortURL` and `Click` objects.
 
+The presentation for the project is available [here](ProjectPresentation.pdf).
 
 ## Deployment
 
