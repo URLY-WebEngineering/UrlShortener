@@ -10,6 +10,7 @@ The __project__ is a [Spring Boot](http://docs.spring.io/spring-boot/docs/curren
 * __Redirection service__: `GET /{id}` redirects the request to a URL associated with the parameter `id`.
 * __Database service__: Persistence and retrieval of `ShortURL` and `Click` objects.
 
+The Project Presentation can be found [here](ProjectPresentation.pdf).
 
 ## Deployment
 
