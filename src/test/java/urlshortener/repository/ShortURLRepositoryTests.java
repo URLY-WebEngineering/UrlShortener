@@ -57,7 +57,7 @@ public class ShortURLRepositoryTests {
     assertEquals(1L, repository.count());
     // Assert exception for duplicate hash
     Exception exception = assertThrows(DuplicateKeyException.class, () -> repository.save(url1()));
-    assertEquals(1L,  repository.count());
+    assertEquals(1L, repository.count());
   }
 
   @Test

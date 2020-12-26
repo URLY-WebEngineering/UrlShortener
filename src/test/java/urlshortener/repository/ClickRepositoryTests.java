@@ -5,15 +5,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.test.context.junit4.SpringRunner;
 import urlshortener.domain.Click;
 import urlshortener.fixtures.ClickFixture;
@@ -23,11 +19,9 @@ import urlshortener.fixtures.ShortURLFixture;
 @SpringBootTest
 public class ClickRepositoryTests {
 
-  @Autowired
-  private ClickRepository repository;
+  @Autowired private ClickRepository repository;
 
-  @Autowired
-  private ShortURLRepository shortUrlRepository;
+  @Autowired private ShortURLRepository shortUrlRepository;
 
   @Before
   public void setup() {
@@ -84,5 +78,4 @@ public class ClickRepositoryTests {
     repository.deleteById(id2);
     assertEquals(repository.count(), 0L);
   }
-
 }
