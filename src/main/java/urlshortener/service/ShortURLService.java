@@ -26,7 +26,7 @@ public class ShortURLService {
   }
 
   public ShortURL findByKey(String id) {
-    return shortURLRepository.findByKey(id);
+    return shortURLRepository.findByHash(id);
   }
 
   public ShortURL save(String url, String sponsor, String custombackhalf, String ip, boolean wantQr)

@@ -1,33 +1,28 @@
 package urlshortener.service;
 
 import static org.junit.Assert.*;
-import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.HSQL;
 import static urlshortener.fixtures.ShortURLFixture.url1;
 import static urlshortener.fixtures.ShortURLFixture.url2;
 import static urlshortener.fixtures.ShortURLFixture.url3;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 import urlshortener.domain.ShortURL;
 import urlshortener.repository.ShortURLRepository;
-import urlshortener.repository.impl.ShortURLRepositoryImpl;
 import urlshortener.service.exceptions.BadCustomBackhalfException;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class ShortURLServiceTests {
   private ShortURLService shortURLService;
-  private EmbeddedDatabase db;
-  private ShortURLRepository repository;
-  private JdbcTemplate jdbc;
+  @Autowired private ShortURLRepository repository;
 
   @Before
   public void setup() {
-    db = new EmbeddedDatabaseBuilder().setType(HSQL).addScript("schema-hsqldb.sql").build();
-    jdbc = new JdbcTemplate(db);
-    repository = new ShortURLRepositoryImpl(jdbc);
     shortURLService = new ShortURLService(repository);
   }
 
@@ -35,14 +30,14 @@ public class ShortURLServiceTests {
   public void thatFindByKeyReturnsAURL() {
     ShortURL insertedURL1 =
         shortURLService.save(
-            url1().getTarget(), url1().getSponsor(), url1().getIp(), url1().getQr() != null);
+            url1().getTarget(), url1().getSponsor(), url1().getIP(), url1().getQr() != null);
     ShortURL insertedURL2 =
         shortURLService.save(
-            url3().getTarget(), url3().getSponsor(), url3().getIp(), url3().getQr() != null);
+            url3().getTarget(), url3().getSponsor(), url3().getIP(), url3().getQr() != null);
     ShortURL su = shortURLService.findByKey(insertedURL1.getHash());
     assertNotNull(su);
-    assertSame(url1().getTarget(), su.getTarget());
-    assertSame(insertedURL1.getHash(), su.getHash());
+    assertEquals(url1().getTarget(), su.getTarget());
+    assertEquals(insertedURL1.getHash(), su.getHash());
   }
 
   @Test
@@ -53,22 +48,23 @@ public class ShortURLServiceTests {
             url1().getTarget(),
             url1().getSponsor(),
             custombackhalf,
-            url1().getIp(),
+            url1().getIP(),
             url1().getQr() != null);
     assertSame(custombackhalf, insertedURL1.getHash());
     ShortURL insertedURL2 =
         shortURLService.save(
-            url3().getTarget(), url3().getSponsor(), url3().getIp(), url3().getQr() != null);
+            url3().getTarget(), url3().getSponsor(), url3().getIP(), url3().getQr() != null);
     ShortURL su = shortURLService.findByKey(custombackhalf);
     assertNotNull(su);
-    assertSame(url1().getTarget(), su.getTarget());
-    assertSame(custombackhalf, su.getHash());
+    assertEquals(url1().getTarget(), su.getTarget());
+    assertEquals(custombackhalf, su.getHash());
   }
 
   @Test
   public void thatFindByKeyReturnsNullWhenFails() {
+    repository.deleteAll();
     shortURLService.save(
-        url1().getTarget(), url1().getSponsor(), url1().getIp(), url1().getQr() != null);
+        url1().getTarget(), url1().getSponsor(), url1().getIP(), url1().getQr() != null);
     ShortURL su = shortURLService.findByKey(url2().getHash());
     assertNull(su);
   }
@@ -76,12 +72,13 @@ public class ShortURLServiceTests {
   @Test
   public void thatFindByKeyReturnsNullWhenFailsWithCustomBackhalf()
       throws BadCustomBackhalfException {
+    repository.deleteAll();
     String custombackhalf = "custombackhalf";
     shortURLService.save(
         url1().getTarget(),
         url1().getSponsor(),
         custombackhalf,
-        url1().getIp(),
+        url1().getIP(),
         url1().getQr() != null);
     ShortURL su = shortURLService.findByKey(url2().getHash());
     assertNull(su);
@@ -116,7 +113,7 @@ public class ShortURLServiceTests {
                     url1().getTarget(),
                     url1().getSponsor(),
                     custombackhalf,
-                    url1().getIp(),
+                    url1().getIP(),
                     url1().getQr() != null));
     assertEquals(
         "Backhalf should start with letters or numbers and be followed by letters, numbers, _ or -",
@@ -149,7 +146,7 @@ public class ShortURLServiceTests {
                     url1().getTarget(),
                     url1().getSponsor(),
                     custombackhalf,
-                    url1().getIp(),
+                    url1().getIP(),
                     url1().getQr() != null));
     assertEquals("Backhalf conflicts with existing endpoints", exception.getMessage());
   }
@@ -161,7 +158,7 @@ public class ShortURLServiceTests {
         url1().getTarget(),
         url1().getSponsor(),
         custombackhalf,
-        url1().getIp(),
+        url1().getIP(),
         url1().getQr() != null);
     Exception e =
         assertThrows(
@@ -171,13 +168,8 @@ public class ShortURLServiceTests {
                     url3().getTarget(),
                     url3().getSponsor(),
                     custombackhalf,
-                    url3().getIp(),
+                    url3().getIP(),
                     url3().getQr() != null));
     assertEquals("Backhalf already exists", e.getMessage());
-  }
-
-  @After
-  public void shutdown() {
-    db.shutdown();
   }
 }

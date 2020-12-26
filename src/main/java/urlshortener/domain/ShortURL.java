@@ -5,27 +5,35 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.net.URI;
 import java.sql.Date;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.*;
 import urlshortener.web.UrlShortenerController;
 
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Data
+@Table(name = "ShortURL")
 public class ShortURL {
 
-  @Getter @Setter private String hash;
-  @Getter @Setter private String target;
-  @Setter private URI uri;
-  @Getter @Setter private String sponsor;
-  @Getter @Setter private Date created;
-  @Getter @Setter private String owner;
-  @Getter @Setter private Integer mode;
-  @Getter @Setter private Boolean safe;
-  @Getter @Setter private String ip;
-  @Getter @Setter private String country;
-  @Getter @Setter private URI qr;
-  @Getter @Setter private Boolean reachable;
-  @Getter @Setter private Boolean checked;
+  @Id private String hash;
+
+  private String target;
+  private URI uri;
+  private String sponsor;
+  private Date created;
+  private String owner;
+  private Integer mode;
+
+  private Boolean safe;
+  private String IP;
+  private String country;
+  private URI qr;
+  private Boolean reachable;
+  private Boolean checked;
 
   public URI getUri() {
     // I will not be necessary to save the uri on the database

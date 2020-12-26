@@ -17,14 +17,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.Answer;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import urlshortener.domain.ShortURL;
-import urlshortener.repository.impl.ShortURLRepositoryImpl;
+import urlshortener.repository.ShortURLRepository;
 import urlshortener.service.ClickService;
 import urlshortener.service.ShortURLService;
 import urlshortener.service.URLStatusService;
 
+@DataJpaTest
 public class UrlShortenerTests {
 
   private MockMvc mockMvc;
@@ -35,7 +37,7 @@ public class UrlShortenerTests {
 
   @Mock private URLStatusService urlStatusService;
 
-  @Mock private ShortURLRepositoryImpl shortURLRepository;
+  @Mock private ShortURLRepository shortURLRepository;
 
   @InjectMocks private UrlShortenerController urlShortener;
 

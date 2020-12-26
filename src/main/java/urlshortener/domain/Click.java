@@ -1,66 +1,42 @@
 package urlshortener.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.sql.Date;
+import javax.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "click")
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
 public class Click {
 
-  private final Long id;
-  private final String hash;
-  private final Date created;
-  private final String referrer;
-  private final String browser;
-  private final String platform;
-  private final String ip;
-  private final String country;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-  public Click(
-      Long id,
-      String hash,
-      Date created,
-      String referrer,
-      String browser,
-      String platform,
-      String ip,
-      String country) {
-    this.id = id;
-    this.hash = hash;
-    this.created = created;
-    this.referrer = referrer;
-    this.browser = browser;
-    this.platform = platform;
-    this.ip = ip;
-    this.country = country;
-  }
+  @Column(name = "hash")
+  private String hash;
 
-  public Long getId() {
-    return id;
-  }
+  @Column(name = "created")
+  private Date created;
 
-  public String getHash() {
-    return hash;
-  }
+  @Column(name = "referrer")
+  private String referrer;
 
-  public Date getCreated() {
-    return created;
-  }
+  @Column(name = "browser")
+  private String browser;
 
-  public String getReferrer() {
-    return referrer;
-  }
+  @Column(name = "platform")
+  private String platform;
 
-  public String getBrowser() {
-    return browser;
-  }
+  @Column(name = "ip")
+  private String ip;
 
-  public String getPlatform() {
-    return platform;
-  }
-
-  public String getIp() {
-    return ip;
-  }
-
-  public String getCountry() {
-    return country;
-  }
+  @Column(name = "country")
+  private String country;
 }

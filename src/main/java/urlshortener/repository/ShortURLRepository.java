@@ -1,23 +1,10 @@
 package urlshortener.repository;
 
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import urlshortener.domain.ShortURL;
+import urlshortener.repository.custom.ShortURLRepositoryCustom;
 
-public interface ShortURLRepository {
-
-  ShortURL findByKey(String id);
-
-  List<ShortURL> findByTarget(String target);
-
-  ShortURL save(ShortURL su);
-
-  ShortURL mark(ShortURL urlSafe, boolean safeness);
-
-  void update(ShortURL su);
-
-  void delete(String id);
-
-  Long count();
-
-  List<ShortURL> list(Long limit, Long offset);
-}
+@Repository
+public interface ShortURLRepository
+    extends JpaRepository<ShortURL, String>, ShortURLRepositoryCustom {}

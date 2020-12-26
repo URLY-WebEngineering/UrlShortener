@@ -2,24 +2,24 @@ package urlshortener.service;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.HSQL;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import urlshortener.repository.impl.ShortURLRepositoryImpl;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import urlshortener.repository.ShortURLRepository;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class URLStatusServiceTests {
   private URLStatusService urlStatusService;
 
+  @Autowired private ShortURLRepository repository;
+
   @Before
   public void setup() {
-    EmbeddedDatabase db =
-        new EmbeddedDatabaseBuilder().setType(HSQL).addScript("schema-hsqldb.sql").build();
-    JdbcTemplate jdbc = new JdbcTemplate(db);
-    ShortURLRepositoryImpl repository = new ShortURLRepositoryImpl(jdbc);
     urlStatusService = new URLStatusService(repository);
   }
 
