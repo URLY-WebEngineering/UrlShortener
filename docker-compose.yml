@@ -5,8 +5,8 @@ services:
     ports:
       - "8080:8080"
     environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-docker:3306/urly?useSSL=false
       - GSB_API_KEY
-      - SPRING_DATASOURCE_URL: jdbc:mysql://mysql-docker:3306/urly?useSSL=false
     depends_on:
       - mysql-docker
   mysql-docker:
