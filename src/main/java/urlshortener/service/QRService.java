@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class QRService {
   public static byte[] getQRImage(String uri) throws IOException, WriterException {
-    // Given an URI this function creates a qr code
+    // Given an URI this function creates a QR code
     ByteArrayOutputStream os = new ByteArrayOutputStream();
     QRCodeWriter writer = new QRCodeWriter();
     BitMatrix bitMatrix = writer.encode(uri, BarcodeFormat.QR_CODE, 300, 300);
