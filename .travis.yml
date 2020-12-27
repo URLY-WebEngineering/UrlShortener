@@ -1,6 +1,12 @@
 language: java
 jdk: openjdk11
 addons:
+  apt:
+    sources:
+      - mysql-5.7-trusty
+    packages:
+      - mysql-server
+      - mysql-client
   sonarcloud:
     organization: urly-webengineering
     token:
