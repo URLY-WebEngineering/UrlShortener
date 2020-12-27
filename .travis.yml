@@ -13,4 +13,4 @@ env:
 services:
   - mysql
 before_install:
-  - sudo mysql -e 'CREATE DATABASE urly; USE urly;'
+  - sudo mysql -e 'CREATE DATABASE IF NOT EXISTS urly; SHOW DATABASES; USE urly;CREATE USER urly IDENTIFIED BY 'root'; GRANT ALL ON urly.* TO urly;'
