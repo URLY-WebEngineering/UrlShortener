@@ -6,7 +6,6 @@ addons:
       - mysql-5.7-trusty
     packages:
       - mysql-server
-      - mysql-client
   sonarcloud:
     organization: urly-webengineering
     token:
@@ -18,6 +17,7 @@ env:
     secure: HKd1GqbUx2wvR1+IL1YzkW2xg/L9xolXXAWZnfQcQJu3XzU+uHV2otcw/eExATeKeT2TUsXv3FDlzvWwWkCyuvjj2ZQU3JTawZMAwl1KLLMv02WKWldmaEPrrJv/2+q36D+7eoPFEg9N5I299tAHR0doKLCWSBTnq5/Oyial5mLudy05hfJryHoaOklP1Dz3uOUP2hsiTFYV/RgeBk8X57zPfYCTwwtrQbkJdLGl60t6gta0mJjWQ4xcBC7r9KqVTukJKAnRe10raj8S/ZULJCjhFMWnzjZsIX0taw71TY3zHdXuSFmnpzPuZhkLYDH18KCu/u0Xu3mUdvGdxpZpSm8O0cslJ8Lo6UBPWA9TllYvCMkbaMwOwrkOxnJZd+GcGTLzqMaLDxFEy1SeHPJMhbdOOXGKMYy4su9PG4KlVatN/U5tRMBULzd68zjqk0ZqRHr9FPf6aV1B/AMePLx5sI/mjr+di06CHM9m6stZneJgspwNP3IRqG/sJEr0ZqBl4IBoRoEXnIHkjJ79JkK1Em+dTe/v6VK4M5t/lI3CmG4cYSTcfjqwKKP08oADPUKw+9hcGRVkXOswVg13IzqWy9iQDuWBHy57xyj5SnD09pgc+SuvCFGxXpX3H1ZnPt6wJPZGBGoLvCOO3gNLkOdXiFFnqSCYF7XnIga3mtaNekk=
 services:
   - mysql
-sudo: true
+dist: trusty
+sudo: required
 before_install:
-  - sudo mysql -e 'CREATE DATABASE IF NOT EXISTS urly; SHOW DATABASES; USE urly;'
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS urly; SHOW DATABASES; USE urly;'
