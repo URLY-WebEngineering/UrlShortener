@@ -21,4 +21,4 @@ services:
 dist: trusty
 sudo: required
 before_install:
-  - mysql -e 'CREATE DATABASE IF NOT EXISTS urly; SHOW DATABASES; USE urly;'
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS urly; USE urly;'
