@@ -122,6 +122,7 @@ public class ShortURLServiceTests {
 
   @Test
   public void thatBackhalfIsConflictive() {
+    repository.deleteAll();
     String correctcustombackhalf1 = "anything";
     String badcustombackhalf1 = "info";
     String badcustombackhalf2 = "link";
@@ -137,6 +138,7 @@ public class ShortURLServiceTests {
 
   @Test
   public void thatSaveWithCustomBackhalfIsConflictiveThrows() {
+    repository.deleteAll();
     String custombackhalf = "info";
     Exception exception =
         assertThrows(
@@ -153,6 +155,7 @@ public class ShortURLServiceTests {
 
   @Test
   public void thatSaveDuplicateWithCustomBackhalfThrows() throws BadCustomBackhalfException {
+    repository.deleteAll();
     String custombackhalf = "custom";
     shortURLService.save(
         url1().getTarget(),
@@ -160,6 +163,7 @@ public class ShortURLServiceTests {
         custombackhalf,
         url1().getIP(),
         url1().getQr() != null);
+
     Exception e =
         assertThrows(
             BadCustomBackhalfException.class,
@@ -170,6 +174,8 @@ public class ShortURLServiceTests {
                     custombackhalf,
                     url3().getIP(),
                     url3().getQr() != null));
+
+    System.out.println(e.getMessage());
     assertEquals("Backhalf already exists", e.getMessage());
   }
 }

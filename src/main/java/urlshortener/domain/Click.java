@@ -19,7 +19,7 @@ public class Click {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "hash")
+  @Column(name = "hash", nullable = false)
   private String hash;
 
   @Column(name = "created")

@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import urlshortener.domain.ShortURL;
 import urlshortener.repository.ShortURLRepository;
@@ -57,10 +56,13 @@ public class ShortURLService {
             .notReachable()
             .notChecked()
             .build();
+    if (shortURLRepository.findByHash(su.getHash()) != null) {
+      if (shortURLRepository.findByHash(su.getHash()).getHash().equals(custombackhalf)) {
+        throw new BadCustomBackhalfException("Backhalf already exists");
+      }
+    }
     try {
       return shortURLRepository.save(su);
-    } catch (DuplicateKeyException e) {
-      throw new BadCustomBackhalfException("Backhalf already exists");
     } catch (Exception e) {
       throw new BadCustomBackhalfException("Backhalf could not be inserted");
     }

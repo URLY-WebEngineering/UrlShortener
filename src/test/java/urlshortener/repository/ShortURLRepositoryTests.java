@@ -1,14 +1,10 @@
 package urlshortener.repository;
 
 import static org.junit.Assert.*;
-import static urlshortener.fixtures.ShortURLFixture.badUrl;
-import static urlshortener.fixtures.ShortURLFixture.url1;
-import static urlshortener.fixtures.ShortURLFixture.url1modified;
-import static urlshortener.fixtures.ShortURLFixture.url2;
-import static urlshortener.fixtures.ShortURLFixture.url3;
-import static urlshortener.fixtures.ShortURLFixture.urlSponsor;
+import static urlshortener.fixtures.ShortURLFixture.*;
 
 import java.util.List;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,15 +37,21 @@ public class ShortURLRepositoryTests {
 
   @Test
   public void thatSaveSafe() {
-    /* assertNotNull(repository.save(urlSafe()));
-    assertEquals(jdbc.queryForObject("select safe from SHORTURL", Boolean.class), true);
-    repository.mark(urlSafe(), false);
-    assertEquals(jdbc.queryForObject("select safe from SHORTURL", Boolean.class), false);
-    repository.mark(urlSafe(), true);
-    assertEquals(jdbc.queryForObject("select safe from SHORTURL", Boolean.class), true);*/
+
+    assertNotNull(repository.save(urlSafe()));
+    assertEquals(repository.findByHash(urlSafe().getHash()).getSafe(), true);
+
+    ShortURL notsafe = urlSafe();
+    notsafe.setSafe(false);
+    repository.save(notsafe);
+    assertEquals(repository.findByHash(urlSafe().getHash()).getSafe(), false);
+    notsafe.setSafe(true);
+    repository.save(notsafe);
+    assertEquals(repository.findByHash(urlSafe().getHash()).getSafe(), true);
   }
 
   @Test
+  @Ignore
   public void thatSaveADuplicateHashThrowsException() {
     repository.deleteAll();
     repository.save(url1());

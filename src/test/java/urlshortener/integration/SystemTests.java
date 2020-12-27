@@ -25,6 +25,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import urlshortener.domain.UrlStatus;
+import urlshortener.repository.ShortURLRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -32,6 +33,8 @@ import urlshortener.domain.UrlStatus;
 public class SystemTests {
 
   @Autowired private TestRestTemplate restTemplate;
+
+  @Autowired private ShortURLRepository repository;
 
   @LocalServerPort private int port;
 
@@ -72,6 +75,7 @@ public class SystemTests {
 
   @Test
   public void testCreateLinkWithCustomBackhalfCorrect() throws Exception {
+    repository.deleteAll();
     ResponseEntity<String> entity = postLink("http://example.com/", "custom");
 
     assertThat(entity.getStatusCode(), is(HttpStatus.CREATED));
