@@ -5,6 +5,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.net.URI;
 import java.sql.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -21,18 +22,40 @@ public class ShortURL {
 
   @Id private String hash;
 
+  @Column(name = "target")
   private String target;
+
+  @Column(name = "uri")
   private URI uri;
+
+  @Column(name = "sponsor")
   private String sponsor;
+
+  @Column(name = "created")
   private Date created;
+
+  @Column(name = "owner")
   private String owner;
+
+  @Column(name = "mode")
   private Integer mode;
 
+  @Column(name = "safe")
   private Boolean safe;
+
+  @Column(name = "IP")
   private String IP;
+
+  @Column(name = "country")
   private String country;
+
+  @Column(name = "qr")
   private URI qr;
+
+  @Column(name = "reachable")
   private Boolean reachable;
+
+  @Column(name = "checked")
   private Boolean checked;
 
   public URI getUri() {
