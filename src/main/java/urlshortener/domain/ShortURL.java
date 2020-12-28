@@ -14,7 +14,7 @@ import urlshortener.web.UrlShortenerController;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Entity(name = "ShortURL")
 @Data
 @Table(name = "ShortURL")
 public class ShortURL {

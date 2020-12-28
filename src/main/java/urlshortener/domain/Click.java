@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "click")
+@Entity(name = "Click")
+@Table(name = "Click")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public class Click {
