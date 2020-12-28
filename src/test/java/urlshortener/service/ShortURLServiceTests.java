@@ -18,6 +18,7 @@ import urlshortener.service.exceptions.BadCustomBackhalfException;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ShortURLServiceTests {
+
   private ShortURLService shortURLService;
   @Autowired private ShortURLRepository repository;
 
