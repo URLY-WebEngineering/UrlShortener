@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.net.URI;
+import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.http.HttpHeaders;
@@ -57,22 +58,22 @@ public class UrlShortenerController {
   public ResponseEntity<?> redirectTo(
       @Parameter(description = "id of the shortened URL") @PathVariable String id,
       HttpServletRequest request) {
-    ShortURL l = shortUrlService.findByKey(id);
-    if (l != null) {
-      clickService.saveClick(id, extractIP(request));
+    Optional<ShortURL> l = shortUrlService.findByKey(id);
+    if (l.isPresent()) {
+      clickService.saveClick(l.get(), extractIP(request));
       // Checking url status
-      if (!l.getChecked()) {
+      if (!l.get().getChecked()) {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, UrlStatus.CHECKING.getStatus());
       }
-      if (!l.getReachable()) {
+      if (!l.get().getReachable()) {
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, UrlStatus.UNREACHABLE.getStatus());
       }
-      if (!l.getSafe()) {
+      if (!l.get().getSafe()) {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, UrlStatus.UNSAFE.getStatus());
       }
       // Everything is ok
-      return createSuccessfulRedirectToResponse(l);
+      return createSuccessfulRedirectToResponse(l.get());
     } else {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

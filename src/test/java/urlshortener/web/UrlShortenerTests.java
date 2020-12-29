@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static urlshortener.fixtures.ShortURLFixture.someOKUrl;
 
 import java.net.URI;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -20,7 +21,7 @@ import org.mockito.stubbing.Answer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import urlshortener.domain.ShortURL;
-import urlshortener.repository.impl.ShortURLRepositoryImpl;
+import urlshortener.repository.ShortURLRepository;
 import urlshortener.service.ClickService;
 import urlshortener.service.ShortURLService;
 import urlshortener.service.URLStatusService;
@@ -35,7 +36,7 @@ public class UrlShortenerTests {
 
   @Mock private URLStatusService urlStatusService;
 
-  @Mock private ShortURLRepositoryImpl shortURLRepository;
+  @Mock private ShortURLRepository shortURLRepository;
 
   @InjectMocks private UrlShortenerController urlShortener;
 
@@ -47,7 +48,7 @@ public class UrlShortenerTests {
 
   @Test
   public void thatRedirectToReturnsTemporaryRedirectIfKeyExists() throws Exception {
-    when(shortUrlService.findByKey("someKey")).thenReturn(someOKUrl());
+    when(shortUrlService.findByKey("someKey")).thenReturn(Optional.of(someOKUrl()));
 
     mockMvc
         .perform(get("/{id}", "someKey"))
@@ -58,7 +59,7 @@ public class UrlShortenerTests {
 
   @Test
   public void thatRedirecToReturnsNotFoundIdIfKeyDoesNotExist() throws Exception {
-    when(shortUrlService.findByKey("someKey")).thenReturn(null);
+    when(shortUrlService.findByKey("someKey")).thenReturn(Optional.empty());
 
     mockMvc.perform(get("/{id}", "someKey")).andDo(print()).andExpect(status().isNotFound());
   }
