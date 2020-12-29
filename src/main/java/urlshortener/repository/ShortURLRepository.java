@@ -9,5 +9,4 @@ public interface ShortURLRepository extends JpaRepository<ShortURL, String> {
   ShortURL findByHash(String id);
 
   List<ShortURL> findByTarget(String target);
-
 }
