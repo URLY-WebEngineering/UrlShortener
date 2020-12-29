@@ -47,17 +47,20 @@ public class ShortURLRepositoryTests {
   @Test
   public void thatSaveSafe() {
     assertNotNull(shortURLRepository.save(urlSafe()));
-    assertSame(true,
+    assertSame(
+        true,
         (Boolean) entityManager.createNativeQuery("select safe from SHORTURL").getSingleResult());
     ShortURL shortURL = shortURLRepository.findByHash(urlSafe().getHash());
     shortURL.setSafe(false);
     shortURLRepository.save(shortURL);
-    assertSame(false,
+    assertSame(
+        false,
         (Boolean) entityManager.createNativeQuery("select safe from SHORTURL").getSingleResult());
     shortURL = shortURLRepository.findByHash(urlSafe().getHash());
     shortURL.setSafe(true);
     shortURLRepository.save(shortURL);
-    assertSame(true,
+    assertSame(
+        true,
         (Boolean) entityManager.createNativeQuery("select safe from SHORTURL").getSingleResult());
   }
 
