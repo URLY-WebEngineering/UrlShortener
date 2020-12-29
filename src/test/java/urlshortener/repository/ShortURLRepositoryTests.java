@@ -47,23 +47,18 @@ public class ShortURLRepositoryTests {
   @Test
   public void thatSaveSafe() {
     assertNotNull(shortURLRepository.save(urlSafe()));
-    assertSame(
-        (Boolean) entityManager.createNativeQuery("select safe from SHORTURL").getSingleResult(),
-        true);
+    assertSame(true,
+        (Boolean) entityManager.createNativeQuery("select safe from SHORTURL").getSingleResult());
     ShortURL shortURL = shortURLRepository.findByHash(urlSafe().getHash());
     shortURL.setSafe(false);
     shortURLRepository.save(shortURL);
-    // repository.mark(urlSafe(), false);
-    assertSame(
-        (Boolean) entityManager.createNativeQuery("select safe from SHORTURL").getSingleResult(),
-        false);
+    assertSame(false,
+        (Boolean) entityManager.createNativeQuery("select safe from SHORTURL").getSingleResult());
     shortURL = shortURLRepository.findByHash(urlSafe().getHash());
     shortURL.setSafe(true);
     shortURLRepository.save(shortURL);
-    // repository.mark(urlSafe(), true);
-    assertSame(
-        (Boolean) entityManager.createNativeQuery("select safe from SHORTURL").getSingleResult(),
-        true);
+    assertSame(true,
+        (Boolean) entityManager.createNativeQuery("select safe from SHORTURL").getSingleResult());
   }
 
   @Test
@@ -97,11 +92,11 @@ public class ShortURLRepositoryTests {
     shortURLRepository.save(url2());
     shortURLRepository.save(url3());
     List<ShortURL> sul = shortURLRepository.findByTarget(url1().getTarget());
-    assertEquals(sul.size(), 2);
+    assertEquals(2, sul.size());
     sul = shortURLRepository.findByTarget(url3().getTarget());
-    assertEquals(sul.size(), 1);
+    assertEquals(1, sul.size());
     sul = shortURLRepository.findByTarget("dummy");
-    assertEquals(sul.size(), 0);
+    assertEquals(0, sul.size());
   }
 
   @Test
@@ -109,9 +104,9 @@ public class ShortURLRepositoryTests {
     shortURLRepository.save(url1());
     shortURLRepository.save(url2());
     shortURLRepository.deleteById(url1().getHash());
-    assertEquals(shortURLRepository.count(), 1);
+    assertEquals(1, shortURLRepository.count());
     shortURLRepository.deleteById(url2().getHash());
-    assertEquals(shortURLRepository.count(), 0);
+    assertEquals(0, shortURLRepository.count());
   }
 
   @Test

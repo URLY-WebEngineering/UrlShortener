@@ -48,16 +48,20 @@ public class QRController {
       HttpHeaders h = new HttpHeaders(); // NOSONAR
       // Find the URL by the id
       Optional<ShortURL> shorturl = shortUrlService.findByKey(id); // NOSONAR
-      // Get the URI
-      String location = shorturl.get().getUri().toString();
-      // Create the QR code
-      byte[] qrImage = QRService.getQRImage(location);
-      // Specify the header and the content of the response
-      h.setLocation(URI.create(location));
-      h.setContentType(MediaType.IMAGE_PNG);
-      h.setContentLength(qrImage.length);
-      return new ResponseEntity<>(qrImage, h, HttpStatus.OK);
-
+      if (shorturl.isPresent()) {
+        // Get the URI
+        String location = shorturl.get().getUri().toString();
+        // Create the QR code
+        byte[] qrImage = QRService.getQRImage(location);
+        // Specify the header and the content of the response
+        h.setLocation(URI.create(location));
+        h.setContentType(MediaType.IMAGE_PNG);
+        h.setContentLength(qrImage.length);
+        return new ResponseEntity<>(qrImage, h, HttpStatus.OK);
+      } else {
+        // It could not find the URI
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ID of shortened URL not found");
+      }
     } catch (Exception e) {
       // It could not find the URI
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ID of shortened URL not found");

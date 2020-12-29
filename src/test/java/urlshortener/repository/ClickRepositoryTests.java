@@ -56,8 +56,8 @@ public class ClickRepositoryTests {
     clickRepository.save(ClickFixture.click(ShortURLFixture.url1()));
     clickRepository.save(ClickFixture.click(ShortURLFixture.url2()));
     clickRepository.save(ClickFixture.click(ShortURLFixture.url1()));
-    assertEquals(clickRepository.findByHash(ShortURLFixture.url1()).size(), 3);
-    assertEquals(clickRepository.findByHash(ShortURLFixture.url2()).size(), 2);
+    assertEquals(3, clickRepository.findByHash(ShortURLFixture.url1()).size());
+    assertEquals(2, clickRepository.findByHash(ShortURLFixture.url2()).size());
   }
 
   @Test
@@ -67,7 +67,7 @@ public class ClickRepositoryTests {
     clickRepository.save(ClickFixture.click(ShortURLFixture.url1()));
     clickRepository.save(ClickFixture.click(ShortURLFixture.url2()));
     clickRepository.save(ClickFixture.click(ShortURLFixture.url1()));
-    assertEquals(clickRepository.findByHash(ShortURLFixture.url3()).size(), 0);
+    assertEquals(0, clickRepository.findByHash(ShortURLFixture.url3()).size());
   }
 
   @Test
@@ -75,8 +75,8 @@ public class ClickRepositoryTests {
     Long id1 = clickRepository.save(ClickFixture.click(ShortURLFixture.url1())).getId();
     Long id2 = clickRepository.save(ClickFixture.click(ShortURLFixture.url2())).getId();
     clickRepository.deleteById(id1);
-    assertEquals(clickRepository.count(), 1);
+    assertEquals(1, clickRepository.count());
     clickRepository.deleteById(id2);
-    assertEquals(clickRepository.count(), 0);
+    assertEquals(0, clickRepository.count());
   }
 }

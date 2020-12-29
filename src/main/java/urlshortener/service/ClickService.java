@@ -18,12 +18,14 @@ public class ClickService {
   }
 
   public void saveClick(ShortURL shortURL, String ip) {
-    Click cl = ClickBuilder.newInstance().shortURL(shortURL).createdNow().ip(ip).build();
-    cl = clickRepository.save(cl);
-    log.info(
-        cl != null
-            ? "[" + shortURL.getHash() + "] saved with id [" + cl.getId() + "]"
-            : "[" + shortURL.getHash() + "] was not saved");
+    try {
+      Click cl = ClickBuilder.newInstance().shortURL(shortURL).createdNow().ip(ip).build();
+      cl = clickRepository.save(cl);
+      log.info("[" + shortURL.getHash() + "] saved with id [" + cl.getId() + "]");
+    } catch (Exception e) {
+      log.info("[" + shortURL.getHash() + "] was not saved");
+      throw e;
+    }
   }
 
   public Long getTotalClick() {
