@@ -84,6 +84,6 @@ public class URLStatusService {
       updatedShortURL.setSafe(true);
     }
     updatedShortURL.setChecked(true);
-    shortURLRepository.update(updatedShortURL);
+    shortURLRepository.save(updatedShortURL);
   }
 }
