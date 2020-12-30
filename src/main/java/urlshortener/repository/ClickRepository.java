@@ -1,23 +1,11 @@
 package urlshortener.repository;
 
 import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 import urlshortener.domain.Click;
+import urlshortener.domain.ShortURL;
 
-public interface ClickRepository {
+public interface ClickRepository extends JpaRepository<Click, Long> {
 
-  List<Click> findByHash(String hash);
-
-  Long clicksByHash(String hash);
-
-  Click save(Click cl);
-
-  void update(Click cl);
-
-  void delete(Long id);
-
-  void deleteAll();
-
-  Long count();
-
-  List<Click> list(Long limit, Long offset);
+  List<Click> findByHash(ShortURL hash);
 }

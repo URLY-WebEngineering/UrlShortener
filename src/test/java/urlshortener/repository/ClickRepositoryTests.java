@@ -1,86 +1,82 @@
 package urlshortener.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.HSQL;
+import static org.junit.Assert.*;
 
-import org.junit.After;
+import java.math.BigInteger;
+import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.test.context.junit4.SpringRunner;
 import urlshortener.domain.Click;
 import urlshortener.fixtures.ClickFixture;
 import urlshortener.fixtures.ShortURLFixture;
-import urlshortener.repository.impl.ClickRepositoryImpl;
-import urlshortener.repository.impl.ShortURLRepositoryImpl;
 
+@RunWith(SpringRunner.class)
+@DataJpaTest
 public class ClickRepositoryTests {
 
-  private EmbeddedDatabase db;
-  private ClickRepository repository;
-  private JdbcTemplate jdbc;
+  @Autowired private EntityManager entityManager;
+  @Autowired private ShortURLRepository shortURLRepository;
+  @Autowired private ClickRepository clickRepository;
 
   @Before
   public void setup() {
-    db = new EmbeddedDatabaseBuilder().setType(HSQL).addScript("schema-hsqldb.sql").build();
-    jdbc = new JdbcTemplate(db);
-    ShortURLRepository shortUrlRepository = new ShortURLRepositoryImpl(jdbc);
-    shortUrlRepository.save(ShortURLFixture.url1());
-    shortUrlRepository.save(ShortURLFixture.url2());
-    repository = new ClickRepositoryImpl(jdbc);
+    shortURLRepository.save(ShortURLFixture.url1());
+    shortURLRepository.save(ShortURLFixture.url2());
+    shortURLRepository.flush();
   }
 
   @Test
   public void thatSavePersistsTheClickURL() {
-    Click click = repository.save(ClickFixture.click(ShortURLFixture.url1()));
-    assertSame(jdbc.queryForObject("select count(*) from CLICK", Integer.class), 1);
+    Click click = clickRepository.save(ClickFixture.click(ShortURLFixture.url1()));
+    assertSame(
+        1,
+        ((BigInteger)
+                entityManager.createNativeQuery("select count(*) from CLICK").getSingleResult())
+            .intValue());
     assertNotNull(click);
     assertNotNull(click.getId());
   }
 
   @Test
-  public void thatErrorsInSaveReturnsNull() {
-    assertNull(repository.save(ClickFixture.click(ShortURLFixture.badUrl())));
-    assertSame(jdbc.queryForObject("select count(*) from CLICK", Integer.class), 0);
+  public void thatErrorsInSaveThrows() {
+    assertThrows(
+        InvalidDataAccessApiUsageException.class,
+        () -> clickRepository.save(ClickFixture.click(ShortURLFixture.badUrl())));
   }
 
   @Test
   public void thatFindByKeyReturnsAURL() {
-    repository.save(ClickFixture.click(ShortURLFixture.url1()));
-    repository.save(ClickFixture.click(ShortURLFixture.url2()));
-    repository.save(ClickFixture.click(ShortURLFixture.url1()));
-    repository.save(ClickFixture.click(ShortURLFixture.url2()));
-    repository.save(ClickFixture.click(ShortURLFixture.url1()));
-    assertEquals(repository.findByHash(ShortURLFixture.url1().getHash()).size(), 3);
-    assertEquals(repository.findByHash(ShortURLFixture.url2().getHash()).size(), 2);
+    clickRepository.save(ClickFixture.click(ShortURLFixture.url1()));
+    clickRepository.save(ClickFixture.click(ShortURLFixture.url2()));
+    clickRepository.save(ClickFixture.click(ShortURLFixture.url1()));
+    clickRepository.save(ClickFixture.click(ShortURLFixture.url2()));
+    clickRepository.save(ClickFixture.click(ShortURLFixture.url1()));
+    assertEquals(3, clickRepository.findByHash(ShortURLFixture.url1()).size());
+    assertEquals(2, clickRepository.findByHash(ShortURLFixture.url2()).size());
   }
 
   @Test
   public void thatFindByKeyReturnsEmpty() {
-    repository.save(ClickFixture.click(ShortURLFixture.url1()));
-    repository.save(ClickFixture.click(ShortURLFixture.url2()));
-    repository.save(ClickFixture.click(ShortURLFixture.url1()));
-    repository.save(ClickFixture.click(ShortURLFixture.url2()));
-    repository.save(ClickFixture.click(ShortURLFixture.url1()));
-    assertEquals(repository.findByHash(ShortURLFixture.badUrl().getHash()).size(), 0);
+    clickRepository.save(ClickFixture.click(ShortURLFixture.url1()));
+    clickRepository.save(ClickFixture.click(ShortURLFixture.url2()));
+    clickRepository.save(ClickFixture.click(ShortURLFixture.url1()));
+    clickRepository.save(ClickFixture.click(ShortURLFixture.url2()));
+    clickRepository.save(ClickFixture.click(ShortURLFixture.url1()));
+    assertEquals(0, clickRepository.findByHash(ShortURLFixture.url3()).size());
   }
 
   @Test
   public void thatDeleteDelete() {
-    Long id1 = repository.save(ClickFixture.click(ShortURLFixture.url1())).getId();
-    Long id2 = repository.save(ClickFixture.click(ShortURLFixture.url2())).getId();
-    repository.delete(id1);
-    assertEquals(repository.count().intValue(), 1);
-    repository.delete(id2);
-    assertEquals(repository.count().intValue(), 0);
-  }
-
-  @After
-  public void shutdown() {
-    db.shutdown();
+    Long id1 = clickRepository.save(ClickFixture.click(ShortURLFixture.url1())).getId();
+    Long id2 = clickRepository.save(ClickFixture.click(ShortURLFixture.url2())).getId();
+    clickRepository.deleteById(id1);
+    assertEquals(1, clickRepository.count());
+    clickRepository.deleteById(id2);
+    assertEquals(0, clickRepository.count());
   }
 }

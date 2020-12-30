@@ -38,6 +38,23 @@ public class ShortURLFixture {
         false);
   }
 
+  public static ShortURL url1Custom(String custombackhalf) {
+    return new ShortURL(
+        custombackhalf,
+        "http://www.unizar.es/",
+        null,
+        null,
+        null,
+        null,
+        null,
+        false,
+        null,
+        null,
+        null,
+        false,
+        false);
+  }
+
   public static ShortURL url2() {
     return new ShortURL(
         "2",

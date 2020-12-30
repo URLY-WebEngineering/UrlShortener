@@ -5,15 +5,19 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.net.URI;
 import java.sql.Date;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import lombok.*;
 import urlshortener.web.UrlShortenerController;
 
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class ShortURL {
 
-  @Getter @Setter private String hash;
+  @Id @Getter @Setter private String hash;
+
   @Getter @Setter private String target;
   @Setter private URI uri;
   @Getter @Setter private String sponsor;

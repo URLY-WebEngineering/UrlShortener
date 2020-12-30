@@ -5,9 +5,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import urlshortener.domain.ShortURL;
 import urlshortener.repository.ShortURLRepository;
@@ -25,8 +25,8 @@ public class ShortURLService {
     this.shortURLRepository = shortURLRepository;
   }
 
-  public ShortURL findByKey(String id) {
-    return shortURLRepository.findByKey(id);
+  public Optional<ShortURL> findByKey(String id) {
+    return shortURLRepository.findById(id);
   }
 
   public ShortURL save(String url, String sponsor, String custombackhalf, String ip, boolean wantQr)
@@ -57,12 +57,14 @@ public class ShortURLService {
             .notReachable()
             .notChecked()
             .build();
-    try {
-      return shortURLRepository.save(su);
-    } catch (DuplicateKeyException e) {
+    if (shortURLRepository.findById(custombackhalf).isPresent()) {
       throw new BadCustomBackhalfException("Backhalf already exists");
-    } catch (Exception e) {
-      throw new BadCustomBackhalfException("Backhalf could not be inserted");
+    } else {
+      try {
+        return shortURLRepository.save(su);
+      } catch (Exception e) {
+        throw new BadCustomBackhalfException("Backhalf could not be inserted");
+      }
     }
   }
 

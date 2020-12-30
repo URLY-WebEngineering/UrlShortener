@@ -56,7 +56,7 @@ dependencies {
     implementation 'com.google.guava:guava:28.1-jre'
     implementation 'com.jayway.jsonpath:json-path:2.4.0'
 
-    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -66,6 +66,7 @@ dependencies {
     compile 'com.google.zxing:javase:3.3.0'
     compile 'org.springdoc:springdoc-openapi-ui:1.5.0'
 
+    runtime 'mysql:mysql-connector-java'
     runtime 'org.hsqldb:hsqldb'
     runtime 'org.webjars:bootstrap:3.3.5'
     runtime 'org.webjars:jquery:2.1.4'

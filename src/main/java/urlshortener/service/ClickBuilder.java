@@ -2,10 +2,11 @@ package urlshortener.service;
 
 import java.sql.Date;
 import urlshortener.domain.Click;
+import urlshortener.domain.ShortURL;
 
 public class ClickBuilder {
 
-  private String hash;
+  private ShortURL shortURL;
   private Date created;
   private String referrer;
   private String browser;
@@ -18,11 +19,11 @@ public class ClickBuilder {
   }
 
   Click build() {
-    return new Click(null, hash, created, referrer, browser, platform, ip, country);
+    return new Click(null, shortURL, created, referrer, browser, platform, ip, country);
   }
 
-  ClickBuilder hash(String hash) {
-    this.hash = hash;
+  ClickBuilder shortURL(ShortURL shortURL) {
+    this.shortURL = shortURL;
     return this;
   }
 
