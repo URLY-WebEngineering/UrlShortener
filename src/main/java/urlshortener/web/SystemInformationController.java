@@ -119,14 +119,13 @@ public class SystemInformationController {
     this.numClicks = parseMessage(message);
   }
 
-  @Async
-  @Scheduled(fixedRate = 1000, initialDelay = 500)
+  @Async("threadTaskScheduler")
+  @Scheduled(fixedRate = 2000, initialDelay = 500)
   public void checkSystemInformation() {
-    template.convertAndSend(direct.getName(), "request_queue", "800");
+    template.convertAndSend(direct.getName(), "request_queue", "send information");
   }
 
   AtomicInteger parseMessage(String message) {
-    Integer dato = Integer.parseInt(message);
-    return (new AtomicInteger(dato));
+    return (new AtomicInteger(Integer.parseInt(message)));
   }
 }

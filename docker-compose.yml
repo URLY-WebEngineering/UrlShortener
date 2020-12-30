@@ -9,6 +9,7 @@ services:
       - GSB_API_KEY
     depends_on:
       - mysql-docker
+      - rabbitmq
   mysql-docker:
     image: library/mysql:5.7.32
     container_name: mysql-docker
@@ -25,6 +26,13 @@ services:
       - '3306'
     volumes:
       - my-db:/var/lib/mysql
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - target: 15672
+        published: 15672
+        mode: host
 # Names our volume
 volumes:
   my-db:
