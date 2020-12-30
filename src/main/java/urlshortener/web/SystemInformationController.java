@@ -3,8 +3,15 @@ package urlshortener.web;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -22,28 +29,46 @@ import urlshortener.service.ShortURLService;
 @Component
 public class SystemInformationController {
 
-  private final AtomicInteger numClicks;
-  private final AtomicInteger numUsers;
-  private final AtomicInteger numURLs;
+  private AtomicInteger numClicks;
+  private AtomicInteger numUsers;
+  private AtomicInteger numURLs;
 
   private final ClickService clickService;
   private final ShortURLService shortUrlService;
 
-  public SystemInformationController(ClickService clickService, ShortURLService shortUrlService) {
+  private RabbitTemplate template;
+  private DirectExchange direct;
+
+  @Bean
+  public Queue ResponsesUsersQueue() {
+    return new Queue("responses_users");
+  }
+
+  @Bean
+  public Queue ResponsesURLQueue() {
+    return new Queue("responses_url");
+  }
+
+  @Bean
+  public Queue ResponsesClickQueue() {
+    return new Queue("responses_click");
+  }
+
+  public SystemInformationController(
+      ClickService clickService,
+      ShortURLService shortUrlService,
+      RabbitTemplate template,
+      DirectExchange direct) {
+
     this.clickService = clickService;
     this.shortUrlService = shortUrlService;
 
     this.numClicks = new AtomicInteger(Math.toIntExact(clickService.getTotalClick()));
     this.numURLs = new AtomicInteger(Math.toIntExact(shortUrlService.getTotalURL()));
     this.numUsers = new AtomicInteger(0);
-  }
 
-  @Async("threadTaskScheduler")
-  @Scheduled(fixedRate = 1000, initialDelay = 500)
-  public void checkSystemInformation() {
-    numUsers.set(0);
-    numClicks.set(Math.toIntExact(clickService.getTotalClick()));
-    numURLs.set(Math.toIntExact(shortUrlService.getTotalURL()));
+    this.direct = direct;
+    this.template = template;
   }
 
   @ReadOperation
@@ -56,5 +81,52 @@ public class SystemInformationController {
             "Clicks.number", "Number of clicks to urls stored in  the database", numClicks));
     list.add(new Information("Users.number", "Number of users  on the database", numUsers));
     return list;
+  }
+
+  // Bind the process to the queues
+  // A binding is a relationship between an exchange and a queue
+  @Bean
+  public Binding bindingUsersResponses(DirectExchange direct, Queue ResponsesUsersQueue) {
+    return BindingBuilder.bind(ResponsesUsersQueue).to(direct).with("responses_users");
+  }
+
+  @Bean
+  public Binding bindingURLResponses(DirectExchange direct, Queue ResponsesURLQueue) {
+    return BindingBuilder.bind(ResponsesURLQueue).to(direct).with("responses_url");
+  }
+
+  @Bean
+  public Binding bindingClickResponses(DirectExchange direct, Queue ResponsesClickQueue) {
+    return BindingBuilder.bind(ResponsesClickQueue).to(direct).with("responses_click");
+  }
+
+  // Consumes the messages in the queue and updates the values
+  @Async
+  @RabbitListener(queues = "responses_users")
+  public void receiveUsers(String message) {
+    this.numUsers = parseMessage(message);
+  }
+
+  @Async
+  @RabbitListener(queues = "responses_url")
+  public void receiveUrl(String message) {
+    this.numURLs = parseMessage(message);
+  }
+
+  @Async
+  @RabbitListener(queues = "responses_click")
+  public void receiveClick(String message) {
+    this.numClicks = parseMessage(message);
+  }
+
+  @Async
+  @Scheduled(fixedRate = 1000, initialDelay = 500)
+  public void checkSystemInformation() {
+    template.convertAndSend(direct.getName(), "request_queue", "800");
+  }
+
+  AtomicInteger parseMessage(String message) {
+    Integer dato = Integer.parseInt(message);
+    return (new AtomicInteger(dato));
   }
 }

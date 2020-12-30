@@ -66,6 +66,8 @@ dependencies {
     compile 'com.google.zxing:javase:3.3.0'
     compile 'org.springdoc:springdoc-openapi-ui:1.5.0'
 
+    compile 'org.springframework.boot:spring-boot-starter-amqp'
+
     runtime 'mysql:mysql-connector-java'
     runtime 'org.hsqldb:hsqldb'
     runtime 'org.webjars:bootstrap:3.3.5'
