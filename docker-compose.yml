@@ -1,15 +1,26 @@
 version: "3"
 services:
   web:
-    build: .
+    build: server
     ports:
       - "8080:8080"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-docker:3306/urly?useSSL=false
-      - GSB_API_KEY
+      - GSB_API_KEY=AIzaSyA1-QPoABwGOAiwKCl8jboLzIDEuqj3JY4
     depends_on:
       - mysql-docker
       - rabbitmq
+
+  systeminformation:
+    build: systeminformation
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-docker:3306/urly?useSSL=false
+    depends_on:
+      - mysql-docker
+      - rabbitmq
+
   mysql-docker:
     image: library/mysql:5.7.32
     container_name: mysql-docker
@@ -20,7 +31,7 @@ services:
       - MYSQL_USER=urly
       - MYSQL_PASSWORD=password
     ports:
-    - '3306:3306'
+      - '3306:3306'
     expose:
       # Opens port 3306 on the container
       - '3306'
@@ -30,9 +41,8 @@ services:
     image: rabbitmq:3-management
     container_name: rabbitmq
     ports:
-      - target: 15672
-        published: 15672
-        mode: host
+      - '15672:15672'
+
 # Names our volume
 volumes:
   my-db:
