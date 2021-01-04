@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -26,14 +27,17 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 public class SystemInformationTests {
 
   @Autowired private TestRestTemplate restTemplate;
-  @Autowired private RabbitTemplate template;
-  @Autowired private DirectExchange direct;
+  private RabbitTemplate template;
+  private DirectExchange direct;
 
   @InjectMocks private SystemInformationController systemInformation;
   private MockMvc mockMvc;
 
   @Before
   public void setup() {
+
+    this.template = Mockito.mock(RabbitTemplate.class);
+    this.direct = new DirectExchange("tut.direct");
     MockitoAnnotations.initMocks(this);
     this.mockMvc = MockMvcBuilders.standaloneSetup(systemInformation).build();
   }
