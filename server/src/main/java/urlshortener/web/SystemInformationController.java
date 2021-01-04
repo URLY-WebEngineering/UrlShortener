@@ -33,37 +33,30 @@ public class SystemInformationController {
   private AtomicInteger numUsers;
   private AtomicInteger numURLs;
 
-  private final ClickService clickService;
-  private final ShortURLService shortUrlService;
-
   private RabbitTemplate template;
   private DirectExchange direct;
 
   @Bean
-  public Queue ResponsesUsersQueue() {
+  public Queue responsesUsersQueue() {
     return new Queue("responses_users");
   }
 
   @Bean
-  public Queue ResponsesURLQueue() {
+  public Queue responsesURLQueue() {
     return new Queue("responses_url");
   }
 
   @Bean
-  public Queue ResponsesClickQueue() {
+  public Queue responsesClickQueue() {
     return new Queue("responses_click");
   }
 
   public SystemInformationController(
-      ClickService clickService,
-      ShortURLService shortUrlService,
       RabbitTemplate template,
       DirectExchange direct) {
-    this.clickService = clickService;
-    this.shortUrlService = shortUrlService;
 
-    this.numClicks = new AtomicInteger(Math.toIntExact(clickService.getTotalClick()));
-    this.numURLs = new AtomicInteger(Math.toIntExact(shortUrlService.getTotalURL()));
+    this.numClicks = new AtomicInteger(0);
+    this.numURLs = new AtomicInteger(0);
     this.numUsers = new AtomicInteger(0);
 
     this.direct = direct;
@@ -85,18 +78,18 @@ public class SystemInformationController {
   // Bind the process to the queues
   // A binding is a relationship between an exchange and a queue
   @Bean
-  public Binding bindingUsersResponses(DirectExchange direct, Queue ResponsesUsersQueue) {
-    return BindingBuilder.bind(ResponsesUsersQueue).to(direct).with("responses_users");
+  public Binding bindingUsersResponses(DirectExchange direct, Queue responsesUsersQueue) {
+    return BindingBuilder.bind(responsesUsersQueue).to(direct).with("responses_users");
   }
 
   @Bean
-  public Binding bindingURLResponses(DirectExchange direct, Queue ResponsesURLQueue) {
-    return BindingBuilder.bind(ResponsesURLQueue).to(direct).with("responses_url");
+  public Binding bindingURLResponses(DirectExchange direct, Queue responsesURLQueue) {
+    return BindingBuilder.bind(responsesURLQueue).to(direct).with("responses_url");
   }
 
   @Bean
-  public Binding bindingClickResponses(DirectExchange direct, Queue ResponsesClickQueue) {
-    return BindingBuilder.bind(ResponsesClickQueue).to(direct).with("responses_click");
+  public Binding bindingClickResponses(DirectExchange direct, Queue responsesClickQueue) {
+    return BindingBuilder.bind(responsesClickQueue).to(direct).with("responses_click");
   }
 
   // Consumes the messages in the queue and updates the values
@@ -119,7 +112,7 @@ public class SystemInformationController {
   }
 
   @Async("threadTaskScheduler")
-  @Scheduled(fixedRate = 2000, initialDelay = 500)
+  @Scheduled(fixedRate = 1000, initialDelay = 500)
   public void checkSystemInformation() {
     template.convertAndSend(direct.getName(), "request_queue", "send information");
   }
