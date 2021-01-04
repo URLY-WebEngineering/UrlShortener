@@ -19,8 +19,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import urlshortener.domain.Information;
-import urlshortener.service.ClickService;
-import urlshortener.service.ShortURLService;
 
 @Endpoint(id = "database")
 @Configuration
@@ -37,23 +35,21 @@ public class SystemInformationController {
   private DirectExchange direct;
 
   @Bean
-  public Queue responsesUsersQueue() {
+  public Queue ResponsesUsersQueue() {
     return new Queue("responses_users");
   }
 
   @Bean
-  public Queue responsesURLQueue() {
+  public Queue ResponsesURLQueue() {
     return new Queue("responses_url");
   }
 
   @Bean
-  public Queue responsesClickQueue() {
+  public Queue ResponsesClickQueue() {
     return new Queue("responses_click");
   }
 
-  public SystemInformationController(
-      RabbitTemplate template,
-      DirectExchange direct) {
+  public SystemInformationController(RabbitTemplate template, DirectExchange direct) {
 
     this.numClicks = new AtomicInteger(0);
     this.numURLs = new AtomicInteger(0);
@@ -78,18 +74,18 @@ public class SystemInformationController {
   // Bind the process to the queues
   // A binding is a relationship between an exchange and a queue
   @Bean
-  public Binding bindingUsersResponses(DirectExchange direct, Queue responsesUsersQueue) {
-    return BindingBuilder.bind(responsesUsersQueue).to(direct).with("responses_users");
+  public Binding bindingUsersResponses(DirectExchange direct, Queue ResponsesUsersQueue) {
+    return BindingBuilder.bind(ResponsesUsersQueue).to(direct).with("responses_users");
   }
 
   @Bean
-  public Binding bindingURLResponses(DirectExchange direct, Queue responsesURLQueue) {
-    return BindingBuilder.bind(responsesURLQueue).to(direct).with("responses_url");
+  public Binding bindingURLResponses(DirectExchange direct, Queue ResponsesURLQueue) {
+    return BindingBuilder.bind(ResponsesURLQueue).to(direct).with("responses_url");
   }
 
   @Bean
-  public Binding bindingClickResponses(DirectExchange direct, Queue responsesClickQueue) {
-    return BindingBuilder.bind(responsesClickQueue).to(direct).with("responses_click");
+  public Binding bindingClickResponses(DirectExchange direct, Queue ResponsesClickQueue) {
+    return BindingBuilder.bind(ResponsesClickQueue).to(direct).with("responses_click");
   }
 
   // Consumes the messages in the queue and updates the values
