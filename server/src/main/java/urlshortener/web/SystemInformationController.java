@@ -72,7 +72,6 @@ public class SystemInformationController {
 
     this.direct = direct;
     this.template = template;
-    checkSystemInformation();
   }
 
   @ReadOperation
