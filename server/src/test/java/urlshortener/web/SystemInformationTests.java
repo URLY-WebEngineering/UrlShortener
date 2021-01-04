@@ -69,7 +69,6 @@ public class SystemInformationTests {
   @Test
   public void testQueue() {
     String numberData = "150";
-    systemInformation.checkSystemInformation();
 
     template.convertAndSend(direct.getName(), "responses_url", numberData);
     template.convertAndSend(direct.getName(), "responses_click", numberData);
