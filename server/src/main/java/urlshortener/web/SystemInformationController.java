@@ -30,23 +30,38 @@ public class SystemInformationController {
   private AtomicInteger numClicks;
   private AtomicInteger numUsers;
   private AtomicInteger numURLs;
-
   private RabbitTemplate template;
   private DirectExchange direct;
 
   @Bean
-  public Queue ResponsesUsersQueue() {
+  public Queue responsesUsersQueue() {
     return new Queue("responses_users");
   }
 
   @Bean
-  public Queue ResponsesURLQueue() {
+  public Queue responsesURLQueue() {
     return new Queue("responses_url");
   }
 
   @Bean
-  public Queue ResponsesClickQueue() {
+  public Queue responsesClickQueue() {
     return new Queue("responses_click");
+  }
+  // Bind the process to the queues
+  // A binding is a relationship between an exchange and a queue
+  @Bean
+  public Binding bindingUsersResponses(DirectExchange direct, Queue responsesUsersQueue) {
+    return BindingBuilder.bind(responsesUsersQueue).to(direct).with("responses_users");
+  }
+
+  @Bean
+  public Binding bindingURLResponses(DirectExchange direct, Queue responsesURLQueue) {
+    return BindingBuilder.bind(responsesURLQueue).to(direct).with("responses_url");
+  }
+
+  @Bean
+  public Binding bindingClickResponses(DirectExchange direct, Queue responsesClickQueue) {
+    return BindingBuilder.bind(responsesClickQueue).to(direct).with("responses_click");
   }
 
   public SystemInformationController(RabbitTemplate template, DirectExchange direct) {
@@ -57,10 +72,12 @@ public class SystemInformationController {
 
     this.direct = direct;
     this.template = template;
+    checkSystemInformation();
   }
 
   @ReadOperation
   public List<Information> getInformation() {
+    checkSystemInformation();
     List<Information> list = new ArrayList<>();
     list.add(
         new Information("URL.number", "Number of URL shortened stored in the database", numURLs));
@@ -69,23 +86,6 @@ public class SystemInformationController {
             "Clicks.number", "Number of clicks to urls stored in  the database", numClicks));
     list.add(new Information("Users.number", "Number of users  on the database", numUsers));
     return list;
-  }
-
-  // Bind the process to the queues
-  // A binding is a relationship between an exchange and a queue
-  @Bean
-  public Binding bindingUsersResponses(DirectExchange direct, Queue ResponsesUsersQueue) {
-    return BindingBuilder.bind(ResponsesUsersQueue).to(direct).with("responses_users");
-  }
-
-  @Bean
-  public Binding bindingURLResponses(DirectExchange direct, Queue ResponsesURLQueue) {
-    return BindingBuilder.bind(ResponsesURLQueue).to(direct).with("responses_url");
-  }
-
-  @Bean
-  public Binding bindingClickResponses(DirectExchange direct, Queue ResponsesClickQueue) {
-    return BindingBuilder.bind(ResponsesClickQueue).to(direct).with("responses_click");
   }
 
   // Consumes the messages in the queue and updates the values
@@ -110,7 +110,7 @@ public class SystemInformationController {
   @Async("threadTaskScheduler")
   @Scheduled(fixedRate = 1000, initialDelay = 500)
   public void checkSystemInformation() {
-    template.convertAndSend(direct.getName(), "request_queue", "send information");
+    template.convertAndSend(direct.getName(), "request_queue", "information");
   }
 
   AtomicInteger parseMessage(String message) {

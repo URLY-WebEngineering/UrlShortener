@@ -12,35 +12,31 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 
-
 @Configuration
 @EnableAsync
 @Component
 public class SenderService {
 
-
-    // Bind the process to the queues
-    // A binding is a relationship between an exchange and a queue
-    @Bean
-    public Binding bindingRequest(DirectExchange direct,Queue ResponsesRequest) {
-        return BindingBuilder.bind(ResponsesRequest).to(direct).with("request_queue");
-    }
-
-    @Bean
-    public Queue ResponsesRequest() {
-        return new Queue("request_queue");
-    }
-
     private RabbitTemplate template;
-
     private DirectExchange direct;
-
     private AccessService accessData;
 
     public SenderService(RabbitTemplate template,DirectExchange direct,AccessService accessData){
         this.direct = direct;
         this.template = template;
         this.accessData = accessData;
+    }
+
+    // Bind the process to the queues
+    // A binding is a relationship between an exchange and a queue
+    @Bean
+    public Binding bindingRequest(DirectExchange direct,Queue responsesRequest) {
+        return BindingBuilder.bind(responsesRequest).to(direct).with("request_queue");
+    }
+
+    @Bean
+    public Queue responsesRequest() {
+        return new Queue("request_queue");
     }
 
     @Async
@@ -60,7 +56,7 @@ public class SenderService {
     public void sendClick() {
         template.convertAndSend(direct.getName(), "responses_click", accessData.getTotalClick().toString());
     }
-
+    //TODO
     @Async
     public void sendUser() {
         template.convertAndSend(direct.getName(), "responses_user", "800");
