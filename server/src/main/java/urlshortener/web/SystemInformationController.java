@@ -59,7 +59,6 @@ public class SystemInformationController {
       ShortURLService shortUrlService,
       RabbitTemplate template,
       DirectExchange direct) {
-
     this.clickService = clickService;
     this.shortUrlService = shortUrlService;
 

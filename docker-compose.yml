@@ -10,7 +10,6 @@ services:
     depends_on:
       - mysql-docker
       - rabbitmq
-
   systeminformation:
     build: systeminformation
     ports:
@@ -20,7 +19,6 @@ services:
     depends_on:
       - mysql-docker
       - rabbitmq
-
   mysql-docker:
     image: library/mysql:5.7.32
     container_name: mysql-docker
@@ -42,7 +40,6 @@ services:
     container_name: rabbitmq
     ports:
       - '15672:15672'
-
 # Names our volume
 volumes:
   my-db:
