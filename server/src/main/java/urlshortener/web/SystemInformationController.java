@@ -76,7 +76,6 @@ public class SystemInformationController {
 
   @ReadOperation
   public List<Information> getInformation() {
-    checkSystemInformation();
     List<Information> list = new ArrayList<>();
     list.add(
         new Information("URL.number", "Number of URL shortened stored in the database", numURLs));
