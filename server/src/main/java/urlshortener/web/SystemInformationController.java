@@ -65,7 +65,6 @@ public class SystemInformationController {
   }
 
   public SystemInformationController(RabbitTemplate template, DirectExchange direct) {
-
     this.numClicks = new AtomicInteger(0);
     this.numURLs = new AtomicInteger(0);
     this.numUsers = new AtomicInteger(0);
@@ -111,7 +110,7 @@ public class SystemInformationController {
     template.convertAndSend(direct.getName(), "request_queue", "information"); // NOSONAR
   }
 
-  @Async
+  @Async("threadTaskScheduler")
   @Scheduled(fixedRate = 1000, initialDelay = 500)
   public void updateInformation() {
     template.convertAndSend(direct.getName(), "request_queue", "update"); // NOSONAR
