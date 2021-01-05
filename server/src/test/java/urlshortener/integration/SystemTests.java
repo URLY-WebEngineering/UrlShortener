@@ -11,8 +11,11 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import java.net.URI;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -25,6 +28,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import urlshortener.domain.UrlStatus;
+import urlshortener.repository.ShortURLRepository;
+import urlshortener.service.ClickService;
+import urlshortener.service.ShortURLService;
+import urlshortener.service.URLStatusService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -32,6 +39,10 @@ import urlshortener.domain.UrlStatus;
 public class SystemTests {
 
   @Autowired private TestRestTemplate restTemplate;
+  @Mock private ClickService clickService;
+  @Mock private ShortURLService shortUrlService;
+  @Mock private URLStatusService urlStatusService;
+  @Mock private ShortURLRepository shortURLRepository;
   @LocalServerPort private int port;
 
   @Test
