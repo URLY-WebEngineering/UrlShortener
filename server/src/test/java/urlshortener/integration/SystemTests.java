@@ -32,7 +32,6 @@ import urlshortener.domain.UrlStatus;
 public class SystemTests {
 
   @Autowired private TestRestTemplate restTemplate;
-
   @LocalServerPort private int port;
 
   @Test
