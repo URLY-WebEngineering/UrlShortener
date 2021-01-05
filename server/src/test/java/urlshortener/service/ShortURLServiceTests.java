@@ -5,17 +5,13 @@ import static org.mockito.Mockito.*;
 import static urlshortener.fixtures.ShortURLFixture.*;
 
 import java.util.Optional;
-
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.annotation.DirtiesContext;
 import urlshortener.domain.ShortURL;
 import urlshortener.repository.ShortURLRepository;

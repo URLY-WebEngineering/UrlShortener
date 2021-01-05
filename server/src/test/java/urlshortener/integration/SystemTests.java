@@ -11,8 +11,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import java.net.URI;
-
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
