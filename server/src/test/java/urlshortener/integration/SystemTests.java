@@ -13,7 +13,6 @@ import com.jayway.jsonpath.ReadContext;
 import java.net.URI;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -26,10 +25,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import urlshortener.domain.UrlStatus;
-import urlshortener.repository.ShortURLRepository;
-import urlshortener.service.ClickService;
-import urlshortener.service.ShortURLService;
-import urlshortener.service.URLStatusService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -37,14 +32,10 @@ import urlshortener.service.URLStatusService;
 public class SystemTests {
 
   @Autowired private TestRestTemplate restTemplate;
-  @Mock private ClickService clickService;
-  @Mock private ShortURLService shortUrlService;
-  @Mock private URLStatusService urlStatusService;
-  @Mock private ShortURLRepository shortURLRepository;
   @LocalServerPort private int port;
 
   @Test
-  public void testHome() throws InterruptedException {
+  public void testHome() {
     ResponseEntity<String> entity = restTemplate.getForEntity("/", String.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.OK));
     assertNotNull(entity.getHeaders().getContentType());
@@ -54,7 +45,7 @@ public class SystemTests {
   }
 
   @Test
-  public void testCss() throws InterruptedException {
+  public void testCss() {
     ResponseEntity<String> entity =
         restTemplate.getForEntity("/webjars/bootstrap/3.3.5/css/bootstrap.min.css", String.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.OK));
@@ -114,7 +105,7 @@ public class SystemTests {
   }
 
   @Test
-  public void testUrlNotValidYet() throws Exception {
+  public void testUrlNotValidYet() {
     postLink("https://www.youtube.com/");
     ResponseEntity<String> entity = restTemplate.getForEntity("/_6f12359f", String.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
