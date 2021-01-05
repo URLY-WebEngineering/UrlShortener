@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import urlshortener.domain.ShortURL;
 import urlshortener.repository.ShortURLRepository;
@@ -20,16 +18,10 @@ import urlshortener.web.UrlShortenerController;
 public class ShortURLService {
 
   List<String> existingEndpoints = Arrays.asList("info", "link", "user", "qr");
-
   private final ShortURLRepository shortURLRepository;
-  private final RabbitTemplate template;
-  private final DirectExchange direct;
 
-  public ShortURLService(
-      ShortURLRepository shortURLRepository, RabbitTemplate template, DirectExchange direct) {
+  public ShortURLService(ShortURLRepository shortURLRepository) {
     this.shortURLRepository = shortURLRepository;
-    this.template = template;
-    this.direct = direct;
   }
 
   public Optional<ShortURL> findByKey(String id) {
@@ -64,7 +56,6 @@ public class ShortURLService {
             .notReachable()
             .notChecked()
             .build();
-    checkShortUrl(su);
     if (shortURLRepository.findById(custombackhalf).isPresent()) {
       throw new BadCustomBackhalfException("Backhalf already exists");
     } else {
@@ -95,7 +86,6 @@ public class ShortURLService {
             .notReachable()
             .notChecked()
             .build();
-    checkShortUrl(su);
     try {
       return shortURLRepository.save(su);
     } catch (Exception e) {
@@ -113,11 +103,5 @@ public class ShortURLService {
   public boolean backhalfIsConflictive(String custombackhalf) {
     // Check that it is not conflictive with already existing endpoints
     return existingEndpoints.contains(custombackhalf);
-  }
-
-  private void checkShortUrl(ShortURL su) {
-    if (shortURLRepository.findByHash(su.getHash()) == null) {
-      template.convertAndSend(direct.getName(), "request_queue", "url");
-    }
   }
 }

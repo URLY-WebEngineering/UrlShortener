@@ -10,8 +10,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import urlshortener.domain.ShortURL;
 import urlshortener.repository.ShortURLRepository;
@@ -22,9 +20,6 @@ import urlshortener.service.exceptions.BadCustomBackhalfException;
 public class ShortURLServiceTests {
 
   @Mock ShortURLRepository shortURLRepository;
-  @Mock private RabbitTemplate template;
-  @Mock private DirectExchange direct;
-
   @InjectMocks private ShortURLService shortURLService;
 
   @Test

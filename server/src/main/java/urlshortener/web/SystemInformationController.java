@@ -106,9 +106,15 @@ public class SystemInformationController {
   }
 
   @Async("threadTaskScheduler")
-  @Scheduled(fixedRate = 1000, initialDelay = 500)
+  @Scheduled(fixedRate = 2000, initialDelay = 500)
   public void checkSystemInformation() {
-    template.convertAndSend(direct.getName(), "request_queue", "information");
+    template.convertAndSend(direct.getName(), "request_queue", "information"); // NOSONAR
+  }
+
+  @Async
+  @Scheduled(fixedRate = 1000, initialDelay = 500)
+  public void updateInformation() {
+    template.convertAndSend(direct.getName(), "request_queue", "update"); // NOSONAR
   }
 
   AtomicInteger parseMessage(String message) {

@@ -51,19 +51,17 @@ public class SenderService {
     @Async
     @RabbitListener(queues = "request_queue")
     public void listenRequest(String in) {
-        if(in.equals("click")){
-            this.numClicks.getAndAdd(1);
-        }
-        if(in.equals("url")){
-            this.numURLs.getAndAdd(1);
-        }
-        if(in.equals("user")){
-            System.out.println("New user added");
+        if(in.equals("update")){
+            this.numClicks = new AtomicInteger(Math.toIntExact(accessData.getTotalClick()));
             //TODO
+            this.numUsers = new AtomicInteger(0);
+            this.numURLs = new AtomicInteger(Math.toIntExact(accessData.getTotalURL()));
         }
-        sendUrl();
-        sendClick();
-        sendUser();
+        else{
+            sendUrl();
+            sendClick();
+            sendUser();
+        }
     }
 
     @Async

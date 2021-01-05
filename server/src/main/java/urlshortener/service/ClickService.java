@@ -28,7 +28,6 @@ public class ClickService {
     try {
       Click cl = ClickBuilder.newInstance().shortURL(shortURL).createdNow().ip(ip).build();
       cl = clickRepository.save(cl);
-      template.convertAndSend(direct.getName(), "request_queue", "click");
       log.info("[" + shortURL.getHash() + "] saved with id [" + cl.getId() + "]");
     } catch (Exception e) {
       log.info("[" + shortURL.getHash() + "] was not saved");
