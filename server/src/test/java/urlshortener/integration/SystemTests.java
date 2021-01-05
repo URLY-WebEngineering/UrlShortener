@@ -37,7 +37,6 @@ public class SystemTests {
   @Test
   public void testHome() throws InterruptedException {
     ResponseEntity<String> entity = restTemplate.getForEntity("/", String.class);
-    Thread.sleep(500);
     assertThat(entity.getStatusCode(), is(HttpStatus.OK));
     assertNotNull(entity.getHeaders().getContentType());
     assertTrue(
@@ -49,7 +48,6 @@ public class SystemTests {
   public void testCss() throws InterruptedException {
     ResponseEntity<String> entity =
         restTemplate.getForEntity("/webjars/bootstrap/3.3.5/css/bootstrap.min.css", String.class);
-    Thread.sleep(500);
     assertThat(entity.getStatusCode(), is(HttpStatus.OK));
     assertThat(entity.getHeaders().getContentType(), is(MediaType.valueOf("text/css")));
     assertThat(entity.getBody(), containsString("body"));
@@ -58,7 +56,6 @@ public class SystemTests {
   @Test
   public void testCreateLink() throws Exception {
     ResponseEntity<String> entity = postLink("http://example.com/");
-    Thread.sleep(500);
     assertThat(entity.getStatusCode(), is(HttpStatus.CREATED));
     assertThat(
         entity.getHeaders().getLocation(),
@@ -74,7 +71,6 @@ public class SystemTests {
   @Test
   public void testCreateLinkWithCustomBackhalfCorrect() throws Exception {
     ResponseEntity<String> entity = postLink("http://example.com/", "custom");
-    Thread.sleep(500);
     assertThat(entity.getStatusCode(), is(HttpStatus.CREATED));
     assertThat(
         entity.getHeaders().getLocation(),
@@ -90,7 +86,6 @@ public class SystemTests {
   @Test
   public void testCreateLinkWithCustomBackhalfIncorrect() throws Exception {
     ResponseEntity<String> entity = postLink("http://example.com/", "_custom");
-    Thread.sleep(500);
     assertThat(entity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     assertThat(
         JsonPath.read(entity.getBody(), "$.message"),
@@ -104,6 +99,7 @@ public class SystemTests {
     Thread.sleep(3500); // Wait for checking
 
     ResponseEntity<String> entity = restTemplate.getForEntity("/_6f12359f", String.class);
+    System.out.println(entity.getStatusCode());
     assertThat(entity.getStatusCode(), is(HttpStatus.TEMPORARY_REDIRECT));
     assertThat(entity.getHeaders().getLocation(), is(new URI("https://www.youtube.com/")));
   }
@@ -112,7 +108,6 @@ public class SystemTests {
   public void testUrlNotValidYet() throws Exception {
     postLink("https://www.youtube.com/");
     ResponseEntity<String> entity = restTemplate.getForEntity("/_6f12359f", String.class);
-    Thread.sleep(500);
     assertThat(entity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     assertThat(JsonPath.read(entity.getBody(), "$.message"), is(UrlStatus.CHECKING.getStatus()));
   }
@@ -121,7 +116,6 @@ public class SystemTests {
   public void testUrlNotReachable() throws Exception {
     postLink("http://ingenieriaweb.com/");
     Thread.sleep(3500); // Wait for checking
-
     ResponseEntity<String> entity = restTemplate.getForEntity("/_6e9c6060", String.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     assertThat(JsonPath.read(entity.getBody(), "$.message"), is(UrlStatus.UNREACHABLE.getStatus()));
