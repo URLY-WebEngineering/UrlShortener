@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Configuration
 @EnableAsync
@@ -21,10 +22,18 @@ public class SenderService {
     private DirectExchange direct;
     private AccessService accessData;
 
+    private AtomicInteger numClicks;
+    private AtomicInteger numUsers;
+    private AtomicInteger numURLs;
+
     public SenderService(RabbitTemplate template,DirectExchange direct,AccessService accessData){
         this.direct = direct;
         this.template = template;
         this.accessData = accessData;
+
+        this.numClicks = new AtomicInteger(Math.toIntExact(accessData.getTotalClick()));
+        this.numUsers = new AtomicInteger(0);
+        this.numURLs = new AtomicInteger(Math.toIntExact(accessData.getTotalURL()));
     }
 
     // Bind the process to the queues
@@ -42,6 +51,16 @@ public class SenderService {
     @Async
     @RabbitListener(queues = "request_queue")
     public void listenRequest(String in) {
+        if(in.equals("click")){
+            this.numClicks.getAndAdd(1);
+        }
+        if(in.equals("url")){
+            this.numURLs.getAndAdd(1);
+        }
+        if(in.equals("user")){
+            System.out.println("New user added");
+            //TODO
+        }
         sendUrl();
         sendClick();
         sendUser();
@@ -49,12 +68,12 @@ public class SenderService {
 
     @Async
     public void sendUrl() {
-        template.convertAndSend(direct.getName(), "responses_url", accessData.getTotalURL().toString());
+        template.convertAndSend(direct.getName(), "responses_url", this.numURLs.toString());
     }
 
     @Async
     public void sendClick() {
-        template.convertAndSend(direct.getName(), "responses_click", accessData.getTotalClick().toString());
+        template.convertAndSend(direct.getName(), "responses_click", this.numClicks.toString());
     }
     //TODO
     @Async
