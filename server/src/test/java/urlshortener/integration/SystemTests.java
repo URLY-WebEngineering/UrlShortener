@@ -100,7 +100,7 @@ public class SystemTests {
   @Test
   public void testRedirection() throws Exception {
     postLink("https://www.youtube.com/");
-    Thread.sleep(2000); // Wait for checking
+    Thread.sleep(2500); // Wait for checking
 
     ResponseEntity<String> entity = restTemplate.getForEntity("/_6f12359f", String.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.TEMPORARY_REDIRECT));
@@ -119,7 +119,7 @@ public class SystemTests {
   @Test
   public void testUrlNotReachable() throws Exception {
     postLink("http://ingenieriaweb.com/");
-    Thread.sleep(2000); // Wait for checking
+    Thread.sleep(2500); // Wait for checking
 
     ResponseEntity<String> entity = restTemplate.getForEntity("/_6e9c6060", String.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
