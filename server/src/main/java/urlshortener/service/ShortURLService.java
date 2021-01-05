@@ -65,7 +65,7 @@ public class ShortURLService {
             .notChecked()
             .build();
 
-    checkShortUrl(su);
+    //checkShortUrl(su);
 
     if (shortURLRepository.findById(custombackhalf).isPresent()) {
       throw new BadCustomBackhalfException("Backhalf already exists");
@@ -98,7 +98,7 @@ public class ShortURLService {
             .notChecked()
             .build();
 
-    checkShortUrl(su);
+    //checkShortUrl(su);
 
     try {
       return shortURLRepository.save(su);
