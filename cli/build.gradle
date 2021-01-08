@@ -1,0 +1,32 @@
+plugins {
+	id 'com.github.sherter.google-java-format' version '0.9'
+	id 'org.springframework.boot' version '2.3.7.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	id 'java'
+}
+
+group = 'urly'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	compile "org.springframework.shell:spring-shell-starter:2.0.0.RELEASE"
+	compile "org.springframework:spring-web:5.2.2.RELEASE"
+	compile "org.json:json:20180130"
+	compile "com.jayway.jsonpath:json-path:2.5.0"
+}
+
+test.onlyIf { project.hasProperty('Integration')}
+test {
+	useJUnitPlatform()
+}
+
+googleJavaFormat {
+	options style: 'GOOGLE'
+}
