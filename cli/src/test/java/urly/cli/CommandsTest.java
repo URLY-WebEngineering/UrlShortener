@@ -1,6 +1,5 @@
 package urly.cli;
 
-import java.net.URISyntaxException;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;

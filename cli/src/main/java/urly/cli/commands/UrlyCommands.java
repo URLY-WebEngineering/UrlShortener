@@ -2,15 +2,14 @@ package urly.cli.commands;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.http.HttpEntity;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @ShellComponent
 public class UrlyCommands {
