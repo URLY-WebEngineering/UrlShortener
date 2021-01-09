@@ -107,7 +107,7 @@ public class SystemInformationController {
   @Async("threadTaskScheduler")
   @Scheduled(fixedRate = 2000, initialDelay = 500)
   public void checkSystemInformation() {
-    template.convertAndSend(direct.getName(), "request_queue", "information"); // NOSONAR
+    template.convertAndSend(direct.getName(), "request_queue", "get"); // NOSONAR
   }
 
   @Async("threadTaskScheduler")
