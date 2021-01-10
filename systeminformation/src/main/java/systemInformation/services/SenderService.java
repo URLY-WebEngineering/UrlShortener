@@ -56,12 +56,17 @@ public class SenderService {
             //TODO
             this.numUsers = new AtomicInteger(0);
             this.numURLs = new AtomicInteger(Math.toIntExact(accessData.getTotalURL()));
+            sendResponse();
         }
         else{
             sendUrl();
             sendClick();
             sendUser();
         }
+    }
+    @Async
+    public void sendResponse() {
+        template.convertAndSend(direct.getName(), "responses_queue", "done");
     }
 
     @Async
@@ -76,7 +81,7 @@ public class SenderService {
     //TODO
     @Async
     public void sendUser() {
-        template.convertAndSend(direct.getName(), "responses_user", "800");
+        template.convertAndSend(direct.getName(), "responses_user", this.numUsers.toString());
     }
 }
 

@@ -2,6 +2,7 @@ package urlshortener.web;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -32,6 +33,7 @@ public class SystemInformationController {
   private AtomicInteger numURLs;
   private RabbitTemplate template;
   private DirectExchange direct;
+  private AtomicBoolean readyresponse;
 
   @Bean
   public Queue responsesUsersQueue() {
@@ -46,6 +48,11 @@ public class SystemInformationController {
   @Bean
   public Queue responsesClickQueue() {
     return new Queue("responses_click");
+  }
+
+  @Bean
+  public Queue responsesQueue() {
+    return new Queue("responses_queue");
   }
   // Bind the process to the queues
   // A binding is a relationship between an exchange and a queue
@@ -64,7 +71,13 @@ public class SystemInformationController {
     return BindingBuilder.bind(responsesClickQueue).to(direct).with("responses_click");
   }
 
+  @Bean
+  public Binding bindingResponses(DirectExchange direct, Queue responsesQueue) {
+    return BindingBuilder.bind(responsesQueue).to(direct).with("responses_queue");
+  }
+
   public SystemInformationController(RabbitTemplate template, DirectExchange direct) {
+    this.readyresponse = new AtomicBoolean(false);
     this.numClicks = new AtomicInteger(0);
     this.numURLs = new AtomicInteger(0);
     this.numUsers = new AtomicInteger(0);
@@ -105,15 +118,34 @@ public class SystemInformationController {
     this.numClicks = parseMessage(message);
   }
 
-  @Async("threadTaskScheduler")
-  @Scheduled(fixedRate = 2000, initialDelay = 500)
-  public void checkSystemInformation() {
-    template.convertAndSend(direct.getName(), "request_queue", "get"); // NOSONAR
+  // Updating system information ACK
+  @Async
+  @RabbitListener(queues = "responses_queue")
+  public void receiveDone(String message) {
+    this.readyresponse.set(true);
   }
 
   @Async("threadTaskScheduler")
+  @Scheduled(fixedRate = 2000, initialDelay = 500)
+  public void checkSystemInformation() {
+    // First we check if the information if ready
+    if (this.readyresponse.get() == true) {
+      template.convertAndSend(direct.getName(), "request_queue", "get"); // NOSONAR
+      this.readyresponse.set(false);
+    } else {
+      // If it is not ready , demand again the information
+      requestUpdate();
+    }
+  }
+
+  // First it ask for an update of the information
+  @Async("threadTaskScheduler")
   @Scheduled(fixedRate = 1000, initialDelay = 500)
   public void updateInformation() {
+    requestUpdate();
+  }
+
+  private void requestUpdate() {
     template.convertAndSend(direct.getName(), "request_queue", "update"); // NOSONAR
   }
 
