@@ -3,6 +3,7 @@ package urlshortener.web;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -11,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.amqp.core.DirectExchange;
@@ -24,12 +26,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 public class SystemInformationTests {
 
   @Autowired private TestRestTemplate restTemplate;
-  private RabbitTemplate template;
+  @Mock private RabbitTemplate template;
+  @Mock
   private DirectExchange direct;
 
   @InjectMocks private SystemInformationController systemInformation;
@@ -99,5 +104,24 @@ public class SystemInformationTests {
 
     Mockito.verify(this.template)
         .convertAndSend(eq(direct.getName()), eq("responses_queue"), eq(numberData));
+  }
+
+  @Test
+  public void coveringTest() {
+    String numberData = "150";
+
+    this.systemInformation.requestUpdate();
+
+
+    this.systemInformation.receiveUsers(numberData);
+
+    this.systemInformation.receiveUrl(numberData);
+
+    this.systemInformation.receiveClick(numberData);
+
+    this.systemInformation.receiveDone(numberData);
+
+    AtomicInteger ParsedData = this.systemInformation.parseMessage(numberData);
+    assertEquals(ParsedData.get(),150);
   }
 }
