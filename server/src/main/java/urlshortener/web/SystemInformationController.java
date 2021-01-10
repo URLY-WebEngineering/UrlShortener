@@ -129,7 +129,7 @@ public class SystemInformationController {
   @Scheduled(fixedRate = 2000, initialDelay = 500)
   public void checkSystemInformation() {
     // First we check if the information if ready
-    if (this.readyresponse.get() == true) {
+    if (this.readyresponse.get()) {
       template.convertAndSend(direct.getName(), "request_queue", "get"); // NOSONAR
       this.readyresponse.set(false);
     } else {
@@ -145,11 +145,11 @@ public class SystemInformationController {
     requestUpdate();
   }
 
-  private void requestUpdate() {
+  public void requestUpdate() {
     template.convertAndSend(direct.getName(), "request_queue", "update"); // NOSONAR
   }
 
-  AtomicInteger parseMessage(String message) {
+  public AtomicInteger parseMessage(String message) {
     return (new AtomicInteger(Integer.parseInt(message)));
   }
 }
