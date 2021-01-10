@@ -73,6 +73,7 @@ public class SystemInformationController {
     this.template = template;
   }
 
+  // Petitions GET
   @ReadOperation
   public List<Information> getInformation() {
     List<Information> list = new ArrayList<>();
