@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:11-jdk-slim
 WORKDIR /app
 COPY /build/libs/systeminformation.jar .
-ENTRYPOINT ["java", "-jar", "systeminformation"]
+ENTRYPOINT ["java", "-jar", "systeminformation.jar"]
