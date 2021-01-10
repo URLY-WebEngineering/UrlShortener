@@ -9,6 +9,16 @@ services:
       - GSB_API_KEY
     depends_on:
       - mysql-docker
+      - rabbitmq
+  systeminformation:
+    build: systeminformation
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-docker:3306/urly?useSSL=false
+    depends_on:
+      - mysql-docker
+      - rabbitmq
   mysql-docker:
     image: library/mysql:5.7.32
     container_name: mysql-docker
@@ -25,6 +35,11 @@ services:
       - '3306'
     volumes:
       - my-db:/var/lib/mysql
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - '15672:15672'
 # Names our volume
 volumes:
   my-db:

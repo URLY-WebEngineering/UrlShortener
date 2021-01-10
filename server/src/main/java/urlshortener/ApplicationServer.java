@@ -8,16 +8,16 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @EnableAsync
-public class Application extends SpringBootServletInitializer {
+public class ApplicationServer extends SpringBootServletInitializer {
 
   public static void main(String[] args) {
     checkEnvVars();
-    SpringApplication.run(Application.class, args);
+    SpringApplication.run(ApplicationServer.class, args);
   }
 
   @Override
   protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-    return application.sources(Application.class);
+    return application.sources(ApplicationServer.class);
   }
 
   private static void checkEnvVars() {

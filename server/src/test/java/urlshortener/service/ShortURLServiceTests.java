@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.annotation.DirtiesContext;
 import urlshortener.domain.ShortURL;
@@ -21,12 +20,7 @@ import urlshortener.service.exceptions.BadCustomBackhalfException;
 public class ShortURLServiceTests {
 
   @Mock ShortURLRepository shortURLRepository;
-
   @InjectMocks private ShortURLService shortURLService;
-
-  public void setup() {
-    MockitoAnnotations.initMocks(this);
-  }
 
   @Test
   public void thatFindByKeyReturnsAURL() {

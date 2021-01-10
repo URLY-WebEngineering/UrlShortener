@@ -1,0 +1,33 @@
+plugins {
+	id 'org.springframework.boot' version '2.4.1'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	id 'java'
+	id 'io.freefair.lombok' version '5.3.0' // Lombok
+}
+
+group = 'unizar'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+	implementation 'org.springframework.boot:spring-boot-starter-web-services'
+	compile 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'commons-validator:commons-validator:1.6'
+
+	runtime 'org.hsqldb:hsqldb'
+	runtime 'mysql:mysql-connector-java'
+	testImplementation 'junit:junit:4.13'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.apache.httpcomponents:httpclient'
+
+}
+
+test {
+	useJUnit()
+}
