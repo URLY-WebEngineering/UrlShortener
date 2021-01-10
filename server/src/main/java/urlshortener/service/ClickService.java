@@ -27,8 +27,4 @@ public class ClickService {
       throw e;
     }
   }
-
-  public Long getTotalClick() {
-    return clickRepository.count(); // NOSONAR
-  }
 }

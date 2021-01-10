@@ -32,7 +32,6 @@ import urlshortener.domain.UrlStatus;
 public class SystemTests {
 
   @Autowired private TestRestTemplate restTemplate;
-
   @LocalServerPort private int port;
 
   @Test
@@ -57,7 +56,6 @@ public class SystemTests {
   @Test
   public void testCreateLink() throws Exception {
     ResponseEntity<String> entity = postLink("http://example.com/");
-
     assertThat(entity.getStatusCode(), is(HttpStatus.CREATED));
     assertThat(
         entity.getHeaders().getLocation(),
@@ -73,7 +71,6 @@ public class SystemTests {
   @Test
   public void testCreateLinkWithCustomBackhalfCorrect() throws Exception {
     ResponseEntity<String> entity = postLink("http://example.com/", "custom");
-
     assertThat(entity.getStatusCode(), is(HttpStatus.CREATED));
     assertThat(
         entity.getHeaders().getLocation(),
@@ -89,7 +86,6 @@ public class SystemTests {
   @Test
   public void testCreateLinkWithCustomBackhalfIncorrect() throws Exception {
     ResponseEntity<String> entity = postLink("http://example.com/", "_custom");
-
     assertThat(entity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     assertThat(
         JsonPath.read(entity.getBody(), "$.message"),
@@ -100,17 +96,17 @@ public class SystemTests {
   @Test
   public void testRedirection() throws Exception {
     postLink("https://www.youtube.com/");
-    Thread.sleep(2000); // Wait for checking
+    Thread.sleep(3500); // Wait for checking
 
     ResponseEntity<String> entity = restTemplate.getForEntity("/_6f12359f", String.class);
+    System.out.println(entity.getStatusCode());
     assertThat(entity.getStatusCode(), is(HttpStatus.TEMPORARY_REDIRECT));
     assertThat(entity.getHeaders().getLocation(), is(new URI("https://www.youtube.com/")));
   }
 
   @Test
-  public void testUrlNotValidYet() throws Exception {
+  public void testUrlNotValidYet() {
     postLink("https://www.youtube.com/");
-
     ResponseEntity<String> entity = restTemplate.getForEntity("/_6f12359f", String.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     assertThat(JsonPath.read(entity.getBody(), "$.message"), is(UrlStatus.CHECKING.getStatus()));
@@ -119,8 +115,7 @@ public class SystemTests {
   @Test
   public void testUrlNotReachable() throws Exception {
     postLink("http://ingenieriaweb.com/");
-    Thread.sleep(2000); // Wait for checking
-
+    Thread.sleep(3500); // Wait for checking
     ResponseEntity<String> entity = restTemplate.getForEntity("/_6e9c6060", String.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     assertThat(JsonPath.read(entity.getBody(), "$.message"), is(UrlStatus.UNREACHABLE.getStatus()));

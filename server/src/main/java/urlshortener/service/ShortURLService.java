@@ -18,7 +18,6 @@ import urlshortener.web.UrlShortenerController;
 public class ShortURLService {
 
   List<String> existingEndpoints = Arrays.asList("info", "link", "user", "qr");
-
   private final ShortURLRepository shortURLRepository;
 
   public ShortURLService(ShortURLRepository shortURLRepository) {
@@ -92,10 +91,6 @@ public class ShortURLService {
     } catch (Exception e) {
       return su;
     }
-  }
-
-  public Long getTotalURL() {
-    return shortURLRepository.count(); // NOSONAR
   }
 
   public boolean backhalfConformsToPattern(String custombackhalf) {
