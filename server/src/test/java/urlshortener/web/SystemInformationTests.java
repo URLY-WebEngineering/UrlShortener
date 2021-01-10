@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,16 +27,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 public class SystemInformationTests {
 
   @Autowired private TestRestTemplate restTemplate;
   @Mock private RabbitTemplate template;
-  @Mock
-  private DirectExchange direct;
+  @Mock private DirectExchange direct;
 
   @InjectMocks private SystemInformationController systemInformation;
   private MockMvc mockMvc;
@@ -112,7 +110,6 @@ public class SystemInformationTests {
 
     this.systemInformation.requestUpdate();
 
-
     this.systemInformation.receiveUsers(numberData);
 
     this.systemInformation.receiveUrl(numberData);
@@ -122,6 +119,6 @@ public class SystemInformationTests {
     this.systemInformation.receiveDone(numberData);
 
     AtomicInteger ParsedData = this.systemInformation.parseMessage(numberData);
-    assertEquals(ParsedData.get(),150);
+    assertEquals(ParsedData.get(), 150);
   }
 }
