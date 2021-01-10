@@ -1,3 +1,4 @@
 rootProject.name = 'UrlShortener'
 include 'server'
+include 'cli'
 include 'systeminformation'
