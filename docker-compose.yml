@@ -5,8 +5,9 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-docker:3306/urly?useSSL=false
       - GSB_API_KEY
+      - MYSQL_HOST=mysql-docker
+      - MYSQL_PORT=3307
     depends_on:
       - mysql-docker
       - rabbitmq
@@ -15,26 +16,24 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-docker:3306/urly?useSSL=false
+      - MYSQL_HOST=mysql-docker
+      - MYSQL_PORT=3307
     depends_on:
       - mysql-docker
       - rabbitmq
   mysql-docker:
     image: library/mysql:5.7.32
-    container_name: mysql-docker
-    command: --disable-partition-engine-check
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=urly
       - MYSQL_USER=urly
       - MYSQL_PASSWORD=password
+      - MYSQL_TCP_PORT=3307
     ports:
-      - '3306:3306'
-    expose:
-      # Opens port 3306 on the container
-      - '3306'
+      - '3307:3307'
     volumes:
-      - my-db:/var/lib/mysql
+      - mysqldocker:/var/lib/mysql
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -42,4 +41,4 @@ services:
       - '15672:15672'
 # Names our volume
 volumes:
-  my-db:
+  mysqldocker:
