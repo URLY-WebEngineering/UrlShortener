@@ -134,7 +134,7 @@ public class SystemInformationController {
       this.readyresponse.set(false);
     } else {
       // If it is not ready , demand again the information
-      requestUpdate();
+      requestUpdate(); // NOSONAR
     }
   }
 
@@ -142,7 +142,7 @@ public class SystemInformationController {
   @Async("threadTaskScheduler")
   @Scheduled(fixedRate = 1000, initialDelay = 500)
   public void updateInformation() {
-    requestUpdate();
+    requestUpdate(); // NOSONAR
   }
 
   public void requestUpdate() {

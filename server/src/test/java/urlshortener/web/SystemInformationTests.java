@@ -108,6 +108,8 @@ public class SystemInformationTests {
   public void coveringTest() {
     String numberData = "150";
 
+    this.systemInformation.checkSystemInformation();
+
     this.systemInformation.requestUpdate();
 
     this.systemInformation.receiveUsers(numberData);
