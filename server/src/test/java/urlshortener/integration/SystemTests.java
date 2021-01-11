@@ -14,6 +14,8 @@ import java.net.URI;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -29,6 +31,7 @@ import urlshortener.domain.UrlStatus;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @DirtiesContext
+@EnableAutoConfiguration(exclude = {SecurityAutoConfiguration.class})
 public class SystemTests {
 
   @Autowired private TestRestTemplate restTemplate;
@@ -47,7 +50,7 @@ public class SystemTests {
   @Test
   public void testCss() {
     ResponseEntity<String> entity =
-        restTemplate.getForEntity("/webjars/bootstrap/3.3.5/css/bootstrap.min.css", String.class);
+        restTemplate.getForEntity("/webjars/bootstrap/4.5.0/css/bootstrap.min.css", String.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.OK));
     assertThat(entity.getHeaders().getContentType(), is(MediaType.valueOf("text/css")));
     assertThat(entity.getBody(), containsString("body"));
