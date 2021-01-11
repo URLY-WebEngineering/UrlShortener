@@ -5,61 +5,86 @@
     <link rel="icon" href="icon/logo-provisional.png">
 
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <link href="webjars/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"
-          type="text/css"/>
-    <script src="webjars/jquery/2.1.4/jquery.min.js" type="text/javascript"></script>
-    <script src="webjars/bootstrap/3.3.5/js/bootstrap.min.js"
-            type="text/javascript"></script>
-    <script src="js/app.js" type="text/javascript">
-    </script>
+    <!--<link href="webjars/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>-->
+    <!--<script src="webjars/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>-->
+    <!--<script src="webjars/bootstrap/4.5.0/js/bootstrap.min.js" type="text/javascript"></script>-->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+          integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+          crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"
+            integrity="sha512-WNLxfP/8cVYL9sj8Jnp6et0BkubLP31jhTG9vhL/F5uEZmg5wEzKoXp1kJslzPQWwPT1eyMiSxlKCgzHLOTOTQ=="
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+            crossorigin="anonymous"></script>
+    <script src="http://localhost:8082/auth/js/keycloak.js"></script>
+    <script src="js/userskeycloak.js" type="text/javascript"></script>
+    <script src="js/app.js" type="text/javascript"></script>
 </head>
 <body>
-<div class="col-lg-12 text-center">
-    <img src="icon/logo-provisional.png" style='width:160px;height:200px; padding-top: 15px;'/>
-</div>
-<div class="container-full">
-    <div class="row">
-        <div class="col-lg-12 text-center">
+<div class="container-fluid">
+    <nav class="navbar navbar-expand-lg bg-primary" id="not-authenticated" class="menu">
+        <button class="btn bg-light" name="loginBtn" onclick="keycloak.login()">Login</button>
+    </nav>
+
+    <nav class="navbar navbar-expand bg-primary" id="authenticated" class="menu">
+        <button class="btn bg-light" name="logoutBtn" onclick="keycloak.logout()">Logout</button>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div>
+            <img src="icon/logo-provisional.png"
+                 style="max-height:160px;"
+                 alt=""
+            />
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-12 text-center">
             <h1>URLY Shortener</h1>
             <p class="lead">A Spartan front-end example page for the project</p>
-            <br>
-            <form action="" class="col-lg-12" id="shortener" role="form">
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <form id="shortener">
                 <div class="form-group">
-                    <div class="input-group input-group-lg col-sm-offset-4 col-sm-4">
-                        <input class="center-block form-control input-lg" name="url"
-                               placeholder="Enter a URL" title="Enter a URL" type="text">
-                        <span class="input-group-btn"><button
-                                class="btn btn-lg btn-primary"
-                                type="submit">Short me!</button></span>
-                    </div>
+                    <input class="form-control" name="url"
+                           placeholder="Enter a URL" title="Enter a URL" type="text">
+
                 </div>
                 <div class="form-group">
-                    <div class="input-group col-sm-offset-4 col-sm-4">
-                        <input class="center-block form-control input-lg" name="custombackhalf"
-                               placeholder="(Optional) Choose a short URL"
-                               title="(Optional) Choose a short URL" type="text">
-                    </div>
+                    <input class="form-control" name="custombackhalf"
+                           placeholder="(Optional) Choose a short URL"
+                           title="(Optional) Choose a short URL" type="text">
                 </div>
-                <div class="checkbox">
+                <div class="form-check text-center">
                     <label>
-                        <input type="checkbox" name="qrfeature" checked="">Do you want a QR code?
+                        <input type="checkbox" name="qrfeature" checked="">
+                        Do you want a QR code?
                     </label>
+                </div>
+                <div class="text-center">
+                    <button
+                            class="btn btn-primary"
+                            type="submit">Short me!
+                    </button>
                 </div>
             </form>
         </div>
     </div>
-    <div class="row">
+    <div class="row justify-content-center">
         <div class="col-lg-12 text-center">
             <div class="col-sm-offset-4 col-sm-4 text-center">
-                <br/>
-                <div id="result"/>
+                <div id="result"></div>
             </div>
         </div>
+    </div>
+    <div class="row justify-content-center">
         <div class='col-lg-12 text-center'>
             <div class='col-sm-offset-4 col-sm-4 text-center'>
-                <br/>
-                <div id="QRresult">
-                </div>
+                <div id="QRresult"></div>
             </div>
         </div>
     </div>

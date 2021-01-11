@@ -1,0 +1,8 @@
+{
+  "realm": "UsersKeycloak",
+  "auth-server-url": "http://localhost:8082/auth",
+  "ssl-required": "external",
+  "resource": "login-app",
+  "public-client": true,
+  "confidential-port": 0
+}
