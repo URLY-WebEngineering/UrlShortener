@@ -25,45 +25,6 @@ function notAuthenticated() {
 function authenticated() {
     document.getElementById('not-authenticated').style.display = 'none';
     document.getElementById('authenticated').style.display = 'block';
-    document.getElementById('message').innerHTML = 'User: ' + keycloak.tokenParsed['preferred_username'];
-}
-
-function request(endpoint) {
-    var req = function () {
-        var req = new XMLHttpRequest();
-        var output = document.getElementById('message');
-        req.open('GET', serviceUrl + '/' + endpoint, true);
-
-        if (keycloak.authenticated) {
-            req.setRequestHeader('Authorization', 'Bearer ' + keycloak.token);
-        }
-
-        req.onreadystatechange = function () {
-            if (req.readyState == 4) {
-                if (req.status == 200) {
-                    console.log("Request 200: ");
-                    console.log(req.responseText);
-                    output.innerHTML = 'Message: ' + req.responseText;
-                } else if (req.status == 0) {
-                    console.log("Request 0: ");
-                    console.log(req.responseText);
-                    output.innerHTML = '<span class="error">Request failed</span>';
-                } else {
-                    console.log("Request Else: ");
-                    console.log(req.responseText);
-                    output.innerHTML = '<span class="error">' + req.status + ' ' + req.statusText + '</span>';
-                }
-            }
-        };
-
-        req.send();
-    };
-
-    if (keycloak.authenticated) {
-        keycloak.updateToken(30).success(req);
-    } else {
-        req();
-    }
 }
 
 function initializeKeycloak(callback) {

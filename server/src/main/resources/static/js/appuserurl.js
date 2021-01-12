@@ -1,5 +1,14 @@
 function successShowUserLinks(msg) {
-    $("#result").html(msg);
+    var htmlForDisplayingUrls = msg.urls.map(function(url) {
+        return `<li class="list-group-item">
+                    <a target="_blank" href="${url.uri}">${url.uri}</a>
+                    <input type="checkbox" name="${url.uri}" checked="">
+                </li>`;
+    }).join("");
+
+    var htmlListUrls = '<ul class="list-group col-8">' + htmlForDisplayingUrls + "</ul>";
+
+    $("#result").html(htmlListUrls);
 }
 
 function errorShowUserLinks(msg) {
