@@ -20,19 +20,26 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import org.springframework.beans.factory.annotation.Value;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest()
+@SpringBootTest(webEnvironment = RANDOM_PORT)
 public class WebsocketTests {
 
-  static final String WEBSOCKET_URI = "ws://localhost:8080/delete";
+
+  @Value("${local.server.port}")
+  private int port;
+
   static final String WEBSOCKET_TOPIC = "/confirmation";
+  private String WEBSOCKET_URI;
 
   BlockingQueue<String> blockingQueue;
   WebSocketStompClient stompClient;
 
   @Before
   public void setup() {
+    WEBSOCKET_URI = String.format("ws://localhost:%d/delete", port);
     blockingQueue = new LinkedBlockingDeque<>();
     stompClient =
         new WebSocketStompClient(
@@ -41,6 +48,7 @@ public class WebsocketTests {
 
   @Test
   public void shouldReceiveAMessageFromTheServer() throws Exception {
+
     StompSession session =
         stompClient.connect(WEBSOCKET_URI, new StompSessionHandlerAdapter() {}).get(1, SECONDS);
     session.subscribe(WEBSOCKET_TOPIC, new DefaultStompFrameHandler());
