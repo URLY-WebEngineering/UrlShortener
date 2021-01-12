@@ -19,11 +19,11 @@ public class ClickService {
     this.clickRepository = clickRepository;
   }
 
-  public void deleteClick(ShortURL hash) {
+  public void deleteClick(ShortURL su) {
     try {
-      this.clickRepository.deleteAllByHash(hash);
+      this.clickRepository.deleteAllByHash(su);
     } catch (Exception e) {
-      log.info("[" + hash.getHash() + "] was not deleted");
+      log.info("[" + su.getHash() + "] was not deleted");
       throw e;
     }
   }

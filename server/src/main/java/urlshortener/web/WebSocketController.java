@@ -23,15 +23,13 @@ public class WebSocketController {
   @MessageMapping("/delete")
   @SendTo("/confirmation/message")
   public WebSocketMessage deleteUrl(WebSocketMessage message) throws Exception {
-    String finalMessage = "";
     Optional<ShortURL> url = shortUrlService.findByKey(message.getHash());
     if (url.isPresent()) {
       clickService.deleteClick(url.get());
       shortUrlService.deleteByHash(url.get().getHash());
-      finalMessage = message.getHash() + "has been deleted";
+      return new WebSocketMessage(message.getUser(), message.getHash() + "has been deleted");
     } else {
-      finalMessage = message.getHash() + " was not found";
+      return new WebSocketMessage(message.getUser(), message.getHash() + " was not found");
     }
-    return new WebSocketMessage(message.getUser(), finalMessage);
   }
 }

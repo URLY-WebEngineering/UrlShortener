@@ -20,6 +20,7 @@ import urlshortener.service.exceptions.BadCustomBackhalfException;
 public class ShortURLServiceTests {
 
   @Mock ShortURLRepository shortURLRepository;
+
   @InjectMocks private ShortURLService shortURLService;
 
   @Test
