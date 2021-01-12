@@ -3,11 +3,13 @@ package urlshortener.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import urlshortener.domain.Click;
 import urlshortener.domain.ShortURL;
 import urlshortener.repository.ClickRepository;
 
 @Service
+@Transactional
 public class ClickService {
   private static final Logger log = LoggerFactory.getLogger(ClickService.class);
 
@@ -15,6 +17,15 @@ public class ClickService {
 
   public ClickService(ClickRepository clickRepository) {
     this.clickRepository = clickRepository;
+  }
+
+  public void deleteClick(ShortURL hash) {
+    try {
+      this.clickRepository.deleteAllByHash(hash);
+    } catch (Exception e) {
+      log.info("[" + hash.getHash() + "] was not deleted");
+      throw e;
+    }
   }
 
   public void saveClick(ShortURL shortURL, String ip) {
