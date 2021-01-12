@@ -33,7 +33,7 @@ public class ShortURLService {
     shortURLRepository.deleteById(hash);
   }
 
-  public ShortURL save(String url, String sponsor, String custombackhalf, String ip, boolean wantQr)
+  public ShortURL save(String url, String owner, String custombackhalf, String ip, boolean wantQr)
       throws BadCustomBackhalfException {
 
     if (!backhalfConformsToPattern(custombackhalf)) {
