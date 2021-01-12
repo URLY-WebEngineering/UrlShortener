@@ -20,6 +20,7 @@ import urlshortener.service.exceptions.BadCustomBackhalfException;
 public class ShortURLServiceTests {
 
   @Mock ShortURLRepository shortURLRepository;
+
   @InjectMocks private ShortURLService shortURLService;
 
   @Test
@@ -37,6 +38,19 @@ public class ShortURLServiceTests {
     assertTrue(su.isPresent());
     assertSame(url1().getTarget(), su.get().getTarget());
     assertSame(insertedURL1.getHash(), su.get().getHash());
+  }
+
+  @Test
+  public void deleteURL() {
+    when(shortURLRepository.save(any(ShortURL.class))).thenReturn(url1());
+    when(shortURLRepository.findById(any(String.class))).thenReturn(Optional.of(url1()));
+    ShortURL insertedURL1 =
+        shortURLService.save(
+            url1().getTarget(), url1().getSponsor(), url1().getIp(), url1().getQr() != null);
+    Optional<ShortURL> su = shortURLService.findByKey(insertedURL1.getHash());
+    assertTrue(su.isPresent());
+    shortURLService.deleteByHash(su.get().getHash());
+    assertEquals(shortURLRepository.count(), 0);
   }
 
   @Test
