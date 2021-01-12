@@ -45,7 +45,7 @@ public class ShortURLService {
             .uri(
                 (String hash) ->
                     linkTo(methodOn(UrlShortenerController.class).redirectTo(hash, null)).toUri())
-            .randomSponsor()
+            .sponsor(null)
             .createdNow()
             .owner(owner)
             .temporaryRedirect()
@@ -75,7 +75,7 @@ public class ShortURLService {
             .uri(
                 (String hash) ->
                     linkTo(methodOn(UrlShortenerController.class).redirectTo(hash, null)).toUri())
-            .randomSponsor()
+            .sponsor(null)
             .createdNow()
             .owner(owner)
             .temporaryRedirect()

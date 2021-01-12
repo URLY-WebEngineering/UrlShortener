@@ -72,11 +72,6 @@ public class ShortURLBuilder {
     return this;
   }
 
-  ShortURLBuilder randomOwner() {
-    this.owner = UUID.randomUUID().toString();
-    return this;
-  }
-
   ShortURLBuilder temporaryRedirect() {
     this.mode = HttpStatus.TEMPORARY_REDIRECT.value();
     return this;
