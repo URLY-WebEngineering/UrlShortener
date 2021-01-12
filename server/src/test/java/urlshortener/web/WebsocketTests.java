@@ -51,9 +51,16 @@ public class WebsocketTests {
     // Creating the Stomp clients to do the test
     StompSession session =
         stompClient.connect(websocketUri, new StompSessionHandlerAdapter() {}).get(1, SECONDS);
+
+    Thread.sleep(200);
+
     session.subscribe(WEBSOCKET_TOPIC, new DefaultStompFrameHandler());
 
+    Thread.sleep(200);
+
     session.send(WEBSOCKET_TOPIC, message.getBytes());
+
+    Thread.sleep(200);
 
     Assert.assertEquals(message, blockingQueue.poll(1, SECONDS));
   }
