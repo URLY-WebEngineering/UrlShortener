@@ -18,6 +18,9 @@ import urlshortener.domain.safebrowsing.SBThreatEntry;
 import urlshortener.domain.safebrowsing.SBThreatInfo;
 import urlshortener.repository.ShortURLRepository;
 
+/**
+ * Service that check the status of a URL and updates that in the repository.
+ */
 @Service
 public class URLStatusService {
 
@@ -29,6 +32,11 @@ public class URLStatusService {
     this.shortURLRepository = shortURLRepository;
   }
 
+  /**
+   * Checks is the specified URL exists and is reachable.
+   * @param urlToCheck
+   * @return
+   */
   public boolean isReachable(String urlToCheck) {
     try {
       URL url = new URL(urlToCheck);
@@ -42,6 +50,11 @@ public class URLStatusService {
     }
   }
 
+  /**
+   * Checks if the specified URL is safe based on the response of Google Safe Browsing.
+   * @param url
+   * @return
+   */
   public boolean isSafe(String url) {
     // Create request through domain classes
     SBClient sbClient = new SBClient("urly", "1.0");
@@ -73,6 +86,10 @@ public class URLStatusService {
     }
   }
 
+  /**
+   * Checks the status of the specified URL asynchronously and updates that in the repository.
+   * @param shortURL
+   */
   @Async("threadTaskExecutor")
   public void checkStatus(ShortURL shortURL) {
     String url = shortURL.getTarget();
