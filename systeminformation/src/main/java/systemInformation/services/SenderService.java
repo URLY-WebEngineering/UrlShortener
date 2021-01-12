@@ -21,15 +21,21 @@ public class SenderService {
   private RabbitTemplate template;
   private DirectExchange direct;
   private AccessService accessData;
+  private KeycloakAccessService keycloakAccessService;
 
   private AtomicInteger numClicks;
   private AtomicInteger numUsers;
   private AtomicInteger numURLs;
 
-  public SenderService(RabbitTemplate template, DirectExchange direct, AccessService accessData) {
+  public SenderService(
+      RabbitTemplate template,
+      DirectExchange direct,
+      AccessService accessData,
+      KeycloakAccessService keycloakAccessService) {
     this.direct = direct;
     this.template = template;
     this.accessData = accessData;
+    this.keycloakAccessService = keycloakAccessService;
 
     this.numClicks = new AtomicInteger(Math.toIntExact(accessData.getTotalClick()));
     this.numUsers = new AtomicInteger(0);
@@ -53,8 +59,7 @@ public class SenderService {
   public void listenRequest(String in) {
     if (in.equals("update")) {
       this.numClicks = new AtomicInteger(Math.toIntExact(accessData.getTotalClick()));
-      // TODO
-      this.numUsers = new AtomicInteger(0);
+      this.numUsers = new AtomicInteger(keycloakAccessService.countNumberOfUser());
       this.numURLs = new AtomicInteger(Math.toIntExact(accessData.getTotalURL()));
       sendResponse();
     } else {
@@ -78,9 +83,9 @@ public class SenderService {
   public void sendClick() {
     template.convertAndSend(direct.getName(), "responses_click", this.numClicks.toString());
   }
-  // TODO
+
   @Async
   public void sendUser() {
-    template.convertAndSend(direct.getName(), "responses_user", this.numUsers.toString());
+    template.convertAndSend(direct.getName(), "responses_users", this.numUsers.toString());
   }
 }

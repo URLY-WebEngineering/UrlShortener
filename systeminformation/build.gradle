@@ -9,7 +9,6 @@ plugins {
 group = 'unizar'
 sourceCompatibility = '11'
 
-
 repositories {
 	mavenCentral()
 }
