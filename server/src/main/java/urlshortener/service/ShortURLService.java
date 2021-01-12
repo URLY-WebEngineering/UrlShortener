@@ -28,7 +28,6 @@ public class ShortURLService {
     return shortURLRepository.findById(id);
   }
 
-
   public void deleteByHash(String hash) {
     shortURLRepository.deleteById(hash);
   }
