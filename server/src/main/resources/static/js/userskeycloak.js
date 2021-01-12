@@ -66,7 +66,7 @@ function request(endpoint) {
     }
 }
 
-window.onload = function () {
+function initializeKeycloak(callback) {
     keycloak.init({onLoad: 'check-sso', checkLoginIframeInterval: 1}).success(function () {
         if (keycloak.authenticated) {
             authenticated();
@@ -76,6 +76,8 @@ window.onload = function () {
 
         document.body.style.display = 'block';
     });
+
+    keycloak.onAuthLogout = notAuthenticated;
+    keycloak.onReady = callback;
 }
 
-keycloak.onAuthLogout = notAuthenticated;

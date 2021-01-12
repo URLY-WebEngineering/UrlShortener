@@ -15,21 +15,33 @@ function errorShortLink(msg) {
     $("#result").html("<div class='alert alert-danger lead'>SOMETHING WENT WRONG</div>");
 }
 
+function setupShortenerButton() {
+    $("#shortener").submit(function (event) {
+        event.preventDefault();
+
+        // Prepare authorization headers if necessary
+        var headers = {};
+        if (keycloak.authenticated) {
+            headers.Authorization = "Bearer " + keycloak.token;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/link",
+            data: $(this).serialize(),
+            headers: headers,
+            success: function (msg) {
+                successShortLink(msg)
+            },
+            error: function (msg) {
+                errorShortLink(msg)
+            }
+        });
+    });
+}
+
 $(document).ready(
     function () {
-        $("#shortener").submit(function (event) {
-            event.preventDefault();
-            $.ajax({
-                type: "POST",
-                url: "/link",
-                data: $(this).serialize(),
-                success: function (msg) {
-                    successShortLink(msg)
-                },
-                error: function (msg) {
-                    errorShortLink(msg)
-                }
-            });
-        });
+        initializeKeycloak(setupShortenerButton);
     }
 );
