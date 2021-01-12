@@ -48,6 +48,7 @@ public class WebsocketTests {
   @Test
   public void receiveAMessageFromTheServer() throws Exception {
     String message = "MESSAGE TEST";
+    // Creating the Stomp clients to do the test
     StompSession session =
         stompClient.connect(websocketUri, new StompSessionHandlerAdapter() {}).get(1, SECONDS);
     session.subscribe(WEBSOCKET_TOPIC, new DefaultStompFrameHandler());
