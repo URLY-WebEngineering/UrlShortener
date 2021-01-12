@@ -28,6 +28,7 @@ public class ShortURLService {
     return shortURLRepository.findById(id);
   }
 
+
   public void deleteByHash(String hash) {
     shortURLRepository.deleteById(hash);
   }
@@ -49,9 +50,9 @@ public class ShortURLService {
             .uri(
                 (String hash) ->
                     linkTo(methodOn(UrlShortenerController.class).redirectTo(hash, null)).toUri())
-            .sponsor(sponsor)
+            .sponsor(null)
             .createdNow()
-            .randomOwner()
+            .owner(owner)
             .temporaryRedirect()
             .notSafe()
             .ip(ip)
@@ -71,7 +72,7 @@ public class ShortURLService {
     }
   }
 
-  public ShortURL save(String url, String sponsor, String ip, boolean wantQr) {
+  public ShortURL save(String url, String owner, String ip, boolean wantQr) {
 
     ShortURL su =
         ShortURLBuilder.newInstance()
@@ -79,9 +80,9 @@ public class ShortURLService {
             .uri(
                 (String hash) ->
                     linkTo(methodOn(UrlShortenerController.class).redirectTo(hash, null)).toUri())
-            .sponsor(sponsor)
+            .sponsor(null)
             .createdNow()
-            .randomOwner()
+            .owner(owner)
             .temporaryRedirect()
             .notSafe()
             .ip(ip)
