@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.net.URI;
+import java.security.Principal;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -101,7 +102,8 @@ public class UrlShortenerController {
       @RequestParam(value = "sponsor", required = false) String sponsor,
       @RequestParam(value = "qrfeature", required = false) String qrfeature,
       @RequestParam(value = "custombackhalf", required = false) String custombackhalf,
-      HttpServletRequest request)
+      HttpServletRequest request,
+      Principal principal)
       throws InterruptedException {
 
     try {
@@ -113,12 +115,13 @@ public class UrlShortenerController {
       ShortURL su;
       // TODO: check for @NotNull @NotBlank
       boolean wantQr = (qrfeature != null) && (qrfeature.equals("on"));
+      String owner = principal != null ? principal.getName() : null;
       if ((custombackhalf != null) && (!custombackhalf.isEmpty())) {
         // ShortUrl is saved without URLStatus checked, it's pending
-        su = shortUrlService.save(url, sponsor, custombackhalf, request.getRemoteAddr(), wantQr);
+        su = shortUrlService.save(url, owner, custombackhalf, request.getRemoteAddr(), wantQr);
       } else {
         // ShortUrl is saved without URLStatus checked, it's pending
-        su = shortUrlService.save(url, sponsor, request.getRemoteAddr(), wantQr);
+        su = shortUrlService.save(url, owner, request.getRemoteAddr(), wantQr);
       }
 
       // Check URLStatus

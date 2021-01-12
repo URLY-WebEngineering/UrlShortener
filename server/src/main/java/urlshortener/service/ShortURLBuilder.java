@@ -57,8 +57,18 @@ public class ShortURLBuilder {
     return this;
   }
 
+  ShortURLBuilder randomSponsor() {
+    this.sponsor = UUID.randomUUID().toString();
+    return this;
+  }
+
   ShortURLBuilder createdNow() {
     this.created = new Date(System.currentTimeMillis());
+    return this;
+  }
+
+  ShortURLBuilder owner(String owner) {
+    this.owner = owner;
     return this;
   }
 
