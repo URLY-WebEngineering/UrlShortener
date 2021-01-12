@@ -31,7 +31,6 @@ public class WebsocketTests {
   private int port;
 
   static final String WEBSOCKET_TOPIC = "/confirmation";
-  static final String MESSAGE = "DELETE THIS URL";
   private String websocketUri;
 
   BlockingQueue<String> blockingQueue;
@@ -48,14 +47,14 @@ public class WebsocketTests {
 
   @Test
   public void receiveAMessageFromTheServer() throws Exception {
-
+    String message = "MESSAGE TEST";
     StompSession session =
         stompClient.connect(websocketUri, new StompSessionHandlerAdapter() {}).get(1, SECONDS);
     session.subscribe(WEBSOCKET_TOPIC, new DefaultStompFrameHandler());
 
-    session.send(WEBSOCKET_TOPIC, MESSAGE.getBytes());
+    session.send(WEBSOCKET_TOPIC, message.getBytes());
 
-    Assert.assertEquals(MESSAGE, blockingQueue.poll(1, SECONDS));
+    Assert.assertEquals(message, blockingQueue.poll(1, SECONDS));
   }
 
   class DefaultStompFrameHandler implements StompFrameHandler {
