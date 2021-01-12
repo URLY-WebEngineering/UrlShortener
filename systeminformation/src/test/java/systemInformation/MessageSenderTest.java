@@ -12,20 +12,24 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 public class MessageSenderTest {
 
-    private RabbitTemplate rabbitTemplateMock;
-    private DirectExchange direct;
+  private RabbitTemplate rabbitTemplateMock;
+  private DirectExchange direct;
 
-    @Before
-    public void setUp() {
-        this.rabbitTemplateMock = Mockito.mock(RabbitTemplate.class);
-        this.direct = new DirectExchange("tut.direct");
-    }
+  @Before
+  public void setUp() {
+    this.rabbitTemplateMock = Mockito.mock(RabbitTemplate.class);
+    this.direct = new DirectExchange("tut.direct");
+  }
 
-    @Test
-    public void testQueue() {
-        assertThatCode(() -> this.rabbitTemplateMock.convertAndSend(direct.getName(), "request_queue", "send information")).doesNotThrowAnyException();
+  @Test
+  public void testQueue() {
+    assertThatCode(
+            () ->
+                this.rabbitTemplateMock.convertAndSend(
+                    direct.getName(), "request_queue", "send information"))
+        .doesNotThrowAnyException();
 
-        Mockito.verify(this.rabbitTemplateMock)
-                .convertAndSend(eq(direct.getName()), eq("request_queue"), eq("send information"));
-    }
+    Mockito.verify(this.rabbitTemplateMock)
+        .convertAndSend(eq(direct.getName()), eq("request_queue"), eq("send information"));
+  }
 }

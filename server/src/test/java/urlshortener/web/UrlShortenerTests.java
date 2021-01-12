@@ -120,6 +120,28 @@ public class UrlShortenerTests {
         .andExpect(status().isBadRequest());
   }
 
+  @Test
+  public void thatShortenerCreatesAQRUrl() throws Exception {
+    configureSave(null);
+    String url = "http://example.com/";
+    String qrfeature = "on";
+    when(urlStatusService.isSafe(url)).thenReturn(true);
+    when(urlStatusService.isReachable(url)).thenReturn(true);
+
+    mockMvc
+        .perform(
+            post("/link")
+                .param("url", url)
+                .param("qrfeature", qrfeature)
+                .param("sponsor", "http://sponsor.com/"))
+        .andDo(print())
+        .andExpect(redirectedUrl("http://localhost/f684a3c4"))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.qr", is("http://localhost/qr/f684a3c4")))
+        .andExpect(jsonPath("$.hash", is("f684a3c4")))
+        .andExpect(jsonPath("$.uri", is("http://localhost/f684a3c4")));
+  }
+
   private void configureSave(String sponsor) {
     when(shortUrlService.save(any(), any(), any(), any(Boolean.class)))
         .then(
@@ -136,7 +158,7 @@ public class UrlShortenerTests {
                         false,
                         null,
                         null,
-                        null,
+                        URI.create("http://localhost/qr/f684a3c4"),
                         false,
                         false));
   }

@@ -63,12 +63,19 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'commons-validator:commons-validator:1.6'
     implementation 'com.google.guava:guava:28.1-jre'
-    
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
     compile 'com.google.zxing:core:3.3.0'
     compile 'com.google.zxing:javase:3.3.0'
     compile 'org.keycloak:keycloak-spring-boot-starter:12.0.1'
     compile 'org.springdoc:springdoc-openapi-ui:1.5.0'
     compile 'org.springframework.boot:spring-boot-starter-amqp'
+
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    implementation 'org.webjars:sockjs-client:1.0.2'
+    implementation 'org.webjars:stomp-websocket:2.3.3'
     
     runtime 'mysql:mysql-connector-java'
     runtime 'org.hsqldb:hsqldb'

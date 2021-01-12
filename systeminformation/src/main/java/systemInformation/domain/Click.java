@@ -1,9 +1,8 @@
 package systemInformation.domain;
 
-import lombok.*;
-
-import javax.persistence.*;
 import java.sql.Date;
+import javax.persistence.*;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
