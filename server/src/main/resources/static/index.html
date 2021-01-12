@@ -10,8 +10,13 @@
     <script src="webjars/jquery/2.1.4/jquery.min.js" type="text/javascript"></script>
     <script src="webjars/bootstrap/3.3.5/js/bootstrap.min.js"
             type="text/javascript"></script>
-    <script src="js/app.js" type="text/javascript">
-    </script>
+
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+
+    <script src="js/app.js" type="text/javascript"></script>
+
+
 </head>
 <body>
 <div class="col-lg-12 text-center">
@@ -63,6 +68,21 @@
             </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <input type="text" id="user" placeholder="Who are you?"/>
+        </div>
+        <br />
+        <div class='col-lg-12 text-center'>
+            <div class='col-sm-offset-4 col-sm-4 text-center'>
+            <input type="text" id="hash" placeholder="Which do you wan to delete?"/>
+            <button id="sendMessage" onclick="sendMessage();">Send</button>
+            <p id="response"></p>
+        </div>
+        </div>
+    </div>
+
 </div>
 </body>
 </html>

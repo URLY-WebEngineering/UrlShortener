@@ -1,11 +1,9 @@
 package urlshortener.web;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -69,39 +67,6 @@ public class SystemInformationTests {
     assertThat(entity.getStatusCode(), is(HttpStatus.OK));
     assertNotNull(entity.getHeaders().getContentType());
     assertNotNull(entity.getBody());
-  }
-
-  @Test
-  public void testQueues() {
-    String numberData = "150";
-
-    assertThatCode(
-            () -> this.template.convertAndSend(direct.getName(), "responses_url", numberData))
-        .doesNotThrowAnyException();
-
-    Mockito.verify(this.template)
-        .convertAndSend(eq(direct.getName()), eq("responses_url"), eq(numberData));
-
-    assertThatCode(
-            () -> this.template.convertAndSend(direct.getName(), "responses_click", numberData))
-        .doesNotThrowAnyException();
-
-    Mockito.verify(this.template)
-        .convertAndSend(eq(direct.getName()), eq("responses_click"), eq(numberData));
-
-    assertThatCode(
-            () -> this.template.convertAndSend(direct.getName(), "responses_user", numberData))
-        .doesNotThrowAnyException();
-
-    Mockito.verify(this.template)
-        .convertAndSend(eq(direct.getName()), eq("responses_user"), eq(numberData));
-
-    assertThatCode(
-            () -> this.template.convertAndSend(direct.getName(), "responses_queue", numberData))
-        .doesNotThrowAnyException();
-
-    Mockito.verify(this.template)
-        .convertAndSend(eq(direct.getName()), eq("responses_queue"), eq(numberData));
   }
 
   @Test

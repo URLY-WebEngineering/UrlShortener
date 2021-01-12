@@ -137,4 +137,21 @@ public class ShortURLFixture {
         true,
         true);
   }
+
+  public static ShortURL urlIp() {
+    return new ShortURL(
+        "someKey",
+        "http://example.com/",
+        null,
+        null,
+        null,
+        null,
+        307,
+        true,
+        "192.168.125.123",
+        "Sweden",
+        null,
+        true,
+        true);
+  }
 }
