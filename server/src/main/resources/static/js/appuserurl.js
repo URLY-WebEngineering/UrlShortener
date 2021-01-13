@@ -1,14 +1,13 @@
 function successShowUserLinks(msg) {
     var htmlForDisplayingUrls = msg.urls.map(function(url) {
-        return `<li class="list-group-item">
+        console.log(url);
+        return `<li class="list-group-item" class="shortenedurl" id="${url.hash}">
                     <a target="_blank" href="${url.uri}">${url.uri}</a>
-                    <input type="checkbox" name="${url.uri}" checked="">
+                    <input type="checkbox" name="${url.hash}" checked="">
                 </li>`;
     }).join("");
 
-    var htmlListUrls = '<ul class="list-group col-8">' + htmlForDisplayingUrls + "</ul>";
-
-    $("#result").html(htmlListUrls);
+    $("#listofhashes").html(htmlForDisplayingUrls);
 }
 
 function errorShowUserLinks(msg) {
@@ -36,6 +35,23 @@ function getUserLinks() {
     });
 }
 
+function deleteSelectedHashes() {
+    // Get all checked urls
+    $("#listofhashes li input:checked").each(function(index, li) {
+        // For each checked url, get the name (this is the shortened url)
+        sendDelete(li.name);
+    });
+}
+
+function initialFunction() {
+   getUserLinks();
+   connect();
+   $("#delete").submit(function (event) {
+       event.preventDefault();
+       deleteSelectedHashes();
+   })
+}
+
 $(document).ready(function () {
-    initializeKeycloak(getUserLinks);
+    initializeKeycloak(initialFunction);
 });
