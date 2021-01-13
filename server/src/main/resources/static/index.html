@@ -30,7 +30,7 @@
 
     <nav class="navbar navbar-expand bg-primary" id="authenticated" class="menu">
         <button class="btn bg-light" name="logoutBtn" onclick="keycloak.logout(); ">Logout</button>
-        <a href="html/userurl.html">My URLs</a>
+        <a href="html/userurl.html" class="text-white">My URLs</a>
     </nav>
 
     <div class="row justify-content-center">
@@ -89,21 +89,6 @@
             </div>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-lg-12 text-center">
-            <input type="text" id="user" placeholder="Who are you?"/>
-        </div>
-        <br />
-        <div class='col-lg-12 text-center'>
-            <div class='col-sm-offset-4 col-sm-4 text-center'>
-            <input type="text" id="hash" placeholder="Which do you wan to delete?"/>
-            <button id="sendMessage" onclick="sendMessage();">Send</button>
-            <p id="response"></p>
-        </div>
-        </div>
-    </div>
-
 </div>
 </body>
 </html>

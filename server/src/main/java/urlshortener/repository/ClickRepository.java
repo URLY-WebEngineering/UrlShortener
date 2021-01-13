@@ -9,5 +9,5 @@ public interface ClickRepository extends JpaRepository<Click, Long> {
 
   List<Click> findByHash(ShortURL hash);
 
-  List<Click> deleteAllByHash(ShortURL hash);
+  void deleteAllByHash(ShortURL su);
 }
