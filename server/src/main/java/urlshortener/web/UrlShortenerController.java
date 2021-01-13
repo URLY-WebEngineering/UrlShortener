@@ -113,7 +113,6 @@ public class UrlShortenerController {
       }
 
       ShortURL su;
-      // TODO: check for @NotNull @NotBlank
       boolean wantQr = (qrfeature != null) && (qrfeature.equals("on"));
       String owner = principal != null ? principal.getName() : null;
       if ((custombackhalf != null) && (!custombackhalf.isEmpty())) {
