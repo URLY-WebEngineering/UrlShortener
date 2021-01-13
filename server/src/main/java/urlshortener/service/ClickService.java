@@ -4,6 +4,7 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import urlshortener.domain.Click;
 import urlshortener.domain.ShortURL;
 import urlshortener.repository.ClickRepository;
@@ -32,9 +33,9 @@ public class ClickService {
     try {
       Click cl = ClickBuilder.newInstance().shortURL(shortURL).createdNow().ip(ip).build();
       cl = clickRepository.save(cl);
-      log.info("[" + shortURL.getHash() + "] saved with id [" + cl.getId() + "]");
+      log.info("[" + shortURL.getHash() + "] saved with id [" + cl.getId() + "]"); // NOSONAR
     } catch (Exception e) {
-      log.info("[" + shortURL.getHash() + "] was not saved");
+      log.info("[" + shortURL.getHash() + "] was not saved"); // NOSONAR
       throw e;
     }
   }

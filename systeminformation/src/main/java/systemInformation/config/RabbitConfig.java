@@ -6,12 +6,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitConfig {
-    // An exchange receive the messages from the producer and send it to the queues
-    // A DirectExchange must know exactly what to do with a message it receives.
-    // Its necessary to specific the key and the name of the queue
-    @Bean
-    public DirectExchange direct() {
-        return new DirectExchange("tut.direct");
-    }
-
+  // An exchange receive the messages from the producer and send it to the queues
+  // A DirectExchange must know exactly what to do with a message it receives.
+  // Its necessary to specific the key and the name of the queue
+  @Bean
+  public DirectExchange direct() {
+    return new DirectExchange("tut.direct");
+  }
 }

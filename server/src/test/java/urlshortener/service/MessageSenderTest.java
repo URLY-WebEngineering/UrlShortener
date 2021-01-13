@@ -56,4 +56,17 @@ public class MessageSenderTest {
     Mockito.verify(this.rabbitTemplateMock)
         .convertAndSend(eq(direct.getName()), eq("responses_users"), eq("add user"));
   }
+
+  @Test
+  public void testQueuesResponse() {
+
+    assertThatCode(
+            () ->
+                this.rabbitTemplateMock.convertAndSend(
+                    direct.getName(), "responses_queue", "response"))
+        .doesNotThrowAnyException();
+
+    Mockito.verify(this.rabbitTemplateMock)
+        .convertAndSend(eq(direct.getName()), eq("responses_queue"), eq("response"));
+  }
 }

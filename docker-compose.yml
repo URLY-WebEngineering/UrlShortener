@@ -21,6 +21,7 @@ services:
     environment:
       - MYSQL_HOST=mysql-docker
       - MYSQL_PORT=3307
+      - KEYCLOAK_HOST=keycloak
     depends_on:
       - mysql-docker
       - rabbitmq

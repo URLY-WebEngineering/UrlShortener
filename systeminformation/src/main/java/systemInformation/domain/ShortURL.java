@@ -1,11 +1,10 @@
 package systemInformation.domain;
 
-import lombok.*;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import java.net.URI;
 import java.sql.Date;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import lombok.*;
 
 @ToString
 @AllArgsConstructor
@@ -27,6 +26,4 @@ public class ShortURL {
   @Getter @Setter private URI qr;
   @Getter @Setter private Boolean reachable;
   @Getter @Setter private Boolean checked;
-
-
 }

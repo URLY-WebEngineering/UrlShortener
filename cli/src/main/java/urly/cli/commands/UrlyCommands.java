@@ -14,6 +14,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 @ShellComponent
 public class UrlyCommands {
 
+  /**
+   * Shorts a URL requesting to URLY backend server
+   *
+   * @param url
+   * @param qr optional, true if wanted to recevice a QR code
+   * @param backhalf optional, text to replace the default hash in a URL shorten
+   * @return
+   */
   @ShellMethod("Short a Url.")
   public Map<String, String> shortUrl(
       String url, boolean qr, @ShellOption(defaultValue = "") String backhalf) {
