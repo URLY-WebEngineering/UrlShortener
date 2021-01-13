@@ -8,7 +8,7 @@ function connect() {
     // Conecting to the server
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/confirmation/message', function (msg) {
+        stompClient.subscribe('/user/confirmation/message', function (msg) {
             // get html and delete it
             var resp = JSON.parse(msg.body);
             var element = `<li>${resp.hash}: ${resp.information}</li>`
