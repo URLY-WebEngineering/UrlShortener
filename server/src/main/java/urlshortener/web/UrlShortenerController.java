@@ -101,7 +101,12 @@ public class UrlShortenerController {
       @Parameter(description = "long url to shorten") @RequestParam("url") String url,
       @RequestParam(value = "sponsor", required = false) String sponsor,
       @RequestParam(value = "qrfeature", required = false) String qrfeature,
-      @RequestParam(value = "custombackhalf", required = false) String custombackhalf,
+      @Parameter(
+              description =
+                  "Must start with number o letter [a-zA-Z0-9] and can continue with any "
+                      + "combination of number, letter or underscore [a-zA-Z0-9_]")
+          @RequestParam(value = "custombackhalf", required = false)
+          String custombackhalf,
       HttpServletRequest request,
       Principal principal)
       throws InterruptedException {
