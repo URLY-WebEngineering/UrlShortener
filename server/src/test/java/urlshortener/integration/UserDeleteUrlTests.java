@@ -4,20 +4,14 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-import java.lang.reflect.Type;
 import java.util.Collections;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.messaging.converter.StringMessageConverter;
-import org.springframework.messaging.simp.stomp.StompFrameHandler;
-import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.test.annotation.DirtiesContext;
@@ -53,15 +47,15 @@ public class UserDeleteUrlTests {
   @Test
   public void clientConnected() throws InterruptedException, ExecutionException, TimeoutException {
     StompSession session =
-            stompClient.connect(websocketUri, new StompSessionHandlerAdapter() {}).get(1, SECONDS);
+        stompClient.connect(websocketUri, new StompSessionHandlerAdapter() {}).get(1, SECONDS);
     assertTrue(session.isConnected());
   }
 
   public WebSocketStompClient createWebSocketClient() {
     WebSocketStompClient stompClient =
-            new WebSocketStompClient(
-                    new SockJsClient(
-                            Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient()))));
+        new WebSocketStompClient(
+            new SockJsClient(
+                Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient()))));
     stompClient.setMessageConverter(new StringMessageConverter());
     return stompClient;
   }
