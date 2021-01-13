@@ -18,9 +18,7 @@ import urlshortener.domain.safebrowsing.SBThreatEntry;
 import urlshortener.domain.safebrowsing.SBThreatInfo;
 import urlshortener.repository.ShortURLRepository;
 
-/**
- * Service that check the status of a URL and updates that in the repository.
- */
+/** Service that check the status of a URL and updates that in the repository. */
 @Service
 public class URLStatusService {
 
@@ -34,6 +32,7 @@ public class URLStatusService {
 
   /**
    * Checks is the specified URL exists and is reachable.
+   *
    * @param urlToCheck
    * @return
    */
@@ -52,6 +51,7 @@ public class URLStatusService {
 
   /**
    * Checks if the specified URL is safe based on the response of Google Safe Browsing.
+   *
    * @param url
    * @return
    */
@@ -88,6 +88,7 @@ public class URLStatusService {
 
   /**
    * Checks the status of the specified URL asynchronously and updates that in the repository.
+   *
    * @param shortURL
    */
   @Async("threadTaskExecutor")
