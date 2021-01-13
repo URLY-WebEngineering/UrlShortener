@@ -1,5 +1,9 @@
 package urlshortener.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -33,6 +37,7 @@ public class SystemInformationController {
   private AtomicInteger numURLs;
   private RabbitTemplate template;
   private DirectExchange direct;
+  // ACK which indicates the values have been updated
   private AtomicBoolean readyresponse;
 
   @Bean
@@ -87,6 +92,14 @@ public class SystemInformationController {
   }
 
   // Petitions GET
+  @Operation(summary = "Show the information avaible at the endpoint /info provided by Acuator")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "System information",
+            content = @Content(mediaType = "application/json"))
+      })
   @ReadOperation
   public List<Information> getInformation() {
     List<Information> list = new ArrayList<>();
@@ -99,32 +112,59 @@ public class SystemInformationController {
     return list;
   }
 
-  // Consumes the messages in the queue and updates the values
+  /**
+   * Consumes the messages in the queue and updates the value of numUsers
+   *
+   * @param message
+   * @queue responses_users
+   */
   @Async
   @RabbitListener(queues = "responses_users")
   public void receiveUsers(String message) {
     this.numUsers = parseMessage(message);
   }
 
+  /**
+   * Consumes the messages in the queue and updates the value of numURLs
+   *
+   * @param message
+   * @queue responses_url
+   */
   @Async
   @RabbitListener(queues = "responses_url")
   public void receiveUrl(String message) {
     this.numURLs = parseMessage(message);
   }
 
+  /**
+   * Consumes the messages in the queue and updates the value of numClicks
+   *
+   * @queue responses_click
+   * @param message
+   */
   @Async
   @RabbitListener(queues = "responses_click")
   public void receiveClick(String message) {
     this.numClicks = parseMessage(message);
   }
 
-  // Updating system information ACK
+  /**
+   * Update system information ACK
+   *
+   * @param message
+   */
   @Async
   @RabbitListener(queues = "responses_queue")
   public void receiveDone(String message) {
     this.readyresponse.set(true);
   }
 
+  /**
+   * Request the information to show on this controller to the system information application. First
+   * it checks if the values are ready to be sent. If is not send a request to update this values.
+   *
+   * @return
+   */
   @Async("threadTaskScheduler")
   @Scheduled(fixedRate = 2000, initialDelay = 500)
   public void checkSystemInformation() {
@@ -139,12 +179,23 @@ public class SystemInformationController {
   }
 
   // First it ask for an update of the information
+  /**
+   * Request for the updating to the system information application of the value it shows on the
+   * controller
+   *
+   * @return
+   */
   @Async("threadTaskScheduler")
   @Scheduled(fixedRate = 1000, initialDelay = 500)
   public void updateInformation() {
     requestUpdate(); // NOSONAR
   }
 
+  /**
+   * Write on the RabbitMQ queue "request_queue" the message "update"
+   *
+   * @return
+   */
   public void requestUpdate() {
     template.convertAndSend(direct.getName(), "request_queue", "update"); // NOSONAR
   }

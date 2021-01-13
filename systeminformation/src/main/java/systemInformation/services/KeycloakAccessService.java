@@ -18,6 +18,13 @@ public class KeycloakAccessService {
 
   public KeycloakAccessService() {}
 
+  /**
+   * Ask for the number of users in the keycloak mysql server. To achieve its functionality first
+   * gets the access token by request the server through a POST petition and then gets the number of
+   * users by a GET request using the token
+   *
+   * @return the number of user
+   */
   public int countNumberOfUser() {
     RestTemplate template = new RestTemplate();
     HttpHeaders headers = new HttpHeaders();
@@ -37,24 +44,22 @@ public class KeycloakAccessService {
     if (response.getStatusCode() == HttpStatus.OK) {
 
       String json = response.getBody();
-      // System.out.println(json);
+
       List<String> matches = JsonPath.parse(json).read("$..access_token");
 
       String token = matches.get(0);
-
+      // set custom header
       headers = new HttpHeaders();
       // set `accept` header
       headers.setBearerAuth(token);
       headers.setCacheControl(CacheControl.noCache());
-      // set custom header
-
       // build the request
       HttpEntity request = new HttpEntity(headers);
 
       // use `exchange` method for HTTP call
       response = template.exchange(COUNT_URL, HttpMethod.GET, request, String.class);
 
-      if (response.getStatusCode() == HttpStatus.OK) {
+      if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
         return Integer.parseInt(response.getBody());
       } else {
         return 0;

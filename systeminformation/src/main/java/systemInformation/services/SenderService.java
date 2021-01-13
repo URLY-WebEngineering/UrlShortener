@@ -54,6 +54,15 @@ public class SenderService {
     return new Queue("request_queue");
   }
 
+  /**
+   * Consume in the RabbitMQ queue and once it reads a message from the queue updates the values of
+   * the attributes: this.numClicks this.numUsers this.numURLs When the values are updated run the
+   * function sendResponse()
+   *
+   * @queue request_queue
+   * @param in content of the message that is in the Rabbitmq queue
+   * @return
+   */
   @Async
   @RabbitListener(queues = "request_queue")
   public void listenRequest(String in) {
@@ -69,21 +78,46 @@ public class SenderService {
     }
   }
 
+  /**
+   * Write on the RabbitMQ queue the message "done" to inform the main server that the value
+   * requested have been updated
+   *
+   * @queue responses_queue
+   * @return
+   */
   @Async
   public void sendResponse() {
     template.convertAndSend(direct.getName(), "responses_queue", "done");
   }
 
+  /**
+   * Write in the RabbitMQ queue the value of the attribute numURLs
+   *
+   * @queue responses_url
+   * @return
+   */
   @Async
   public void sendUrl() {
     template.convertAndSend(direct.getName(), "responses_url", this.numURLs.toString());
   }
 
+  /**
+   * Write on the RabbitMQ queue "responses_click" the value of the attribute numClicks
+   *
+   * @queue responses_click
+   * @return
+   */
   @Async
   public void sendClick() {
     template.convertAndSend(direct.getName(), "responses_click", this.numClicks.toString());
   }
 
+  /**
+   * Consume in the RabbitMQ queue the value of the attribute numUsers
+   *
+   * @queue responses_users
+   * @return
+   */
   @Async
   public void sendUser() {
     template.convertAndSend(direct.getName(), "responses_users", this.numUsers.toString());
